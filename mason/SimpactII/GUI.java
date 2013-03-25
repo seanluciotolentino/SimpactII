@@ -7,7 +7,11 @@ package SimpactII;
 import SimpactII.Agents.Agent;
 import SimpactII.With.WithMSM;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import sim.display.*;
 import sim.engine.SimState;
@@ -28,7 +32,7 @@ public class GUI extends GUIState{
     public JFrame displayFrame;
     ContinuousPortrayal2D worldPortrayal = new ContinuousPortrayal2D();
     NetworkPortrayal2D networkPortrayal = new NetworkPortrayal2D();
-    
+            
     public static void main(String[] args){
         GUI vid = new GUI();
         Console c = new Console(vid);
@@ -36,7 +40,8 @@ public class GUI extends GUIState{
     }
     
     public GUI() {
-        super(new SimpactII(System.currentTimeMillis()));        
+        super(new SimpactII(System.currentTimeMillis()));     
+        addSimpactGraphs();
         //super(new WithMSM());
     }
     
@@ -52,6 +57,23 @@ public class GUI extends GUIState{
     public void load(SimState state){
         super.load(state);
         setupPortrayals();
+    }
+    
+    public void addSimpactGraphs(){        
+        JFrame frame = new JFrame( );
+        frame.setLocation(1100, 0);
+        JButton button = new JButton("Formed Relations");
+        final SimpactII s = (SimpactII) super.state;
+        button.addActionListener(new ActionListener()
+            {            
+            public void actionPerformed(ActionEvent e) {
+                s.formationScatter();
+            }
+            });
+                
+        frame.add(button);
+        frame.pack();
+        frame.setVisible(true);
     }
 
     public void setupPortrayals() {
