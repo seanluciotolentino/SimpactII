@@ -1,0 +1,60 @@
+To make a new simulation
+
+1) Simulation class which extends SimState.
+	-Constructors calling super's constructors
+	-implement a start method that initializes
+	-main method should call doLoop (inherited from SimState) and system.exit(0)
+2) If start creates some agent X, you need to create a class for agent X. 
+	-For events to occur the agent X must be scheduled to have somethign occur: schedule.scheduleRepeating(X).  This is one specific scheduler, but I belive there are more.
+	-X needs to implement steppable, which means it has have a method called "Step" which means it will know how to step.
+	-Note that the "step" method takes a SimState parameter-- you should cast this to whatever kind of simulation you are making (in the example it is Student). 
+3)You can get the objection location in the simulator field with simulator.field.getObjectLocation(this). You can fein movement with simulator.field.setObjectlocation(this, new Double2D(newx,newy).
+	
+4) To make a GUI, create a new class with a "WithUI" at the end (this is the convention -- you can use a different name actually). The new class should extend GUIState.
+
+5) Have the GUI show us stuff. There seems to be a lot going on "under the hood", but the basic flow is this:
+	-main is called first. It creates the GUIstate (which in turn, creates the simulator that it is based on) and console
+	-When play is pressed, init is called first. It creates a display, sets the title, and other house keeping. 
+	-The SimState is started, then the GUIState is started. After we have initialized the super what call setupPortrayals() which draws the field and students. 
+	
+6) Besides the physical placement we can consider another field such as network.  
+	-Network n = new Network(false) creates a new undirected network
+	-Any object can be a node in the network: n.addNode(new X() );
+	-Get nodes with n.getAllNodes() and .get(i) -- these will be objects though, not their actual type (if you need the type I suppose you can cast to it). 
+	-To create an edge use n.addEdge( object1 , object2 , edgeWeight);
+	
+7) We can also visualize the network by adding a NetworkPortrayalObject.
+	-Add a NetworkPortrayal2D() to your list of class variables
+	-set the Feild and PortrayalForAll
+	
+
+8) To change the color of nodes every time step we need to "anonymously subclass" the draw method. (I've never heard of this term until now). 
+
+9) The actual model can have an inspector as well. 
+	-You can add get{ClassVariable} and set{Class Variable} to have them added to your Model tab as editable text boxes
+	-You can add dom{Class Variable} to give that variable a slider (sim.util.Interval(min,max)) or a drop down menu (String[])
+	-If your write a method which returns an array of numbers, the inspector can create a histogram of it
+	
+10) You can add properties to the nodes by changing the portrayals and nesting one within the others. 
+        yardPortrayal.setPortrayalForAll(
+                new MovablePortrayal2D(
+                    new CircledPortrayal2D(
+                        new LabelledPortrayal2D(
+                            new OvalPortrayal2D(),
+						5.0,null, Color.black, true),
+					0,5.0, Color.green,true)));
+					
+11) Anonymous classing: that's new.  You create "anonymous agents" (or any anonymous class) which is stepped in the background.
+
+12) Checkpointing:
+	-To checkpoint, pass "-docheckpoint x" as an argument. Where x how often to save a checkpoint
+	-To load a checkpoint, pass "-checkpoint x.0.[model].checkpoint" as an argument
+	-Note that there may be problems if transfering between machines, in which case... see the documentation
+	
+13) Adding some about stuff:
+	-You can add a basic HTML page which includes all information. 
+	-You can also link to webpages by overriding the getInfo() method of [Class]WithUI.java.  You can see documentation if this is actually of value.
+	
+	
+	
+	
