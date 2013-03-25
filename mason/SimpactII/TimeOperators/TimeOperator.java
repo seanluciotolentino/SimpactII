@@ -36,7 +36,7 @@ public class TimeOperator implements Steppable{
         for(int i = 0 ; i < numOthers; i++){
             //increment ages
             Agent agent = (Agent) agents.get(i);
-            agent.setAge(agent.getAge() + 1);
+            agent.setAge(agent.getAge() + 1.0/52);
             
             //decrement relations
             Bag relations = state.network.getEdges(agent, new Bag() );
