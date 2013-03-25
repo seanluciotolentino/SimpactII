@@ -8,11 +8,7 @@ import SimpactII.Agents.Agent;
 import SimpactII.Graphs.*;
 import SimpactII.InfectionOperators.InfectionOperator;
 import SimpactII.TimeOperators.TimeOperator;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.FileSystemException;
-import java.util.Map;
+import sim.engine.MakesSimState;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.continuous.Continuous2D;
@@ -39,8 +35,10 @@ public class SimpactII extends SimState {
     public Distribution degrees = new PowerLawDistribution(2.0, 1); 
     public Distribution ages = new UniformDistribution(15.0, 65.0);//new PowerLawDistribution(1.0,3);
     public Distribution relationshipDurations = new UniformDistribution(1.0, 10.0);//new BetaDistribution(0.1,0.9);
-
-        
+    
+    //class variables for data management
+    public Bag relations = new Bag();
+    
     //all class constructors:
     public SimpactII(long seed) {
         super(seed); //your run of Simpact II can reseed the RNG
@@ -56,6 +54,7 @@ public class SimpactII extends SimState {
         myAgents.clear();
         world.clear();  //geographic placements
         network.clear();//sexual network
+        relations.clear();
 
         //add the agents
         this.addAgents();                 
@@ -68,9 +67,9 @@ public class SimpactII extends SimState {
         
         //anonymous class to schedule a stop
         schedule.scheduleOnce(52*numberOfYears, new Steppable()
-            {
+                {
                 public void step(SimState state) { state.finish(); }
-            }
+                }
         );
     }
     
@@ -84,10 +83,6 @@ public class SimpactII extends SimState {
             throw new FileSystemException(e);
         }
     }*/
-    public void formationScatter(){
-        new FormationScatter();
-    }
-
 
     public void addAgents() {//add the agents
         for (int i = 0; i < population; i++) 
@@ -108,9 +103,14 @@ public class SimpactII extends SimState {
     
     public void formRelationship(Agent agent1, Agent agent2){
         //This should NOT be overwritten
-        network.addEdge(agent1, agent2, relationshipDurations.nextValue() );
+        double duration = relationshipDurations.nextValue();
+        network.addEdge(agent1, agent2, duration );
         agent1.setPartners(agent1.getPartners() + 1);
         agent2.setPartners(agent2.getPartners() + 1);
+        
+        //add this relationship to the relation data manager
+        relations.add( new Relationship( agent1, agent2,
+                schedule.getTime() , schedule.getTime() + duration ) );
     }
     
     public void dissolveRelationship(Edge e) {
@@ -122,6 +122,11 @@ public class SimpactII extends SimState {
         network.removeEdge(e);
     }   
     
+    //graph functions
+    public void formationScatter(){
+        //System.out.println("I am here 2 ~ " + this.relations.size());
+        new FormationScatter(this);
+    }
 
     //getters and setters / inspectors for the model
     public int getPopulation() {  return population;  }
@@ -159,12 +164,24 @@ public class SimpactII extends SimState {
     }
 
     //basic functionality methods
-    public void run() { //for running from a MatLab file -- doesn't quite work yet
-        doLoop(SimpactII.class, new String[0]);
+    public void run(String[] args) { //for running from a different file        
+        //doLoop so that it uses this object
+        //String[] args = {"-docheckpoint " + checkpoint}; //arg[0] = checkpoint
+        final SimpactII state = this;
+        doLoop(new MakesSimState()
+            {
+            public SimState newInstance(long seed, String[] args)
+                {
+                try { return  state ; } //not actually a new instance! it's this instance!
+                catch (Exception e) {  throw new RuntimeException("Exception occurred while trying to construct the simulation \n" + e);}
+                }
+            public Class simulationClass() { return SimpactII.class; }
+            }, args);        
     }
-    public void run(Double checkpoint) {
-        String[] args = {"-docheckpoint " + checkpoint}; //arg[0] = checkpoint
-        doLoop(SimpactII.class, args);
+    
+    public void run() {
+        //no args provided        
+        run( new String[0]);
     }
     public static void main(String[] args) { //for running from the command line
         doLoop(SimpactII.class, args); //just some necessary java stuff -- running this will run default        
