@@ -86,7 +86,7 @@ public class SimpactII extends SimState {
 
     public void addAgents() {//add the agents
         for (int i = 0; i < population; i++) 
-            myAgents.add( new Agent(this) ); //add basic agents
+            new Agent(this); //add basic agents
     }
     
     public Agent addAgent() {
@@ -101,8 +101,7 @@ public class SimpactII extends SimState {
         schedule.scheduleRepeating(schedule.EPOCH, 1, new TimeOperator());
     }
     
-    public void formRelationship(Agent agent1, Agent agent2){
-        //This should NOT be overwritten
+    public  final void formRelationship(Agent agent1, Agent agent2){
         double duration = relationshipDurations.nextValue();
         network.addEdge(agent1, agent2, duration );
         agent1.setPartners(agent1.getPartners() + 1);
@@ -113,8 +112,7 @@ public class SimpactII extends SimState {
                 schedule.getTime() , schedule.getTime() + duration ) );
     }
     
-    public void dissolveRelationship(Edge e) {
-        //This should NOT be overwritten
+    public final void dissolveRelationship(Edge e) {
         Agent agent1 = (Agent) e.getFrom();
         agent1.setPartners(agent1.getPartners() - 1);
         Agent agent2 = (Agent) e.getTo();
@@ -126,6 +124,10 @@ public class SimpactII extends SimState {
     public void formationScatter(){
         //System.out.println("I am here 2 ~ " + this.relations.size());
         new FormationScatter(this);
+    }
+    
+    public void demographics(){
+        new Demographics(this);
     }
 
     //getters and setters / inspectors for the model

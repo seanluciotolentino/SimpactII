@@ -14,9 +14,11 @@ public class WithDefault {
     
     public static void main(String[] args) { //for running from the command line
         SimpactII s = new SimpactII();
-        s.population = 2000;
+        s.population = 100;
+        s.numberOfYears = 5;
         s.run();
-        s.formationScatter();
+        //s.formationScatter();
+        s.demographics();
         //System.exit(0);
     }
     

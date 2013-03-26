@@ -17,7 +17,7 @@ import sim.util.Bag;
  */
 public class TimeOperator implements Steppable{
     
-    private double MAX_AGE = 65;
+    private double MAX_AGE = 60;
     
     public TimeOperator(int MAX_AGE){
         this.MAX_AGE = MAX_AGE;
@@ -51,16 +51,16 @@ public class TimeOperator implements Steppable{
             if(remove(agent)){ //if some removal condition is met
                 //somehow replace individual:
                 state.network.addNode(replace(state)); 
-                
+
                 //remove them from the world:
                 agent.stoppable.stop(); //stop them from being scheduled
+                agent.timeOfRemoval = state.schedule.getTime();
                 relations = state.network.getEdges(agent, new Bag() );
                 for(int k = 0 ; k < relations.size(); k++){
                     Edge e = (Edge) relations.get(k);
                     state.dissolveRelationship(e); //dissolve all of their relations
                 }
                 state.network.removeNode(agent);
-                state.myAgents.remove(agent);             
                 state.world.remove(agent);
             } //end if statement
         }//end for loop

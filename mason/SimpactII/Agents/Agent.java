@@ -26,6 +26,8 @@ public class Agent implements Steppable {
     public int weeksInfected = 0;
     public Agent infector; //keep track of who infected me
     public Stoppable stoppable; //so that if individual dies, we can stop them in the schedule
+    public double timeOfAddition;
+    public double timeOfRemoval;
 
     //constructors here
     public Agent(SimpactII model) {
@@ -36,6 +38,9 @@ public class Agent implements Steppable {
         //add self to schedule and world
         stoppable = model.schedule.scheduleRepeating(this); //schedule variable inherited from SimState -- adds the agents to the schedule (their step method will be called at each time step)
         model.network.addNode(this); //add to network
+        model.myAgents.add(this);
+        timeOfAddition = model.schedule.getTime();
+        timeOfRemoval  = Double.MAX_VALUE;
 
         //for GUI purposes:
         model.world.setObjectLocation(this,

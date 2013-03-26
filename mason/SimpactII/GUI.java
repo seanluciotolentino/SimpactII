@@ -5,14 +5,12 @@
 package SimpactII;
 
 import SimpactII.Agents.Agent;
+import SimpactII.With.WithDefault;
 import SimpactII.With.WithMSM;
-import java.awt.Color;
-import java.awt.Desktop;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.*;
 import sim.display.*;
 import sim.engine.SimState;
 import sim.portrayal.*;
@@ -41,8 +39,8 @@ public class GUI extends GUIState{
     
     public GUI() {
         super(new SimpactII(System.currentTimeMillis()));     
-        addSimpactGraphs();
         //super(new WithMSM());
+        addSimpactGraphs();
     }
     
     public GUI(SimState state){
@@ -59,19 +57,35 @@ public class GUI extends GUIState{
         setupPortrayals();
     }
     
-    public void addSimpactGraphs(){        
-        JFrame frame = new JFrame( );
-        frame.setLocation(1100, 0);
-        JButton button = new JButton("Formed Relations");
+    public void addSimpactGraphs(){    
+        //basic stuff
+        JFrame frame = new JFrame();
+        JPanel panel = new JPanel();
+        frame.setLocation(1100, 0);        
         final SimpactII s = (SimpactII) super.state;
+        
+        //formed relations button
+        JButton button = new JButton("Formed Relations");
         button.addActionListener(new ActionListener()
             {            
             public void actionPerformed(ActionEvent e) {
                 s.formationScatter();
             }
             });
-                
-        frame.add(button);
+        panel.add(button);
+        
+        //formed relations button
+        button = new JButton("Demographics");
+        button.addActionListener(new ActionListener()
+            {            
+            public void actionPerformed(ActionEvent e) {
+                s.demographics();
+            }
+            });                
+        panel.add(button);
+        
+        //finalize
+        frame.add(panel);
         frame.pack();
         frame.setVisible(true);
     }
