@@ -39,7 +39,7 @@ public class Demographics extends JFrame{
         int[] demographic;
         int numAgents = state.myAgents.size(); //this were added to this data struct, but should not have been remove.
         double now = Math.min(state.numberOfYears*52, state.schedule.getTime()); //determine if we are at the end of the simulation or in the middle
-        for (int t = 0; t < now; t += timeGranularity) { //Go through each time step 
+        for (int t = timeGranularity; t < now; t += timeGranularity) { //Go through each time step (skipping the first)
             demographic = new int[numBoxes]; //create an int[] with the number of slots we want
             
             //go through agents...
