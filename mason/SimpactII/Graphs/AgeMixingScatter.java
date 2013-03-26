@@ -25,16 +25,16 @@ import sim.util.Double2D;
  *
  * @author visiting_researcher
  */
-public class FormationScatter extends JFrame{
+public class AgeMixingScatter extends JFrame{
     
-    public FormationScatter(SimpactII state){
-        super("Relationship Formation Scatter");
+    public AgeMixingScatter(SimpactII state){
+        super("Age Mixing Scatter");
         
         //create XYseries
         XYSeries data = new XYSeries("Formation Scatter");        
-        int numRelations = state.relations.size();
+        int numRelations = state.allRelations.size();
         for(int j = 0 ; j < numRelations; j++){
-            Relationship r = (Relationship) state.relations.get(j);
+            Relationship r = (Relationship) state.allRelations.get(j);
             data.add(r.getAgent1().getAge() , r.getAgent2().getAge() ); 
         }
         
@@ -44,7 +44,7 @@ public class FormationScatter extends JFrame{
         
         //chart the series
         JFreeChart chart = ChartFactory.createScatterPlot(
-                "Relationship formation scatter", 
+                "Age Mixing Scatter", 
                 "Male Age", 
                 "Female Age", 
                 dataset, 
