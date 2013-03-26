@@ -37,7 +37,7 @@ public class SimpactII extends SimState {
     public Distribution relationshipDurations = new UniformDistribution(1.0, 10.0);//new BetaDistribution(0.1,0.9);
     
     //class variables for data management
-    public Bag relations = new Bag();
+    public Bag allRelations = new Bag();
     
     //all class constructors:
     public SimpactII(long seed) {
@@ -54,7 +54,7 @@ public class SimpactII extends SimState {
         myAgents.clear();
         world.clear();  //geographic placements
         network.clear();//sexual network
-        relations.clear();
+        allRelations.clear();
 
         //add the agents
         this.addAgents();                 
@@ -72,17 +72,6 @@ public class SimpactII extends SimState {
                 }
         );
     }
-    
- /*   public void writeInfectionFile(){
-        try {
-            BufferedWriter out = new BufferedWriter(new FileWriter("Infections.csv"));
-            infections.in
-            out.write(textToSave);
-            out.close();
-        } catch (IOException e) {
-            throw new FileSystemException(e);
-        }
-    }*/
 
     public void addAgents() {//add the agents
         for (int i = 0; i < population; i++) 
@@ -108,7 +97,7 @@ public class SimpactII extends SimState {
         agent2.setPartners(agent2.getPartners() + 1);
         
         //add this relationship to the relation data manager
-        relations.add( new Relationship( agent1, agent2,
+        allRelations.add( new Relationship( agent1, agent2,
                 schedule.getTime() , schedule.getTime() + duration ) );
     }
     
@@ -121,14 +110,9 @@ public class SimpactII extends SimState {
     }   
     
     //graph functions
-    public void formationScatter(){
-        //System.out.println("I am here 2 ~ " + this.relations.size());
-        new FormationScatter(this);
-    }
-    
-    public void demographics(){
-        new Demographics(this);
-    }
+    public void formationScatter(){   new AgeMixingScatter(this);  }    
+    public void demographics(){ new Demographics(this);  }
+    public void formedRelations() { new FormedRelations(this);    }
 
     //getters and setters / inspectors for the model
     public int getPopulation() {  return population;  }
@@ -136,7 +120,7 @@ public class SimpactII extends SimState {
 
     public double getGenderRatio() {  return genderRatio;  }
     public void setGenderRatio(int val) { genderRatio = Math.max(0, val); }
-
+    
     public double[] getDNPDistribution() {
         Bag agents = network.getAllNodes();
         double[] distro = new double[agents.numObjs];
