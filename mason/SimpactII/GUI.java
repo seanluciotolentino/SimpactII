@@ -65,7 +65,7 @@ public class GUI extends GUIState{
         final SimpactII s = (SimpactII) super.state;
         
         //formed relations button
-        JButton button = new JButton("Formed Relations");
+        JButton button = new JButton("Age-Mixing");
         button.addActionListener(new ActionListener()
             {            
             public void actionPerformed(ActionEvent e) {
@@ -80,6 +80,16 @@ public class GUI extends GUIState{
             {            
             public void actionPerformed(ActionEvent e) {
                 s.demographics();
+            }
+            });                
+        panel.add(button);
+        
+        //formed relations button
+        button = new JButton("Formed Relationships");
+        button.addActionListener(new ActionListener()
+            {            
+            public void actionPerformed(ActionEvent e) {
+                s.formedRelations();
             }
             });                
         panel.add(button);

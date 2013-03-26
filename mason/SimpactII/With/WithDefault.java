@@ -15,10 +15,11 @@ public class WithDefault {
     public static void main(String[] args) { //for running from the command line
         SimpactII s = new SimpactII();
         s.population = 100;
-        s.numberOfYears = 5;
+        s.numberOfYears = 20;
         s.run();
         //s.formationScatter();
         s.demographics();
+        s.formedRelations();
         //System.exit(0);
     }
     
