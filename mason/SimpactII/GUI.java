@@ -5,7 +5,6 @@
 package SimpactII;
 
 import SimpactII.Agents.Agent;
-import SimpactII.With.AgeMixingProposal;
 import SimpactII.With.WithDefault;
 import SimpactII.With.WithMSM;
 import java.awt.*;
