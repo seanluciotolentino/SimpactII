@@ -96,6 +96,16 @@ public class GUI extends GUIState{
             });                
         panel.add(button);
         
+        //prevalence and incidence button
+        button = new JButton("Prevalence and Incidence");
+        button.addActionListener(new ActionListener()
+            {            
+            public void actionPerformed(ActionEvent e) {
+                s.prevalence();
+            }
+            });                
+        panel.add(button);
+        
         //finalize
         frame.add(panel);
         frame.pack();
@@ -114,14 +124,8 @@ public class GUI extends GUIState{
                             new OvalPortrayal2D()
                                 { //anonymous subclassing: change the draw function so color is always agitationShade
                                 public void draw(Object o, Graphics2D graphics, DrawInfo2D info){
-                                    Agent ba = (Agent) o;
-                                    if ( ba.isMale() )
-                                        paint = Color.blue;
-                                    else 
-                                        paint = Color.red;
-                                
-                                    if ( ba.weeksInfected > 0 ) 
-                                        paint = Color.GREEN;
+                                    Agent agent = (Agent) o;
+                                    paint = howDoIDraw(agent);
 
                                     super.draw(o,graphics,info);
                                     }
@@ -141,6 +145,18 @@ public class GUI extends GUIState{
         //redraw the display
         display.repaint();
         
+    }
+    
+    public Color howDoIDraw(Agent agent){
+        if (agent.weeksInfected > 0) {
+            return Color.GREEN;
+        }
+        
+        if (agent.isMale()) {
+            return Color.blue;
+        } else {
+            return Color.red;
+        }
     }
     
     public void init(Controller c){

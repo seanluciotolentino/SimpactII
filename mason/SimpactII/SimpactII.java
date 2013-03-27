@@ -116,6 +116,7 @@ public class SimpactII extends SimState {
     public void agemixingScatter(){   new AgeMixingScatter(this);  }    
     public void demographics(){ new Demographics(this);  }
     public void formedRelations() { new FormedRelations(this);    }
+    public void prevalence() { new Prevalence(this); }
     
     //CSV export methods
     public void writeCSVRelations(String filename) {

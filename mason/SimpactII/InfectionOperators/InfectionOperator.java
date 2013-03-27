@@ -47,7 +47,7 @@ public class InfectionOperator implements Steppable{
         } //for all agents        
     } //end step
     
-    private double infectivity(Agent agent) {
+    public double infectivity(Agent agent) {
         return transmissionProbability;       
     }
 
