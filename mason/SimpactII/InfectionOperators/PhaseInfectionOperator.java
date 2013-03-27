@@ -15,7 +15,7 @@ import sim.util.Bag;
  *
  * @author Lucio Tolentino
  */
-public class InfectionOperator implements Steppable{
+public class PhaseInfectionOperator extends InfectionOperator{
     
     //default class variables about infection
     public int initialNumberInfected = 5;
@@ -26,16 +26,13 @@ public class InfectionOperator implements Steppable{
     public int weeksStage3 = 12; 
     public double infectivityStage3 = 0.0152;
     
-    public InfectionOperator(SimpactII s){
-        //perform initial infections
-        for(int i = 0; i < initialNumberInfected; i++){
-            Agent agent = (Agent) s.myAgents.get(s.random.nextInt(s.population));
-            agent.weeksInfected = 1;
-        }
+    public PhaseInfectionOperator(SimpactII s){
+        super(s); //InfectionOperator will perform initial infections        
     }
     
-    public InfectionOperator(int[] weekStages, double[] infectivityStages, 
+    public PhaseInfectionOperator(int[] weekStages, double[] infectivityStages, 
             int initialNumberInfected,SimpactII s){
+        super(initialNumberInfected,s);
         //grab infection parameters:
         this.weeksStage1 = weeksStage1; //number of weeks in Primary Infection phase
         this.weeksStage2 = weeksStage2;
@@ -44,27 +41,7 @@ public class InfectionOperator implements Steppable{
         this.infectivityStage1 = infectivityStage1;
         this.infectivityStage2 = infectivityStage2;
         this.infectivityStage3 = infectivityStage3;
-        
-        //perform initial infections
-        this.initialNumberInfected = initialNumberInfected;
-        for(int i = 0; i < initialNumberInfected; i++){
-            Agent agent = (Agent) s.myAgents.get(s.random.nextInt(s.population));
-            agent.weeksInfected = 1;
-        }
     }
-        
-    public void step(SimState sim){
-        SimpactII state = (SimpactII) sim;
-        
-        //flip coin for possible infections
-        Bag agents = state.network.getAllNodes();
-        for(int i = 0 ; i < agents.size(); i++){
-            Agent agent = (Agent) agents.get(i);
-            
-            infectionStep(agent,state);           
-
-        } //for all agents        
-    } //end step
     
     private double infectivity(Agent agent) {
         if (agent.weeksInfected < weeksStage1)
@@ -75,22 +52,5 @@ public class InfectionOperator implements Steppable{
             return infectivityStage3;        
     }
 
-    private void infectionStep(Agent agent, SimpactII state) {
-        //find those that are actually infected
-        if (agent.weeksInfected>= 1){ 
-            agent.setWeeksInfected(agent.getWeeksInfected() + 1);
-
-            Bag partners = state.network.getEdges(agent,new Bag());
-            for(int j = 0 ; j < partners.size(); j++){
-                Edge relationship = (Edge) partners.get(j);
-                Agent partner = (Agent) relationship.getOtherNode(agent);
-
-                if (partner.weeksInfected<=0 && state.random.nextDouble() < infectivity(agent) ){
-                    partner.setInfector(agent);
-                    partner.weeksInfected = 1;
-                }
-            } //partners for loop
-        } //if agent infected
-    }
     
 }

@@ -4,7 +4,7 @@
  */
 package SimpactII.With;
 
-import SimpactII.InfectionOperators.InfectionOperator;
+import SimpactII.InfectionOperators.PhaseInfectionOperator;
 import SimpactII.InfectionOperators.LDInfectionOperator;
 import SimpactII.SimpactII;
 import static sim.engine.SimState.doLoop;
