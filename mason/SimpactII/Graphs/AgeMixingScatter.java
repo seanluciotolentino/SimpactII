@@ -35,7 +35,10 @@ public class AgeMixingScatter extends JFrame{
         int numRelations = state.allRelations.size();
         for(int j = 0 ; j < numRelations; j++){
             Relationship r = (Relationship) state.allRelations.get(j);
-            data.add(r.getAgent1().getAge() , r.getAgent2().getAge() ); 
+            if (r.getAgent1().isMale())
+                data.add(r.getAgent2().getAge() , r.getAgent1().getAge() ); 
+            else
+                data.add(r.getAgent1().getAge() , r.getAgent2().getAge() ); 
         }
         
         //add the series to the collection?
@@ -45,10 +48,10 @@ public class AgeMixingScatter extends JFrame{
         //chart the series
         JFreeChart chart = ChartFactory.createScatterPlot(
                 "Age Mixing Scatter", 
-                "Male Age", 
                 "Female Age", 
+                "Male Age", 
                 dataset, 
-                PlotOrientation.HORIZONTAL, 
+                PlotOrientation.VERTICAL, 
                 false,   //legend
                 false,  //tooltips
                 false); //urls
