@@ -14,12 +14,12 @@ import sim.util.Distributions.UniformDistribution;
  *
  * @author visiting_researcher
  */
-public class AgeMixingProposal extends SimpactII{
+public class WithAgeMixing extends SimpactII{
     
     private double band = 5;
     private double offset = 5;
     
-    public AgeMixingProposal(){
+    public WithAgeMixing(){
         super();
         this.population = 1000;
         this.numberOfYears = 10;        
@@ -38,7 +38,7 @@ public class AgeMixingProposal extends SimpactII{
     }
     
     public static void main(String[] args){
-        AgeMixingProposal amp = new AgeMixingProposal();
+        WithAgeMixing amp = new WithAgeMixing();
         amp.run();
         amp.agemixingScatter();
         String filename = "relations" + amp.band + "" + amp.offset + ".csv";

@@ -22,16 +22,14 @@ public class InfectionOperator implements Steppable{
     public int initialNumberInfected = 5;
     
     public InfectionOperator(SimpactII s){
-        new InfectionOperator( initialNumberInfected , s);
+        performInitialInfections(s);
     }
     
     public InfectionOperator(int initialNumberInfected,SimpactII s){
         //perform initial infections
         this.initialNumberInfected = initialNumberInfected;
-        for(int i = 0; i < initialNumberInfected; i++){
-            Agent agent = (Agent) s.myAgents.get(s.random.nextInt(s.population));
-            agent.weeksInfected = 1;
-        }
+        performInitialInfections(s);
+
     }
         
     public void step(SimState sim){
@@ -51,7 +49,7 @@ public class InfectionOperator implements Steppable{
         return transmissionProbability;       
     }
 
-    private void infectionStep(Agent agent, SimpactII state) {
+    public void infectionStep(Agent agent, SimpactII state) {
         //find those that are actually infected
         if (agent.weeksInfected>= 1){ 
             agent.setWeeksInfected(agent.getWeeksInfected() + 1);
@@ -68,5 +66,13 @@ public class InfectionOperator implements Steppable{
             } //partners for loop
         } //if agent infected
     }
+    
+    public void performInitialInfections(SimpactII state){
+        for(int i = 0; i < initialNumberInfected; i++){
+            Agent agent = (Agent) state.myAgents.get(state.random.nextInt(state.population));
+            agent.weeksInfected = 1;
+        }
+    }
+    
     
 }
