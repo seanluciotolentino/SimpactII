@@ -5,6 +5,7 @@
 package SimpactII;
 
 import SimpactII.Agents.Agent;
+import SimpactII.With.AgeMixingProposal;
 import SimpactII.With.WithDefault;
 import SimpactII.With.WithMSM;
 import java.awt.*;
@@ -38,6 +39,7 @@ public class GUI extends GUIState{
     }
     
     public GUI() {
+        //super(new AgeMixingProposal() );
         super(new SimpactII(System.currentTimeMillis()));     
         //super(new WithMSM());
         addSimpactGraphs();
@@ -69,7 +71,7 @@ public class GUI extends GUIState{
         button.addActionListener(new ActionListener()
             {            
             public void actionPerformed(ActionEvent e) {
-                s.formationScatter();
+                s.agemixingScatter();
             }
             });
         panel.add(button);

@@ -7,7 +7,10 @@ package SimpactII;
 import SimpactII.Agents.Agent;
 import SimpactII.Graphs.*;
 import SimpactII.InfectionOperators.InfectionOperator;
+import SimpactII.InfectionOperators.PhaseInfectionOperator;
 import SimpactII.TimeOperators.TimeOperator;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import sim.engine.MakesSimState;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -110,9 +113,56 @@ public class SimpactII extends SimState {
     }   
     
     //graph functions
-    public void formationScatter(){   new AgeMixingScatter(this);  }    
+    public void agemixingScatter(){   new AgeMixingScatter(this);  }    
     public void demographics(){ new Demographics(this);  }
     public void formedRelations() { new FormedRelations(this);    }
+    
+    //CSV export methods
+    public void writeCSVRelations(String filename) {
+        try {
+            // Create file 
+            FileWriter fstream = new FileWriter(filename);
+            BufferedWriter out = new BufferedWriter(fstream);
+            out.write("maleAge,femaleAge\n");
+            int numRelations = allRelations.size();
+            for(int j = 0 ; j < numRelations; j++){
+                Relationship r = (Relationship) allRelations.get(j);
+                if (r.getAgent1().isMale())
+                    out.write(r.getAgent1().getAge() + "," + r.getAgent2().getAge() + "\n"); 
+                else
+                    out.write(r.getAgent2().getAge() + "," + r.getAgent1().getAge() + "\n"); 
+            }
+            
+            //Close the output stream
+            out.close();
+        } catch (Exception e) {//Catch exception if any
+            System.err.println("Error: " + e.getMessage());
+        }    
+    }
+    
+    public void writeCSVPopulation(String filename) {
+        try {
+            // Create file 
+            FileWriter fstream = new FileWriter(filename);
+            BufferedWriter out = new BufferedWriter(fstream);
+            out.write("personID,gender,age,timeOfInfection,timeOfBirth,timeOfDeath\n");
+            int numAgents = myAgents.size();
+            for(int j = 0 ; j < numAgents; j++){
+                Agent a = (Agent) myAgents.get(j);
+                int wi;
+                if(a.weeksInfected<=0) wi = 0;
+                else wi = (int) ((numberOfYears*52)-a.weeksInfected) ;
+                
+                out.write(a.hashCode() + "," + a.isMale()+ "," + a.getAge() + "," + wi 
+                         + "," + a.timeOfAddition + "," + a.timeOfRemoval + "\n");                        
+            }
+            
+            //Close the output stream
+            out.close();
+        } catch (Exception e) {//Catch exception if any
+            System.err.println("Error: " + e.getMessage());
+        }    
+    }
 
     //getters and setters / inspectors for the model
     public int getPopulation() {  return population;  }
