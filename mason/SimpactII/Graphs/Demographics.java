@@ -1,35 +1,38 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.Graphs;
 
 import SimpactII.Agents.Agent;
 import SimpactII.SimpactII;
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.RectangularShape;
 import javax.swing.JFrame;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.BarPainter;
-import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.ui.RectangleEdge;
 
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentino
+ * 
+ * Class to generate the demographics box plot.  It does this by iterating from 
+ * the beginning of the simulation (time step 0) to the current time step.  At 
+ * each time step it creates a bar chart with "numBoxes" boxes of "boxSize" in 
+ * years. Each is added as a data point to the data set.   
+ * 
  */
 public class Demographics extends JFrame{
     
     private int numBoxes = 5;
     private int boxSize = 15;
     private int timeGranularity = 4; //4 = 1 month, 52 = 1 year, etc...
+    
+    public Demographics(int numBoxes, int boxSize, int timeGranularity, SimpactII state){
+        this.numBoxes = numBoxes;
+        this.boxSize = boxSize;
+        this.timeGranularity = timeGranularity;
+        new Demographics(state);
+    }
     
     public Demographics(SimpactII state){
         super("Demographics");
@@ -57,7 +60,7 @@ public class Demographics extends JFrame{
             
             //add the delineations to the data
             for (int j = 0; j < numBoxes; j++) { 
-                data.addValue(demographic[j], j*boxSize + " - " + (j+1)*boxSize, t + "");
+                data.addValue(demographic[j], j*boxSize + " - " + (j+1)*boxSize, (t*timeGranularity) + "");
             }
         }
         

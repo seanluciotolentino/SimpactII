@@ -1,29 +1,35 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.Agents;
 
 import SimpactII.SimpactII;
+import SimpactII.With.WithAgeMixing;
+import SimpactII.With.WithPTRAgents;
 
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentino
+ * 
+ * Initially used with "WithAgeMixing" model. This agent takes a band and an offset
+ * to determine which partners to choose.  The 'offset' variable determines the 
+ * preferred age difference (the offset set from 0 age different). The 'band' 
+ * variable determines the flexibility around the preferred age difference. 
+ * 
+ * To do this we overridded the methods isDesirable and isLookingFor. isLooking
+ * stays the same as the default.
+ * 
  */
 public class AgeAgent extends Agent{
     
     private double band;
     private double offset;
     
-    public AgeAgent(SimpactII state, double bandwidth, double offset){
-        super(state);        
-        this.band = bandwidth;
+    public AgeAgent(SimpactII state, double band, double offset){
+        super(state);
+        this.band = band;
         this.offset = offset;
     }
-    
-    public AgeAgent(SimpactII state, double bandwidth, double offset, int DefaultAge){
-        super(state);        
-        this.band = bandwidth;
+    public AgeAgent(SimpactII state, double band, double offset, int DefaultAge){
+        super(state);
+        this.band = band;
         this.offset = offset;
         this.age = DefaultAge;
     }
@@ -36,8 +42,6 @@ public class AgeAgent extends Agent{
         else
             ageIsRight = (other.getAge() - getAge() ) < offset + band && (other.getAge() - getAge() ) > offset - band ; 
         
-        //if (isMale() && age>28 && age < 30 && ageIsRight && other.isLookingFor(this) ) //DEBUG
-        //    System.out.println(toString() );
         return ageIsRight && other.isLookingFor(this);
     }
     
@@ -45,6 +49,7 @@ public class AgeAgent extends Agent{
         return getPartners() < getDNP() && (isMale() ^ other.isMale());
     }
     
-    
-    
+    public Agent replace(SimpactII state){
+        return new AgeAgent(state,band,offset,15);
+    }
 }

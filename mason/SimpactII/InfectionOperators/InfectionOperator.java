@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.InfectionOperators;
 
 import SimpactII.Agents.Agent;
@@ -14,6 +10,14 @@ import sim.util.Bag;
 /**
  *
  * @author Lucio Tolentino
+ * 
+ * Default InfectionOperator. This operator controls how HIV infection spreads 
+ * through the network.  There are four constructors so that transmission probability
+ * and initial number infected can vary based on model structure. At each step,
+ * the operator goes through every node and calls the "infectionStep" method which 
+ * in turn relies on the "infectivity" method. Both can be overwritten for 
+ * customization. 
+ * 
  */
 public class InfectionOperator implements Steppable{
     
@@ -21,18 +25,23 @@ public class InfectionOperator implements Steppable{
     public double transmissionProbability = 0.01;
     public int initialNumberInfected = 5;
     
-    public InfectionOperator(SimpactII s){
-        performInitialInfections(s);
+    public InfectionOperator(){
     }
     
-    public InfectionOperator(int initialNumberInfected,SimpactII s){
-        //perform initial infections
+    public InfectionOperator(int initialNumberInfected){
         this.initialNumberInfected = initialNumberInfected;
-        performInitialInfections(s);
-
+    }
+    
+    public InfectionOperator(double infectivity){
+        this.transmissionProbability = infectivity;
+    }
+    
+    public InfectionOperator(int initialNumberInfected, double infectivity){
+        this.initialNumberInfected = initialNumberInfected;
+        this.transmissionProbability = infectivity;
     }
         
-    public void step(SimState sim){
+    public final void step(SimState sim){
         SimpactII state = (SimpactII) sim;
         
         //flip coin for possible infections

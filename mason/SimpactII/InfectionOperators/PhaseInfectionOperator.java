@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.InfectionOperators;
 
 import SimpactII.Agents.Agent;
@@ -14,6 +10,12 @@ import sim.util.Bag;
 /**
  *
  * @author Lucio Tolentino
+ * 
+ * An infection operator which varies HIV infectivity with weeks infected. This
+ * is in line with the literature which indicates that HIV infectivity is very 
+ * high at first, then drops down to an asyomptomic phase, then ramps up again
+ * during the last few months of life. 
+ * 
  */
 public class PhaseInfectionOperator extends InfectionOperator{
     
@@ -26,13 +28,11 @@ public class PhaseInfectionOperator extends InfectionOperator{
     public int weeksStage3 = 12; 
     public double infectivityStage3 = 0.0152;
     
-    public PhaseInfectionOperator(SimpactII s){
-        super(s); //InfectionOperator will perform initial infections        
+    public PhaseInfectionOperator(){       
     }
     
     public PhaseInfectionOperator(int[] weekStages, double[] infectivityStages, 
             int initialNumberInfected,SimpactII s){
-        super(initialNumberInfected,s);
         //grab infection parameters:
         this.weeksStage1 = weeksStage1; //number of weeks in Primary Infection phase
         this.weeksStage2 = weeksStage2;

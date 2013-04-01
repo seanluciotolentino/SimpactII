@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.Graphs;
 
 import SimpactII.Agents.Agent;
@@ -9,21 +5,18 @@ import SimpactII.SimpactII;
 import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.chart.*;
+import org.jfree.chart.plot.*;
+import org.jfree.data.xy.*;
 
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentino 
+ * 
+ * Class to generate the Prevalence and Incidence graphs.  This is a dual graph.
+ * The first graph shows the proportion of individuals infected with HIV over time,
+ * the second graph shows the number of cases each week.
+ * 
  */
 public class Prevalence extends JFrame{
     
@@ -48,7 +41,7 @@ public class Prevalence extends JFrame{
             for (int i = 0; i < numAgents; i++) { 
                 Agent agent = (Agent) state.myAgents.get(i);
                 
-                if (agent.timeOfAddition < t && agent.timeOfRemoval > t){
+                if (agent.timeOfAddition < t && agent.timeOfRemoval > t){ //if he or she is alive at this time step
                     population++;
                     if (agent.weeksInfected>=1 && (now-agent.weeksInfected)< t) //you are (1) infected AND (2) infected before time t
                         totalInfections++; 

@@ -1,14 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package SimpactII;
+package SimpactII.DataStructures;
 
 import SimpactII.Agents.Agent;
 
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentin
+ * 
+ * Basic data structure to keep track of all relationships that are formed.
+ * 
  */
 public class Relationship {
     

@@ -5,8 +5,7 @@
 package SimpactII;
 
 import SimpactII.Agents.Agent;
-import SimpactII.With.WithDefault;
-import SimpactII.With.WithMSM;
+import SimpactII.With.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,8 +37,10 @@ public class GUI extends GUIState{
     }
     
     public GUI() {
-        //super(new AgeMixingProposal() );
-        super(new SimpactII(System.currentTimeMillis()));     
+        //super(new WithSexWorkers() );
+        //super(new WithPTRAgents());
+        super(new WithAgeMixing() );
+        //super(new SimpactII(System.currentTimeMillis()));     
         //super(new WithMSM());
         addSimpactGraphs();
     }

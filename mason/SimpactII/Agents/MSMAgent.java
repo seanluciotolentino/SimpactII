@@ -1,14 +1,16 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.Agents;
 
 import SimpactII.SimpactII;
 
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentino
+ * 
+ * This is an MSM (men who have sex with men) agent. It overrides the "isDesirable"
+ * and "isLookingFor" method.  
+ * 
+ * No changes to time operator or infection operator is required.
+ * 
  */
 public class MSMAgent extends Agent{
     

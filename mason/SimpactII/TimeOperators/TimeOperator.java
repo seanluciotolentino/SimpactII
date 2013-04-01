@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.TimeOperators;
 
 import SimpactII.Agents.Agent;
@@ -14,17 +10,24 @@ import sim.util.Bag;
 /**
  *
  * @author Lucio Tolentino
+ * 
+ * Default time operator.  This operator goes through every Agent and increments
+ * their age by 1 week (1/52 years). Then it goes through the Agent's relationships
+ * and decrements their duration by 1/2 week (the other half is decremented when
+ * the other partner has their age incremented). Any relationships which have 
+ * negative durations (are over) are removed from the system. This is done by a 
+ * call to the main model "dissolveRelationship".  
+ * 
  */
 public class TimeOperator implements Steppable{
     
-    private double MAX_AGE = 60;
+    private double MAX_AGE = 65;
     
     public TimeOperator(int MAX_AGE){
         this.MAX_AGE = MAX_AGE;
     }
     
     public TimeOperator(){
-        return;
     }
         
     public void step(SimState s){
@@ -50,7 +53,7 @@ public class TimeOperator implements Steppable{
             //check some removal condition
             if(remove(agent)){ //if some removal condition is met
                 //somehow replace individual:
-                state.network.addNode(replace(state)); 
+                state.network.addNode(replace(state,agent)); 
 
                 //remove them from the world:
                 agent.stoppable.stop(); //stop them from being scheduled
@@ -66,12 +69,14 @@ public class TimeOperator implements Steppable{
         }//end for loop
     }
     
+    //The two overridable methods
     public boolean remove(Agent agent){
         return agent.getAge() > MAX_AGE;        
     }
     
-    public Agent replace(SimpactII state){
-        return state.addAgent();
+    public Agent replace(SimpactII state, Agent agent){
+        //return state.addAgent(agent.getClass());
+        return agent.replace(state);
     }
 
 

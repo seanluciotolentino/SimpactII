@@ -1,27 +1,22 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.Graphs;
 
-import SimpactII.Relationship;
+import SimpactII.DataStructures.Relationship;
 import SimpactII.SimpactII;
 import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.Plot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.chart.*;
+import org.jfree.chart.plot.*;
+import org.jfree.data.xy.*;
 
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentino
+ * 
+ * Class to generate the formed relations plot. This is a dual plot with the first
+ * being a graphical representation of each relationship. The second is the number
+ * of relationships formed over time.
+ * 
  */
 public class FormedRelations extends JFrame {
 
@@ -58,7 +53,7 @@ public class FormedRelations extends JFrame {
         }
         //--PART 2 CONT...
         for (int t = 0; t < timesteps; t++) //add each of the count series to the data set
-            data.add(t, countSeries[t]);        
+            data.add(t*timeGranularity, countSeries[t]);        
         XYSeriesCollection dataset = new XYSeriesCollection();
         dataset.addSeries(data);
 

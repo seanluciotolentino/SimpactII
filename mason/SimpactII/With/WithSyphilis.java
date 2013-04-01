@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.With;
 
 import SimpactII.Agents.Agent;
@@ -13,7 +9,24 @@ import sim.util.Bag;
 
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentino
+ * 
+ * This provides an example of how to use SimpactII with co-infection with another 
+ * STI like syphilis. We make use of the default code with some extra provisions
+ * to also allow the transmission of syphilis. (1) First, we create a new Agent
+ * (called SyphilisAgent) which inherits from the default agent. The only difference
+ * from the original is that it has an additional class variable "syphilisWeeksInfected".
+ * 
+ * (2) Second, we create this file which extends the default SimpactII.  We override
+ * the "addAgents" method, adding syphilisAgents instead of regular Agents to the
+ * system. 
+ * 
+ * (3) Third, in the constructor we call super(), which makes the default version
+ * of the SimpactII. Change the InfectionOperator through anonymous classing. This
+ * new infection operator does everything the original does (because it calls
+ * super() at the beginning, but performs the steps necessary for syphilis infection
+ * as well. 
+ * 
  */
 public class WithSyphilis extends SimpactII{
     
@@ -22,19 +35,8 @@ public class WithSyphilis extends SimpactII{
     
     public WithSyphilis(){
         super();
-    }
-    
-    public void addAgents(){
-        for (int i = 0; i<population; i++)
-            new SyphilisAgent(this);
-    }
-    
-    public SyphilisAgent addAgent(){
-        return new SyphilisAgent(this);
-    }
-    
-    public void addInfectionOperator() {
-        schedule.scheduleRepeating(new InfectionOperator(this) {
+        infectionOperator = new InfectionOperator() {
+            
             public void infectionStep(Agent agent, SimpactII state) {
                 super.infectionStep(agent, state); //infect HIV AND also Syphilis
                 SyphilisAgent sAgent = (SyphilisAgent) agent;
@@ -54,10 +56,6 @@ public class WithSyphilis extends SimpactII{
                     } //partners for loop
                 } //if agent infected
             }
-            @Override
-            public double infectivity(Agent a){ 
-                return 0.01;
-            }
 
             public void performInitialInfections(SimpactII state) { 
                 super.performInitialInfections(state); //perform initial HIV infections AND syphilis infections
@@ -66,7 +64,11 @@ public class WithSyphilis extends SimpactII{
                     agent.syphilisWeeksInfected = 1;
                 }
             }
-        });
+        };
+    }
+    
+    public void addAgents(){
+        addNAgents(population,SyphilisAgent.class);
     }
     
     public static void main (String[] args){

@@ -1,50 +1,52 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.With;
 
 import SimpactII.Agents.AgeAgent;
 import SimpactII.Agents.Agent;
+import SimpactII.Agents.PTRAgent;
 import SimpactII.SimpactII;
-import SimpactII.TimeOperators.TimeOperator;
 import sim.util.Distributions.UniformDistribution;
 
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentino
+ * 
+ * An extension of SimpactII that Wim requested for a proposal. It creates "AgeAgents"
+ * with a certain band and offset by overriding the addAgents() method. After the
+ * run, we produce the age-mixing scatter and output infection / relationship 
+ * information to a csv.
+ * 
  */
 public class WithAgeMixing extends SimpactII{
     
-    private double band = 5;
-    private double offset = 5;
+    public double band = 5;
+    public double offset = 5;
     
     public WithAgeMixing(){
         super();
-        this.population = 1000;
-        this.numberOfYears = 10;        
-        this.ages = new UniformDistribution(15,65);
-        this.relationshipDurations = new UniformDistribution(1,5);
     }
     
+    //overriding methods
     public void addAgents(){
-        for (int i = 0; i < population; i++) {
-            new AgeAgent(this, band, offset); //agent class below
-        }
+        //NOTE that addNAgents cannot be used here because an age agent requires
+        //additional parameters and it would confuse the method
+        for(int i = 0; i < population ; i++)
+            new AgeAgent(this,5,5);
     }
-    
-    public Agent addAgent(){ //called by replace method which will add a 15 year old
-        return new AgeAgent(this,band,offset,15);
-    }
-    
+    //main method
     public static void main(String[] args){
         WithAgeMixing amp = new WithAgeMixing();
+        amp.population = 1000;
+        amp.numberOfYears = 10;        
+        amp.ages = new UniformDistribution(15,65);
+        amp.relationshipDurations = new UniformDistribution(1,5);
         amp.run();
+        
+        //after the run produce results
         amp.agemixingScatter();
-        String filename = "relations" + amp.band + "" + amp.offset + ".csv";
-        amp.writeCSVRelations(filename);
-        filename = "population" + amp.band + "" + amp.offset + ".csv";
-        amp.writeCSVPopulation(filename);
+        //String filename = "relations" + amp.band + "" + amp.offset + ".csv";
+        //amp.writeCSVRelations(filename);
+        //filename = "population" + amp.band + "" + amp.offset + ".csv";
+        //amp.writeCSVPopulation(filename);
     }
     
     

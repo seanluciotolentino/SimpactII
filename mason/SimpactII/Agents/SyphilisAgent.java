@@ -1,14 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.Agents;
 
 import SimpactII.SimpactII;
 
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentino
+ * 
+ * The syphilisAgent is similar to the basic agent except it has the additional 
+ * class variable "syphilisWeeksInfected". This allows the agent to be infected 
+ * with syphilis as well as HIV. 
+ * 
  */
 public class SyphilisAgent extends Agent{
     
@@ -28,6 +29,11 @@ public class SyphilisAgent extends Agent{
         return syphilisWeeksInfected;
     }
     
+    /**
+     *
+     * @return the name of this agent.
+     */
+    @Override
     public String toString(){
         return "SyphilisAgent" + this.hashCode();
     }

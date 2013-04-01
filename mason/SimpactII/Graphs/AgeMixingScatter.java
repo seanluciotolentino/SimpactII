@@ -1,29 +1,23 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.Graphs;
 
-import SimpactII.Agents.Agent;
-import SimpactII.Relationship;
+import SimpactII.DataStructures.Relationship;
 import SimpactII.SimpactII;
 import javax.swing.JFrame;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.xy.DefaultTableXYDataset;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import sim.field.network.Edge;
-import sim.util.Bag;
-import sim.util.Double2D;
 
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentino
+ * 
+ * Class to generate the age mixing scatter plot. Each point is a relationship
+ * in the simulation with the x-value denoting the age of the female, and the 
+ * y-value denoting the age of the male. 
+ * 
  */
 public class AgeMixingScatter extends JFrame{
     

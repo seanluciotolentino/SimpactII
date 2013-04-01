@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.With;
 
 import SimpactII.Agents.Agent;
@@ -13,29 +9,30 @@ import sim.util.Double2D;
 
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentino
+ * 
+ * This model is an example of how you can use different types of Agents in addition
+ * to the basic agent. Here we create MSM agents and basic Agents. MSM agents are
+ * identical to basic agents except that they are men who seek exclusively men. 
+ * We inherit from SimpactII and then change the TimeOperator (via anonymous 
+ * classing) so that no one is ever removed.  
+ * 
+ * Note that this class contains no main method. This means that it inherits the 
+ * main function from SimpactII. 
+ * 
  */
 public class WithMSM extends SimpactII{
     
     public WithMSM(){
         super();
+        timeOperator = new TimeOperator()
+                {
+                    public boolean remove(){ return false;  }
+                };
     }
     
     public void addAgents(){
-        for (int i = 0; i < population; i++) {
-            new MSMAgent(this); //agent class below
-            new Agent(this); //agent class below
-        }
+        addNAgents(population,Agent.class);
+        addNAgents(population/2,MSMAgent.class);
     }
-    
-    public void addTimeOperator(){
-        schedule.scheduleRepeating(schedule.EPOCH, 1, 
-                new TimeOperator()
-                {
-                    public boolean remove(){ return false;  }
-                }                
-                );
-    }
-    
-
 }

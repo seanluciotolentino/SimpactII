@@ -1,35 +1,35 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII;
 
 import SimpactII.Agents.Agent;
+import SimpactII.DataStructures.Relationship;
 import SimpactII.Graphs.*;
 import SimpactII.InfectionOperators.InfectionOperator;
-import SimpactII.InfectionOperators.PhaseInfectionOperator;
 import SimpactII.TimeOperators.TimeOperator;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import sim.engine.MakesSimState;
-import sim.engine.SimState;
-import sim.engine.Steppable;
+import javax.swing.JFrame;
+import sim.engine.*;
 import sim.field.continuous.Continuous2D;
-import sim.field.network.Edge;
-import sim.field.network.Network;
+import sim.field.network.*;
 import sim.util.Bag;
 import sim.util.Distributions.*;
 
 /**
  *
  * @author Lucio Tolentino
+ * 
+ * This is the main SimpactII model.  It has all the default values.  Additional
+ * models that incorporate SimpactII should extends (inherit from) this class. 
+ * The default version adds basic agents to the schedule and lets them form relationships
+ * based soley on gender and desired number of partners (pulled from assigned 
+ * distributions). A time operators controls the ageing of individuals and an 
+ * infection operator controls infections.  
  */
 public class SimpactII extends SimState {
 
-    //class variables the simulation
+    //class variables visualization
     public Continuous2D world = new Continuous2D(1.0, 100, 100); //for geographic placement
     public Network network = new Network(false);
-    public Bag myAgents = new Bag();
     
     //class variables for the population
     public int population = 2000; //default
@@ -39,8 +39,13 @@ public class SimpactII extends SimState {
     public Distribution ages = new UniformDistribution(15.0, 65.0);//new PowerLawDistribution(1.0,3);
     public Distribution relationshipDurations = new UniformDistribution(1.0, 10.0);//new BetaDistribution(0.1,0.9);
     
+    //class variables for main operations
+    public TimeOperator timeOperator = new TimeOperator();
+    public InfectionOperator infectionOperator = new InfectionOperator();
+    
     //class variables for data management
     public Bag allRelations = new Bag();
+    public Bag myAgents = new Bag();
     
     //all class constructors:
     public SimpactII(long seed) {
@@ -52,21 +57,24 @@ public class SimpactII extends SimState {
     }
 
     //all class methods go here:
-    public void start() {
+    public final void start() {
         super.start();
-        myAgents.clear();
-        world.clear();  //geographic placements
-        network.clear();//sexual network
-        allRelations.clear();
+        
+        //reset everything:
+        myAgents.clear();       //all agents ever
+        allRelations.clear();   //all relations ever
+        world.clear();          //geographic placements
+        network.clear();        //sexual network
 
         //add the agents
         this.addAgents();                 
 
-        //add the time operator
-        this.addTimeOperator();
+        //schedule time operator
+        schedule.scheduleRepeating(schedule.EPOCH, 1, timeOperator); 
         
-        //add the infection operator
-        this.addInfectionOperator();
+        //schedule infection operator
+        infectionOperator.performInitialInfections(this);
+        schedule.scheduleRepeating(schedule.EPOCH, 2, infectionOperator );
         
         //anonymous class to schedule a stop
         schedule.scheduleOnce(52*numberOfYears, new Steppable()
@@ -74,27 +82,32 @@ public class SimpactII extends SimState {
                 public void step(SimState state) { state.finish(); }
                 }
         );
-    }
-
-    public void addAgents() {//add the agents
-        for (int i = 0; i < population; i++) 
-            new Agent(this); //add basic agents
-    }
-    
-    public Agent addAgent() {
-        return new Agent(this);
+    }    
+    //methods that can be overwritten
+    public void addAgents() {
+        //defalut agent adding -- add basic agents.  Override this method to change
+        //the demographics of the simulation
+        addNAgents(population, Agent.class);
     } 
-    
-    public void addInfectionOperator(){
-        schedule.scheduleRepeating(schedule.EPOCH, 2, new InfectionOperator(this) );
+    public void addNAgents(int N,Class c){
+        try {
+            for (int i = 0; i < N; i++) {
+                Agent a = (Agent) c.getConstructor(new Class[] {SimpactII.class}).newInstance(this);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Exception occurred while trying to add agent " + c + "\n" +
+                    "This agent needs more arguments in order to be initialized" + e);
+        }
     }
-    
-    public void addTimeOperator(){
-        schedule.scheduleRepeating(schedule.EPOCH, 1, new TimeOperator());
-    }
-    
-    public  final void formRelationship(Agent agent1, Agent agent2){
+    public void formRelationship(Agent agent1, Agent agent2){
+        //having this double "formRelationship" method allows us to override
+        //the former and specify relationship duration.  This is desirable in 
+        //cases where not all relationships formed have the same duration (i.e.,
+        //sex workers).  
         double duration = relationshipDurations.nextValue();
+        formRelationship(agent1,agent2,duration);
+    }
+    public void formRelationship(Agent agent1, Agent agent2, double duration){
         network.addEdge(agent1, agent2, duration );
         agent1.setPartners(agent1.getPartners() + 1);
         agent2.setPartners(agent2.getPartners() + 1);
@@ -103,8 +116,7 @@ public class SimpactII extends SimState {
         allRelations.add( new Relationship( agent1, agent2,
                 schedule.getTime() , schedule.getTime() + duration ) );
     }
-    
-    public final void dissolveRelationship(Edge e) {
+    public void dissolveRelationship(Edge e) {
         Agent agent1 = (Agent) e.getFrom();
         agent1.setPartners(agent1.getPartners() - 1);
         Agent agent2 = (Agent) e.getTo();
@@ -113,25 +125,26 @@ public class SimpactII extends SimState {
     }   
     
     //graph functions
-    public void agemixingScatter(){   new AgeMixingScatter(this);  }    
-    public void demographics(){ new Demographics(this);  }
-    public void formedRelations() { new FormedRelations(this);    }
-    public void prevalence() { new Prevalence(this); }
+    public final JFrame agemixingScatter(){  return new AgeMixingScatter(this);  }    
+    public final JFrame demographics(){ return new Demographics(this);  }
+    public final JFrame formedRelations() { return new FormedRelations(this);    }
+    public final JFrame prevalence() { return new Prevalence(this); }
     
     //CSV export methods
-    public void writeCSVRelations(String filename) {
+    public final void writeCSVRelations(String filename) {
         try {
             // Create file 
             FileWriter fstream = new FileWriter(filename);
             BufferedWriter out = new BufferedWriter(fstream);
-            out.write("maleAge,femaleAge\n");
+            out.write("maleAge,femaleAge,start,end\n");
             int numRelations = allRelations.size();
             for(int j = 0 ; j < numRelations; j++){
                 Relationship r = (Relationship) allRelations.get(j);
                 if (r.getAgent1().isMale())
-                    out.write(r.getAgent1().getAge() + "," + r.getAgent2().getAge() + "\n"); 
+                    out.write(r.getAgent1().getAge() + "," + r.getAgent2().getAge()); 
                 else
-                    out.write(r.getAgent2().getAge() + "," + r.getAgent1().getAge() + "\n"); 
+                    out.write(r.getAgent2().getAge() + "," + r.getAgent1().getAge()); 
+                out.write(r.getStart() + "," + r.getEnd()  + "\n");
             }
             
             //Close the output stream
@@ -140,8 +153,7 @@ public class SimpactII extends SimState {
             System.err.println("Error: " + e.getMessage());
         }    
     }
-    
-    public void writeCSVPopulation(String filename) {
+    public final void writeCSVPopulation(String filename) {
         try {
             // Create file 
             FileWriter fstream = new FileWriter(filename);
@@ -164,15 +176,52 @@ public class SimpactII extends SimState {
             System.err.println("Error: " + e.getMessage());
         }    
     }
+    public final void writeCSVEventCounter(String filename){
+        try {
+            int now = (int) Math.min(numberOfYears*52, schedule.getTime()); //determine if we are at the end of the simulation or in the middle
+            //initialize array for counts of stuff
+            int[] infections = new int[now+1];
+            //add more here when more events are added
+            
+            // Create file 
+            FileWriter fstream = new FileWriter(filename);
+            BufferedWriter out = new BufferedWriter(fstream);
+            out.write("timestep,infections\n");
+            int numAgents = myAgents.size();
+            for(int j = 0 ; j < numAgents; j++){
+                Agent a = (Agent) myAgents.get(j);
+                
+                //add event times to the array
+                if (now - a.weeksInfected>0){
+                    infections[now - a.weeksInfected]++ ;
+                    //add more here when more events are added
+                }
+            }
+            
+            //go through times and write events
+            for(int t = 0; t < now; t++){
+                out.write(t + ",");
+                out.write(infections[t] + ",");
+                //add more here when more events are added
+                
+                out.write("\n");
+            }
+            
+            //Close the output stream
+            out.close();
+        } catch (Exception e) {//Catch exception if any
+            System.err.println("Error: " + e);
+        } 
+    }
 
-    //getters and setters / inspectors for the model
-    public int getPopulation() {  return population;  }
-    public void setPopulation(int val) { population = Math.max(0, val); }
-
-    public double getGenderRatio() {  return genderRatio;  }
-    public void setGenderRatio(int val) { genderRatio = Math.max(0, val); }
+    //getters and setters / inspectors for the GUI
+    public final int getPopulation() {  return population;  }
+    public final void setPopulation(int val) { population = Math.max(0, val); }
+    public final double getGenderRatio() {  return genderRatio;  }
+    public final void setGenderRatio(int val) { genderRatio = Math.max(0, val); }
     
-    public double[] getDNPDistribution() {
+    //graph possibilities for the GUI
+    public final double[] getDNPDistribution() {
         Bag agents = network.getAllNodes();
         double[] distro = new double[agents.numObjs];
         int len = agents.size();
@@ -181,7 +230,7 @@ public class SimpactII extends SimState {
         }
         return distro;
     }
-    public double[] getPartnerDistribution() {
+    public final double[] getPartnerDistribution() {
         Bag agents = network.getAllNodes();
         double[] distro = new double[agents.numObjs];
         int len = agents.size();
@@ -190,7 +239,7 @@ public class SimpactII extends SimState {
         }
         return distro;
     }
-    public double[] getAgeDistribution() {
+    public final double[] getAgeDistribution() {
         Bag agents = network.getAllNodes();
         double[] distro = new double[agents.numObjs];
         int len = agents.size();
@@ -215,7 +264,6 @@ public class SimpactII extends SimState {
             public Class simulationClass() { return SimpactII.class; }
             }, args);        
     }
-    
     public void run() {
         //no args provided        
         run( new String[0]);

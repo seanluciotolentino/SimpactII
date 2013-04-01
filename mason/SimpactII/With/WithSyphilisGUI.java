@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.With;
 
 import SimpactII.Agents.Agent;
@@ -13,7 +9,16 @@ import sim.display.GUIState;
 
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentino
+ * 
+ * An example of how to write a GUI for a particular model. In this case the model
+ * that included syphilis.  To do this we extend the GUI class, and call the 
+ * super constructor with the model we want to use (WithSyphilis).  We then 
+ * override the "howDoIDraw" method which tells the GUI how to color nodes. In our
+ * example orange for co-infection, cyan for syphilis infection, and default for 
+ * other (green for HIV, blue for non-infected male, red for non-infected female).
+ * We then implement a main method with is called when we run this file. 
+ * 
  */
 public class WithSyphilisGUI extends GUI {
     
