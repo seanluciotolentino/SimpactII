@@ -83,6 +83,10 @@ public class FormedRelations extends JFrame {
                 false, //legend
                 false, //tooltips
                 false); //urls
+        XYPlot plot2 = (XYPlot) chart2.getPlot();
+        plot2.setBackgroundPaint(Color.WHITE);
+        plot2.setRangeGridlinePaint(Color.black);
+        plot2.setDomainGridlinePaint(Color.black);
         ChartPanel chartPanel2 = new ChartPanel(chart2);
 
         //Put it all together:

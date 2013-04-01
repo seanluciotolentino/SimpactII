@@ -2,11 +2,18 @@ package SimpactII.Graphs;
 
 import SimpactII.DataStructures.Relationship;
 import SimpactII.SimpactII;
+import java.awt.BasicStroke;
+import java.awt.Color;
 import javax.swing.JFrame;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYLineAnnotation;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -49,6 +56,31 @@ public class AgeMixingScatter extends JFrame{
                 false,   //legend
                 false,  //tooltips
                 false); //urls
+        
+        //make the plot look pretty:
+        XYPlot plot = (XYPlot) chart.getPlot();
+        plot.setBackgroundPaint(Color.WHITE);
+        plot.setRangeGridlinePaint(Color.black);
+        plot.setDomainGridlinePaint(Color.black);
+        
+        //change the axis'
+        final NumberAxis domainAxis = new NumberAxis("X-Axis");
+        domainAxis.setRange(0.0,65.0);
+        domainAxis.setTickUnit(new NumberTickUnit(5.0));
+        domainAxis.setLabel("Female Age");
+        plot.setDomainAxis(domainAxis);
+        
+        final NumberAxis rangeAxis = new NumberAxis("Y-Axis");
+        rangeAxis.setRange(0.0,65.0);
+        rangeAxis.setTickUnit(new NumberTickUnit(5.0));
+        rangeAxis.setLabel("Male Age");
+        plot.setRangeAxis(rangeAxis);
+        
+        //add "line of equal age mixing"
+        XYLineAnnotation line = new XYLineAnnotation(
+            0, 0, 70, 70, new BasicStroke(2f), Color.blue);
+        plot.addAnnotation(line);
+        
         ChartPanel chartPanel = new ChartPanel(chart);
         super.setContentPane(chartPanel);
         super.pack();

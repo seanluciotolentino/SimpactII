@@ -62,9 +62,11 @@ public class GUI extends GUIState{
     public void addSimpactGraphs(){    
         //basic stuff
         JFrame frame = new JFrame();
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new GridLayout(0,1) ); //1 column, as many rows as needed
         frame.setLocation(1100, 0);        
         final SimpactII s = (SimpactII) super.state;
+        
+        //perhaps there's a better way to do this then copy / pasting?
         
         //formed relations button
         JButton button = new JButton("Age-Mixing");

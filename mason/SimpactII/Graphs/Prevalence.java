@@ -27,25 +27,50 @@ public class Prevalence extends JFrame{
         
         //create data
         XYSeries prevData = new XYSeries("Prevalence");
+        XYSeries malePrev = new XYSeries("Male Prevalence");
+        XYSeries femalePrev = new XYSeries("Female Prevalence");
         XYSeries inciData = new XYSeries("Incidence");
         int numAgents = state.myAgents.size(); //this were added to this data struct, but should not have been remove.
         double now = Math.min(state.numberOfYears*52, state.schedule.getTime()); //determine if we are at the end of the simulation or in the middle
         double population;
-        double totalInfections;
+        double malePopulation;
+        double femalePopulation;
+        double totalInfections;        
+        double maleInfections;
+        double femaleInfections;
         double weekInfections;
         for (int t = timeGranularity; t < now; t += timeGranularity) { //Go through each time step (skipping the first)
             //at each time step collect ALIVE POPULATION and NUMBER INFECTED
             population = 0;
+            malePopulation = 0;
+            femalePopulation = 0;
+            
             totalInfections = 0;
-            weekInfections = 0;
+            maleInfections = 0;
+            femaleInfections = 0;
+            
+            weekInfections = 0; //for incidence
+            
+            //go through agents and tally
             for (int i = 0; i < numAgents; i++) { 
                 Agent agent = (Agent) state.myAgents.get(i);
+                double timeOfInfection = (now - agent.weeksInfected);
                 
                 if (agent.timeOfAddition < t && agent.timeOfRemoval > t){ //if he or she is alive at this time step
-                    population++;
-                    if (agent.weeksInfected>=1 && (now-agent.weeksInfected)< t) //you are (1) infected AND (2) infected before time t
+                    //add him or her to population counts
+                    population++;                    
+                    if(agent.isMale() ) {  malePopulation++; }
+                    else { femalePopulation++; }
+                    
+                    //tally him or her for prevalence counts
+                    if (agent.weeksInfected>=1 && timeOfInfection < t){ //you are (1) infected AND (2) infected before time t
                         totalInfections++; 
-                    if ( (now-agent.weeksInfected) == t) //you were infected this week
+                        if(agent.isMale() ){ maleInfections++; }
+                        else { femaleInfections++; }
+                    }
+                    
+                    //tally him or her for incidence counts
+                    if ( timeOfInfection > (t - timeGranularity) && timeOfInfection <= t) //you were infected this week
                         weekInfections++; 
                 }
             }
@@ -53,12 +78,16 @@ public class Prevalence extends JFrame{
             //after everyone for this time step, add to the data
             //System.out.println("adding: " + t + " , " + totalInfections / population);
             prevData.add( t , totalInfections / population );
+            malePrev.add( t, maleInfections / malePopulation );
+            femalePrev.add( t, femaleInfections / femalePopulation );
             inciData.add( t , weekInfections );
         }
         
         //this is an odd bit of [necessary] code. 
         XYSeriesCollection dataset1 = new XYSeriesCollection();
         dataset1.addSeries(prevData);
+        dataset1.addSeries(malePrev);
+        dataset1.addSeries(femalePrev);
         XYSeriesCollection dataset2 = new XYSeriesCollection();
         dataset2.addSeries(inciData);
         
@@ -69,7 +98,7 @@ public class Prevalence extends JFrame{
                 "Prevalence (%)",
                 dataset1,
                 PlotOrientation.VERTICAL,
-                false,   //legend
+                true,   //legend
                 false,   //tooltips
                 false); //urls
         
