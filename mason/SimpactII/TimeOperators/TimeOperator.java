@@ -2,6 +2,7 @@ package SimpactII.TimeOperators;
 
 import SimpactII.Agents.Agent;
 import SimpactII.SimpactII;
+import SimpactII.With.WithPTRAgents;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.network.Edge;
@@ -76,10 +77,13 @@ public class TimeOperator implements Steppable{
     
     public Agent replace(SimpactII state, Agent agent){
         //return state.addAgent(agent.getClass());
-        return agent.replace(state);
-    }
-
-
-
-   
+        //return agent.replace(state);
+        final Class c = agent.getClass();
+        try {
+            return (Agent) c.getConstructor(new Class[] {SimpactII.class}).newInstance(state);
+            //return (Agent) (c.getConstructor(new Class[] { Long.TYPE }).newInstance(new Object[] { new Long(seed) } ));
+        } catch (Exception e) {
+            throw new RuntimeException("Exception occurred while trying to replace agent " + c + "\n" + e);
+        }
+    }  
 }

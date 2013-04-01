@@ -29,25 +29,33 @@ public class PTRAgent extends Agent{
     public PTRAgent(SimpactII state, int ppy){
         super(state);
         this.partnersPerYear = ppy;
+        
+        //schedule helper to come alive and reset partner every year
+        final PTRAgent myAgent = this;
+        state.schedule.scheduleRepeating(new Steppable() {
+            public void step(SimState s) { myAgent.resetPartners(); }
+            },52.0); //he only wakes up every 52 steps
     }
-    
+    //inherited methods to override
     public boolean isLooking(){
         return partnersThisYear < partnersPerYear;
-    }
-    
-    public void resetPartners(){
-        partnersThisYear = 0;
-    }
-    
-    public int getPartnersThisYear(){
-        return partnersThisYear;
-    }
+    }    
     public Agent replace(SimpactII state){
         return new PTRAgent(state,this.partnersPerYear); //replace with something similar
     }
+    public double informRelationship(Agent other){
+        //increment my partners this year
+        partnersThisYear++;
+        return super.informRelationship(other);
+    }
+    public String toString(){ return "PTRAgent" + this.hashCode(); }
     
-    public String toString(){
-        return "PTRAgent" + this.hashCode();
+    //extra methods
+    public void resetPartners(){
+        partnersThisYear = 0;
+    }    
+    public int getPartnersThisYear(){
+        return partnersThisYear;
     }
     
 }

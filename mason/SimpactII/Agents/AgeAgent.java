@@ -35,7 +35,6 @@ public class AgeAgent extends Agent{
     }
     
     public boolean isDesirable(Agent other){
-
         boolean ageIsRight;
         if ( isMale() )
             ageIsRight = (getAge() - other.getAge() ) < offset + band && (getAge() - other.getAge() ) > offset - band ; 
@@ -44,7 +43,6 @@ public class AgeAgent extends Agent{
         
         return ageIsRight && other.isLookingFor(this);
     }
-    
     public boolean isLookingFor(Agent other){
         return getPartners() < getDNP() && (isMale() ^ other.isMale());
     }

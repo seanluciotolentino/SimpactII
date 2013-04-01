@@ -95,18 +95,12 @@ public class SimpactII extends SimState {
                     "This agent needs more arguments in order to be initialized" + e);
         }
     }
-    public void formRelationship(Agent agent1, Agent agent2){
-        //having this double "formRelationship" method allows us to override
-        //the former and specify relationship duration.  This is desirable in 
-        //cases where not all relationships formed have the same duration (i.e.,
-        //sex workers).  
-        double duration = relationshipDurations.nextValue();
-        formRelationship(agent1,agent2,duration);
-    }
     public void formRelationship(Agent agent1, Agent agent2, double duration){
+        //if the agents didn't have anything to say about how long the relationship should last:
+        if(duration == 0) duration = relationshipDurations.nextValue(); 
+        
+        //add the new relationship to the network
         network.addEdge(agent1, agent2, duration );
-        agent1.setPartners(agent1.getPartners() + 1);
-        agent2.setPartners(agent2.getPartners() + 1);
         
         //add this relationship to the relation data manager
         allRelations.add( new Relationship( agent1, agent2,
@@ -114,9 +108,9 @@ public class SimpactII extends SimState {
     }
     public void dissolveRelationship(Edge e) {
         Agent agent1 = (Agent) e.getFrom();
-        agent1.setPartners(agent1.getPartners() - 1);
+        agent1.informDissolution();
         Agent agent2 = (Agent) e.getTo();
-        agent2.setPartners(agent2.getPartners() - 1);
+        agent2.informDissolution();
         network.removeEdge(e);
     }   
     

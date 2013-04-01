@@ -68,35 +68,34 @@ public class Agent implements Steppable {
             Agent other = (Agent) others.get(i);
             if ( !isLooking() ) //if this agent isn't interested, don't keep looking
                 return;
-            if ( isDesirable(other) ) 
-                state.formRelationship(this,other);           
+            if ( isDesirable(other) ) {
+                double d1 = this.informRelationship(other);
+                double d2 = other.informRelationship(this);
+                state.formRelationship(this,other, Math.max(d1, d2));
+            }
         } //for end
     }//step end
     
+    //relationship forming methods
     public boolean isDesirable(Agent other) {
         return other.isLookingFor(this) && (isMale() ^ other.isMale()); //second predicate indicates a heterosexual relationship
     }
-    
     public boolean isLooking(){ //if not looking we don't have to check everyone
         return getPartners() < getDNP();
     }
-
     public boolean isLookingFor(Agent other) { //other parameter allows to specify who I am looking for
         return isLooking() && isMale() ^ other.isMale();
     }
-    public Agent replace(SimpactII state){
-        //an agent is replaced with another one of it's class.
-        final Class c = this.getClass();
-        try {
-            return (Agent) c.getConstructor(new Class[] {SimpactII.class}).newInstance(state);
-            //return (Agent) (c.getConstructor(new Class[] { Long.TYPE }).newInstance(new Object[] { new Long(seed) } ));
-        } catch (Exception e) {
-            throw new RuntimeException("Exception occurred while trying to replace agent " + c + "\n" + e);
-        }
+    
+    //helpful methods
+    public double informRelationship(Agent other) {
+        this.partners++;
+        return 0; //0 means no preference as to the length
     }
-    public String toString(){
-        return this.getClass() + "" + this.hashCode();
+    public void informDissolution(){
+        this.partners--;
     }
+    public String toString(){ return this.getClass() + "" + this.hashCode(); }    
     
     //getters and setters
     public void setInfector(Agent agent){ infector = agent;  }
