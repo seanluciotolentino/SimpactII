@@ -20,11 +20,7 @@ public class WithAgeMixing extends SimpactII{
     
     public double band = 5;
     public double offset = 5;
-    
-    public WithAgeMixing(){
-        super();
-    }
-    
+      
     //overriding methods
     public void addAgents(){
         //NOTE that addNAgents cannot be used here because an age agent requires

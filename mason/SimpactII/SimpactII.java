@@ -51,7 +51,6 @@ public class SimpactII extends SimState {
     public SimpactII(long seed) {
         super(seed); //your run of Simpact II can reseed the RNG
     }
-    
     public SimpactII() {
         super(System.currentTimeMillis()); //... or not reseed RNG
     }
@@ -73,16 +72,13 @@ public class SimpactII extends SimState {
         schedule.scheduleRepeating(schedule.EPOCH, 1, timeOperator); 
         
         //schedule infection operator
-        infectionOperator.performInitialInfections(this);
         schedule.scheduleRepeating(schedule.EPOCH, 2, infectionOperator );
+        infectionOperator.performInitialInfections(this);
         
         //anonymous class to schedule a stop
-        schedule.scheduleOnce(52*numberOfYears, new Steppable()
-                {
-                public void step(SimState state) { state.finish(); }
-                }
-        );
+        schedule.scheduleOnce(52*numberOfYears, new Steppable(){ public void step(SimState state) { state.finish(); }  }   );
     }    
+    
     //methods that can be overwritten
     public void addAgents() {
         //defalut agent adding -- add basic agents.  Override this method to change
