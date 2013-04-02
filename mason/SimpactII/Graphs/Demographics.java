@@ -7,8 +7,12 @@ import javax.swing.JFrame;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
@@ -77,7 +81,16 @@ public class Demographics extends JFrame{
         
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
         plot.setBackgroundPaint(Color.WHITE);
-        plot.setRangeGridlinePaint(Color.black);        
+        plot.getDomainAxis().setCategoryMargin(0.0);
+                
+        //change the renderering of the bars
+        BarRenderer br = (BarRenderer)plot.getRenderer();
+        br.setShadowVisible(false);
+        br.setBarPainter(new StandardBarPainter());
+        
+        //br.setItemMargin(0.0);
+        //plot.setRenderer(br);
+        
         
         //silly GUI stuff       
         ChartPanel chartPanel = new ChartPanel(chart);
