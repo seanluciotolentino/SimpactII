@@ -4,7 +4,7 @@
  */
 package SimpactII;
 
-import SimpactII.Agents.Agent;
+import SimpactII.Agents.*;
 import SimpactII.With.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -37,12 +37,13 @@ public class GUI extends GUIState{
     }
     
     public GUI() {
-        this(new SimpactII(1000) );     
+        this(new SimpactII() );     
     }
     
     public GUI(SimState state){
         super(state);     
         addSimpactGraphs();
+        addAddAgentsPopup();
     }
     
     public void start(){
@@ -57,9 +58,9 @@ public class GUI extends GUIState{
     
     public void addSimpactGraphs(){    
         //basic stuff
-        JFrame frame = new JFrame();
+        JFrame frame = new JFrame("Graphing options");
         JPanel panel = new JPanel(new GridLayout(0,1) ); //1 column, as many rows as needed
-        frame.setLocation(1100, 0);        
+        frame.setLocation(1050, 200);        
         final SimpactII s = (SimpactII) super.state;
         
         //perhaps there's a better way to do this then copy / pasting?
@@ -108,6 +109,56 @@ public class GUI extends GUIState{
         frame.add(panel);
         frame.pack();
         frame.setVisible(true);
+    }
+    
+    public void addAddAgentsPopup(){
+        //basic stuff
+        JFrame frame = new JFrame("Add agents box");
+        JPanel panel = new JPanel(new GridLayout(2,2) ); //1 column, as many rows as needed
+        frame.setLocation(1050, 0);        
+        final SimpactII s = (SimpactII) super.state;
+        
+        //actually add the stuff
+        //agents combo box
+        Object[] agents = new Object[] {
+            Agent.class, 
+            AgeAgent.class, 
+            MSMAgent.class,
+            PTRAgent.class, 
+            SexWorkerAgent.class, 
+            SyphilisAgent.class };
+        final JComboBox cb = new JComboBox(agents);
+        panel.add(cb);
+        
+        //population input
+        final JTextField tf = new JTextField("1000");
+        panel.add(tf);
+        
+        //add agents button
+        JButton b = new JButton("Add Agents");
+        b.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                s.addAgents((Class) cb.getSelectedItem(), Integer.parseInt(tf.getText() ));
+            }
+        });
+        panel.add(b);
+        
+        //add reset button
+        b = new JButton("Reset Population");
+        b.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                s.resetPopulations();
+            }
+        });
+        panel.add(b);
+        
+        //finalize
+        frame.add(panel);
+        frame.pack();
+        frame.setVisible(true);
+        
     }
 
     public void setupPortrayals() {

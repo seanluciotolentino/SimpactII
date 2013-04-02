@@ -107,13 +107,14 @@ public class SimpactII extends SimState {
     }
     /** Add N agents of type agentClass to the population. 
     */
-    public void addAgents(Class agentClass, int number) {
+    public void addAgents(Class agentClass, int number) {        
         addAgents(agentClass, number, new String[0]);
     }
 
     private final void addPopulations() {
         //called at the beginning of the simulation to add agents
         int numSubPopulations = subPopulationTypes.size();
+        if (numSubPopulations<=0){ addAgents(Agent.class,1000); }
         for (int i = 0; i < numSubPopulations; i++) {
             Class population = (Class) subPopulationTypes.get(i);
             int number = (int) subPopulationNum.get(i);
@@ -130,6 +131,13 @@ public class SimpactII extends SimState {
         } catch (Exception e) {
             throw new RuntimeException("Exception occurred while trying to add agent " + c + "\n" + e);
         }
+    }
+    
+    public final void resetPopulations(){
+        subPopulationArgs.clear();
+        subPopulationNum.clear();
+        subPopulationTypes.clear();
+        population = 0;
     }
 
     public void formRelationship(Agent agent1, Agent agent2, double duration) {

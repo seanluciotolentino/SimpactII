@@ -78,6 +78,11 @@ public class InfectionOperator implements Steppable{
     
     public void performInitialInfections(SimpactII state){
         int pop = state.getPopulation();
+        if (pop < initialNumberInfected){
+            System.err.println("Population too small for " + initialNumberInfected + " individuals to be initially infected." + 
+                    " Decrease initial number infected or increase population size");
+            return;
+        }
         for(int i = 0; i < initialNumberInfected; i++){
             Agent agent = (Agent) state.myAgents.get(state.random.nextInt(pop));
             agent.weeksInfected = 1;
