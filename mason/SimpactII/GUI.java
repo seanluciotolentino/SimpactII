@@ -37,16 +37,17 @@ public class GUI extends GUIState{
     }
     
     public GUI() {
-        super(new WithSexWorkers() );
+        this(new WithSexWorkers() );
         //super(new WithPTRAgents());
         //super(new WithAgeMixing() );
         //super(new SimpactII(System.currentTimeMillis()));     
         //super(new WithMSM());
-        addSimpactGraphs();
+        
     }
     
     public GUI(SimState state){
-        super(state);        
+        super(state);     
+        addSimpactGraphs();
     }
     
     public void start(){
