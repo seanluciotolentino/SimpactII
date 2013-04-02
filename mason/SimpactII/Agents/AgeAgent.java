@@ -23,13 +23,10 @@ public class AgeAgent extends Agent{
     private double band = 5;
     private double offset = 5;
     
-    public AgeAgent(SimpactII state){
-        super(state);
-    }    
-    public AgeAgent(SimpactII state, String[] args){
-        this(state);
-        this.band = Integer.parseInt(args[0]);
-        this.offset = Integer.parseInt(args[1]);
+    public AgeAgent(SimpactII state,String[] args){
+        super(state,args);
+        this.band = Double.parseDouble(args[0]);
+        this.offset = Double.parseDouble(args[1]);
         if(args.length>2)
             this.age = Integer.parseInt(args[2]);
     }

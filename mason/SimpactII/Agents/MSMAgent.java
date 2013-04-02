@@ -14,8 +14,8 @@ import SimpactII.SimpactII;
  */
 public class MSMAgent extends Agent{
     
-    public MSMAgent(SimpactII s){
-        super(s);
+    public MSMAgent(SimpactII s, String[] args){
+        super(s,args);
         this.male = true;
     }
     

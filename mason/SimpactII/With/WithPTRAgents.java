@@ -14,17 +14,11 @@ import sim.util.Bag;
  *
  * @author Lucio Tolentino
  */
-public class WithPTRAgents extends SimpactII{
-    
-    //just need to override how agents are added
-    public void addAgents(){
-        for(int i = 0; i < population ; i++)
-            new PTRAgent(this,2);
-    }
-    
+public class WithPTRAgents{
+
     public static void main(String[] args){
-        SimpactII model = new WithPTRAgents();
-        model.population = 100;
+        SimpactII model = new SimpactII();
+        model.addAgents(PTRAgent.class, 100, new String[] {"2"} );
         model.numberOfYears = 10;
         model.run();
         model.formedRelations(); 

@@ -65,13 +65,13 @@ public class AgeMixingScatter extends JFrame{
         
         //change the axis'
         final NumberAxis domainAxis = new NumberAxis("X-Axis");
-        domainAxis.setRange(0.0,65.0);
+        domainAxis.setRange(0.0,75.0);
         domainAxis.setTickUnit(new NumberTickUnit(5.0));
         domainAxis.setLabel("Female Age");
         plot.setDomainAxis(domainAxis);
         
         final NumberAxis rangeAxis = new NumberAxis("Y-Axis");
-        rangeAxis.setRange(0.0,65.0);
+        rangeAxis.setRange(0.0,75.0);
         rangeAxis.setTickUnit(new NumberTickUnit(5.0));
         rangeAxis.setLabel("Male Age");
         plot.setRangeAxis(rangeAxis);

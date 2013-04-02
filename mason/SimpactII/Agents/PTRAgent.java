@@ -26,9 +26,9 @@ public class PTRAgent extends Agent{
     public int partnersPerYear;
     public int partnersThisYear = 0;
     
-    public PTRAgent(SimpactII state, int ppy){
-        super(state);
-        this.partnersPerYear = ppy;
+    public PTRAgent(SimpactII state, String[] args){
+        super(state,args);
+        this.partnersPerYear = Integer.parseInt(args[0]);
         
         //schedule helper to come alive and reset partner every year
         final PTRAgent myAgent = this;
@@ -46,7 +46,7 @@ public class PTRAgent extends Agent{
         return super.informRelationship(other);
     }
     public Agent replace(SimpactII state){
-        return new PTRAgent(state,this.partnersPerYear); //replace with something similar
+        return new PTRAgent(state,args); //replace with something similar
     }
     public String toString(){ return "PTRAgent" + this.hashCode(); }
     

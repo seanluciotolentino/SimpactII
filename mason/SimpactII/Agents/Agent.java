@@ -36,9 +36,12 @@ public class Agent implements Steppable {
     public Stoppable stoppable; //so that if individual dies, we can stop them in the schedule
     public double timeOfAddition;
     public double timeOfRemoval;
+    public String[] args;
 
     //basic constructor
-    public Agent(SimpactII model) {
+    public Agent(SimpactII model, String[] args){
+        this.args = args; //save the args for replacement
+        
         //assign random values from distribution
         this.DNP = Math.round((float) model.degrees.nextValue());
         this.male = model.random.nextDouble() <= 0.5; //default gender ratio
@@ -102,9 +105,9 @@ public class Agent implements Steppable {
     public Agent replace(SimpactII state){
         final Class c = this.getClass();
         try {
-            return (Agent) c.getConstructor(new Class[] {SimpactII.class}).newInstance(state);
+            return (Agent) c.getConstructor(new Class[]{SimpactII.class, String[].class}).newInstance(state, args);
         } catch (Exception e) {
-            throw new RuntimeException("Exception occurred while trying to replace agent " + c + "\n" + e);
+            throw new RuntimeException("Exception occurred while trying to replace agent " + c + "\n" + e.getMessage());
         }
     }
     //How am I displayed to the world?

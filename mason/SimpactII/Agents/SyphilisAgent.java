@@ -15,8 +15,8 @@ public class SyphilisAgent extends Agent{
     
     public int syphilisWeeksInfected = 0;
     
-    public SyphilisAgent(SimpactII state){
-        super(state);
+    public SyphilisAgent(SimpactII state,String[] args){
+        super(state,args);
         //same as other agents, just have additional class variable
         //to denote infection with syphilis
         

@@ -17,23 +17,13 @@ import sim.util.Distributions.UniformDistribution;
  * information to a csv.
  * 
  */
-public class WithAgeMixing extends SimpactII{
-    
-    public double band = 5;
-    public double offset = 5;
-    
-    //overriding methods
-    public void addAgents(){
-        //NOTE that addNAgents cannot be used here because an age agent requires
-        //additional parameters and it would confuse the method
-        for(int i = 0; i < population ; i++)
-            new AgeAgent(this,band,offset);
-    }
-    
-        //main method
+public class WithAgeMixing {
+       
+    //main method
     public static void main(String[] args){
-        SimpactII model = new WithAgeMixing();
-        model.population = 1000;
+        SimpactII model = new SimpactII();
+        model.addAgents(AgeAgent.class, 100, new String[] {"5","5"} );
+        model.addAgents(AgeAgent.class, 100, new String[] {"2","-5"} );
         model.numberOfYears = 10;        
         model.ages = new UniformDistribution(15,65);
         model.relationshipDurations = new UniformDistribution(1,5);
