@@ -1,5 +1,6 @@
 package SimpactII.With;
 
+import SimpactII.Agents.Agent;
 import SimpactII.InfectionOperators.*;
 import SimpactII.SimpactII;
 
@@ -20,7 +21,7 @@ public class WithDefault {
     
     public static void main(String[] args) { //for running from the command line
         SimpactII s = new SimpactII();
-        s.population = 1000;
+        s.addAgents(Agent.class, 1000);
         s.numberOfYears = 1;
         s.infectionOperator = new InfectionOperator();//(0.03);
         s.run(args);

@@ -41,7 +41,7 @@ public class Agent implements Steppable {
     public Agent(SimpactII model) {
         //assign random values from distribution
         this.DNP = Math.round((float) model.degrees.nextValue());
-        this.male = model.random.nextDouble() <= model.genderRatio;
+        this.male = model.random.nextDouble() <= 0.5; //default gender ratio
         this.age = model.ages.nextValue();
         
         //add self to schedule and world

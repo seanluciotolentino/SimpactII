@@ -2,8 +2,9 @@
 
 s = Simpact();
 s.population = 1000; //'regular' agents
-s.addAgents('MSM',1000);
-s.addAgents('SugarDaddys',10);
+s.addAgents(MSM.class,1000);
+s.addAgents(SugarDaddy.class,10);
+a.addIntervention(Condom.class,2,100); //type = 'condom', start = 2, spend = 100;
 s.simRunTime = 5; //5 years
 
 s.run() //also s.run(10) -- checkpoints every 10 time steps

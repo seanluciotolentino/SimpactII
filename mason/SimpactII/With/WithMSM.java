@@ -21,16 +21,12 @@ import sim.util.Double2D;
  * main function from SimpactII. 
  * 
  */
-public class WithMSM extends SimpactII{
-    
-    public void addAgents(){
-        addNAgents(population,Agent.class);
-        addNAgents(population/2,MSMAgent.class);
-    }
+public class WithMSM {
     
     public static void main (String[] args){
-        SimpactII model = new WithMSM(); 
-        model.population = 200;
+        SimpactII model = new SimpactII(); 
+        model.addAgents(Agent.class, 100);
+        model.addAgents(MSMAgent.class, 20);
         model.run();
     }
 }

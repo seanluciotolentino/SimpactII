@@ -15,20 +15,12 @@ import sim.util.Distributions.UniformDistribution;
  *
  * @author luciotolentino
  */
-public class WithSexWorkers extends SimpactII {
-
-    public int numSexWorkers = 20;
-
-    public void addAgents() {
-        //add basic agents
-        addNAgents(population, Agent.class);
-        //and then add sex worker agents in addition
-        addNAgents(numSexWorkers, SexWorkerAgent.class);
-    }
+public class WithSexWorkers {
     
     public static void main (String[] args){
-        SimpactII model = new WithSexWorkers();
-        model.population = 2000;
+        SimpactII model = new SimpactII();
+        model.addAgents(Agent.class, 200);
+        model.addAgents(SexWorkerAgent.class, 20);
         model.run();
         model.prevalence();
     }

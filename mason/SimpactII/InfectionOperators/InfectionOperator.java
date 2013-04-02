@@ -77,8 +77,9 @@ public class InfectionOperator implements Steppable{
     }
     
     public void performInitialInfections(SimpactII state){
+        int pop = state.getPopulation();
         for(int i = 0; i < initialNumberInfected; i++){
-            Agent agent = (Agent) state.myAgents.get(state.random.nextInt(state.population));
+            Agent agent = (Agent) state.myAgents.get(state.random.nextInt(pop));
             agent.weeksInfected = 1;
         }
     }

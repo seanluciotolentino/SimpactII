@@ -19,21 +19,20 @@ import SimpactII.With.WithPTRAgents;
  */
 public class AgeAgent extends Agent{
     
-    private double band;
-    private double offset;
+    //default values of an AgeAgent
+    private double band = 5;
+    private double offset = 5;
     
-    public AgeAgent(SimpactII state, double band, double offset){
+    public AgeAgent(SimpactII state){
         super(state);
-        this.band = band;
-        this.offset = offset;
+    }    
+    public AgeAgent(SimpactII state, String[] args){
+        this(state);
+        this.band = Integer.parseInt(args[0]);
+        this.offset = Integer.parseInt(args[1]);
+        if(args.length>2)
+            this.age = Integer.parseInt(args[2]);
     }
-    public AgeAgent(SimpactII state, double band, double offset, int DefaultAge){
-        super(state);
-        this.band = band;
-        this.offset = offset;
-        this.age = DefaultAge;
-    }
-    
     public boolean isDesirable(Agent other){
         boolean ageIsRight;
         if ( isMale() )
@@ -48,6 +47,6 @@ public class AgeAgent extends Agent{
     }
     
     public Agent replace(SimpactII state){
-        return new AgeAgent(state,band,offset,15);
+        return new AgeAgent(state,new String[] {band+"",offset+"",15+""} );
     }
 }

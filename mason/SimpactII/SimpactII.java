@@ -32,8 +32,10 @@ public class SimpactII extends SimState {
     public Network network = new Network(false);
     
     //class variables for the population
-    public int population = 2000; //default
-    public double genderRatio = 0.5;
+    private int population = 0; //default
+    //public double genderRatio = 0.5;
+    private Bag subPopulationTypes = new Bag();
+    private Bag subPopulationNum = new Bag();
     public double numberOfYears = 30;
     public Distribution degrees = new PowerLawDistribution(2.0, 1); 
     public Distribution ages = new UniformDistribution(15.0, 65.0);//new PowerLawDistribution(1.0,3);
@@ -52,7 +54,13 @@ public class SimpactII extends SimState {
         super(seed); //your run of Simpact II can reseed the RNG
     }
     public SimpactII() {
-        super(System.currentTimeMillis()); //... or not reseed RNG
+        this(System.currentTimeMillis()); //... or not reseed RNG
+    }
+    public SimpactII(int population){
+        //a call to this constructor reseeds RNG and creates "population" number
+        //of basic agents
+        this();
+        addAgents(Agent.class, population);
     }
 
     //all class methods go here:
@@ -66,7 +74,7 @@ public class SimpactII extends SimState {
         network.clear();        //sexual network
 
         //add the agents
-        this.addAgents();                 
+        this.addPopulations();                 
 
         //schedule time operator
         schedule.scheduleRepeating(schedule.EPOCH, 1, timeOperator); 
@@ -79,13 +87,27 @@ public class SimpactII extends SimState {
         schedule.scheduleOnce(52*numberOfYears, new Steppable(){ public void step(SimState state) { state.finish(); }  }   );
     }    
     
-    //methods that can be overwritten
-    public void addAgents() {
-        //defalut agent adding -- add basic agents.  Override this method to change
-        //the demographics of the simulation
-        addNAgents(population, Agent.class);
+    //methods that CANNOT be overridden
+    public void addAgents(Class agentClass, int number){
+        if (agentClass.isInstance(Agent.class)){
+            System.err.println("Can only add type Agent to population");
+            System.exit(1);
+        }
+        this.subPopulationTypes.add(agentClass);
+        this.subPopulationNum.add(number);
+        this.population+=number; //add the number of agents to our population
+    }
+    
+    private final void addPopulations() {
+        //called at the beginning of the simulation to add agents
+        int numSubPopulations = subPopulationTypes.size();
+        for(int i = 0; i<numSubPopulations; i++){
+            Class population = (Class) subPopulationTypes.get(i);
+            int number = (int) subPopulationNum.get(i);
+            addNAgents( population , number  );
+        }
     } 
-    public void addNAgents(int N,Class c){
+    private final void addNAgents(Class c,int N){
         try {
             for (int i = 0; i < N; i++) {
                 Agent a = (Agent) c.getConstructor(new Class[] {SimpactII.class}).newInstance(this);
@@ -207,8 +229,6 @@ public class SimpactII extends SimState {
     //getters and setters / inspectors for the GUI
     public final int getPopulation() {  return population;  }
     public final void setPopulation(int val) { population = Math.max(0, val); }
-    public final double getGenderRatio() {  return genderRatio;  }
-    public final void setGenderRatio(int val) { genderRatio = Math.max(0, val); }
     
     //graph possibilities for the GUI
     public final double[] getDNPDistribution() {

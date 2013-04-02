@@ -37,12 +37,7 @@ public class GUI extends GUIState{
     }
     
     public GUI() {
-        this(new WithSexWorkers() );
-        //super(new WithPTRAgents());
-        //super(new WithAgeMixing() );
-        //super(new SimpactII(System.currentTimeMillis()));     
-        //super(new WithMSM());
-        
+        this(new SimpactII(1000) );     
     }
     
     public GUI(SimState state){
@@ -171,7 +166,7 @@ public class GUI extends GUIState{
         display.setClipping(false);
 
         displayFrame = display.createFrame();
-        displayFrame.setTitle("Sexual Network");
+        displayFrame.setTitle("SimpactII");
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);
         display.attach( worldPortrayal, "The World" );

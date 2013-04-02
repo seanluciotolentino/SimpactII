@@ -49,8 +49,9 @@ public class SyphilisInfectionOperator extends InfectionOperator {
 
     public void performInitialInfections(SimpactII state) {
         super.performInitialInfections(state); //perform initial HIV infections AND syphilis infections
+        int pop = state.getPopulation();
         for (int i = 0; i < intialNumberSyphilisInfected; i++) {
-            SyphilisAgent agent = (SyphilisAgent) state.myAgents.get(state.random.nextInt(state.population));
+            SyphilisAgent agent = (SyphilisAgent) state.myAgents.get(state.random.nextInt(pop));
             agent.syphilisWeeksInfected = 1;
         }
     }
