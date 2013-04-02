@@ -31,22 +31,15 @@ import sim.util.Bag;
  */
 public class WithSyphilis extends SimpactII{
     
-    public double syphilisInfectivity = 0.3;
-    public int intialNumberSyphilisInfected = 5;
-    
-    public WithSyphilis(){
-        super();
-        infectionOperator = new SyphilisInfectionOperator(syphilisInfectivity, intialNumberSyphilisInfected);
-    }
-    
     public void addAgents(){
         addNAgents(population,SyphilisAgent.class);
     }
     
     public static void main (String[] args){
-        WithSyphilis ws = new WithSyphilis();
-        ws.run();
-        ws.prevalence();
+        SimpactII model = new WithSyphilis();
+        model.infectionOperator = new SyphilisInfectionOperator(0.3, 5);//syphilis infectivity / initial number of infected
+        model.run();
+        model.prevalence();
     }
     
     

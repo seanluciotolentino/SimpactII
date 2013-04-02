@@ -20,14 +20,14 @@ public class WithDefault {
     
     public static void main(String[] args) { //for running from the command line
         SimpactII s = new SimpactII();
-        s.population = 100;
-        s.numberOfYears = 20;
+        s.population = 1000;
+        s.numberOfYears = 1;
         s.infectionOperator = new InfectionOperator();//(0.03);
         s.run(args);
         s.agemixingScatter();
         s.demographics();
-         s.formedRelations();
         s.prevalence();
+        s.formedRelations();
         //s.writeCSVEventCounter("eventfile.csv");
         //System.exit(0);
     }

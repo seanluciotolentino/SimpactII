@@ -18,16 +18,6 @@ import sim.util.Distributions.UniformDistribution;
 public class WithSexWorkers extends SimpactII {
 
     public int numSexWorkers = 20;
-    public Distribution swRelationshipDistribution = new UniformDistribution(1.0, 2.0); //sw = sex work
-
-    public WithSexWorkers() {
-        super();
-        this.timeOperator = new TimeOperator() {
-            public boolean remove(Agent agent) {
-                return (agent.getClass() == SexWorkerAgent.class) ? agent.getAge() > 30 : super.remove(agent);
-            }
-        };
-    }
 
     public void addAgents() {
         //add basic agents

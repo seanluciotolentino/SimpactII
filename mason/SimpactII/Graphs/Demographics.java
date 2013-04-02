@@ -40,7 +40,7 @@ public class Demographics extends JFrame{
         //create data
         DefaultCategoryDataset data = new DefaultCategoryDataset();
         int[] demographic;
-        int numAgents = state.myAgents.size(); //this were added to this data struct, but should not have been remove.
+        int numAgents = state.myAgents.size();
         double now = Math.min(state.numberOfYears*52, state.schedule.getTime()); //determine if we are at the end of the simulation or in the middle
         for (int t = timeGranularity; t < now; t += timeGranularity) { //Go through each time step (skipping the first)
             demographic = new int[numBoxes]; //create an int[] with the number of slots we want
@@ -60,7 +60,7 @@ public class Demographics extends JFrame{
             
             //add the delineations to the data
             for (int j = 0; j < numBoxes; j++) { 
-                data.addValue(demographic[j], j*boxSize + " - " + (j+1)*boxSize, (t*timeGranularity) + "");
+                data.addValue(demographic[j], j*boxSize + " - " + (j+1)*boxSize, t + "");
             }
         }
         

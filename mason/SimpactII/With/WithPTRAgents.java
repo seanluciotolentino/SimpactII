@@ -16,14 +16,6 @@ import sim.util.Bag;
  */
 public class WithPTRAgents extends SimpactII{
     
-    public WithPTRAgents(){
-        final SimpactII model = this;
-        timeOperator = new TimeOperator()
-            {
-            public Agent replace(SimpactII state, Agent agent){ return new PTRAgent(model,2); }
-            };
-    }
-    
     //just need to override how agents are added
     public void addAgents(){
         for(int i = 0; i < population ; i++)

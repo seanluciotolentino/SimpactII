@@ -20,8 +20,7 @@ public class SyphilisInfectionOperator extends InfectionOperator {
     public int intialNumberSyphilisInfected;
     
     public SyphilisInfectionOperator(){
-        this.syphilisInfectivity = 0.3;
-        this.intialNumberSyphilisInfected = 5;
+        this(0.3,5);
     }
     public SyphilisInfectionOperator(double syphilisInfectivity, int intialNumberSyphilisInfected){
         this.syphilisInfectivity = syphilisInfectivity;

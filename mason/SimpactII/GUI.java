@@ -37,9 +37,9 @@ public class GUI extends GUIState{
     }
     
     public GUI() {
-        //super(new WithSexWorkers() );
+        super(new WithSexWorkers() );
         //super(new WithPTRAgents());
-        super(new WithAgeMixing() );
+        //super(new WithAgeMixing() );
         //super(new SimpactII(System.currentTimeMillis()));     
         //super(new WithMSM());
         addSimpactGraphs();

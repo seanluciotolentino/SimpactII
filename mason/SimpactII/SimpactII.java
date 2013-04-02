@@ -259,6 +259,7 @@ public class SimpactII extends SimState {
         run( new String[0]);
     }
     public static void main(String[] args) { //for running from the command line
+        System.err.println("***Runing SimpactII with default values");
         doLoop(SimpactII.class, args); //just some necessary java stuff -- running this will run default        
         System.exit(0);        
     }

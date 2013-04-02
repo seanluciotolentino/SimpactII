@@ -72,18 +72,18 @@ public class TimeOperator implements Steppable{
     
     //The two overridable methods
     public boolean remove(Agent agent){
-        return agent.getAge() > MAX_AGE;        
+        return agent.remove() || agent.getAge() > MAX_AGE;        
     }
     
     public Agent replace(SimpactII state, Agent agent){
         //return state.addAgent(agent.getClass());
-        //return agent.replace(state);
-        final Class c = agent.getClass();
-        try {
-            return (Agent) c.getConstructor(new Class[] {SimpactII.class}).newInstance(state);
-            //return (Agent) (c.getConstructor(new Class[] { Long.TYPE }).newInstance(new Object[] { new Long(seed) } ));
-        } catch (Exception e) {
-            throw new RuntimeException("Exception occurred while trying to replace agent " + c + "\n" + e);
-        }
+        return agent.replace(state);
+        //        final Class c = agent.getClass();
+        //        try {
+        //            return (Agent) c.getConstructor(new Class[] {SimpactII.class}).newInstance(state);
+        //            //return (Agent) (c.getConstructor(new Class[] { Long.TYPE }).newInstance(new Object[] { new Long(seed) } ));
+        //        } catch (Exception e) {
+        //            throw new RuntimeException("Exception occurred while trying to replace agent " + c + "\n" + e);
+        //        }
     }  
 }

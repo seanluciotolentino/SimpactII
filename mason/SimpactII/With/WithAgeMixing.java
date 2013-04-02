@@ -32,11 +32,7 @@ public class WithAgeMixing extends SimpactII{
     
         //main method
     public static void main(String[] args){
-        final WithAgeMixing model = new WithAgeMixing();
-        model.timeOperator = new TimeOperator()
-            {
-            public Agent replace(SimpactII state, Agent agent){ return new AgeAgent(model,model.band,model.offset); }
-            };
+        SimpactII model = new WithAgeMixing();
         model.population = 1000;
         model.numberOfYears = 10;        
         model.ages = new UniformDistribution(15,65);

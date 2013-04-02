@@ -36,21 +36,21 @@ public class PTRAgent extends Agent{
             public void step(SimState s) { myAgent.resetPartners(); }
             },52.0); //he only wakes up every 52 steps
     }
-    //inherited methods to override
+    //how are relationships formed?
     public boolean isLooking(){
         return partnersThisYear < partnersPerYear;
-    }    
-    public Agent replace(SimpactII state){
-        return new PTRAgent(state,this.partnersPerYear); //replace with something similar
     }
     public double informRelationship(Agent other){
         //increment my partners this year
         partnersThisYear++;
         return super.informRelationship(other);
     }
+    public Agent replace(SimpactII state){
+        return new PTRAgent(state,this.partnersPerYear); //replace with something similar
+    }
     public String toString(){ return "PTRAgent" + this.hashCode(); }
     
-    //extra methods
+    //extra methods for PTR agents
     public void resetPartners(){
         partnersThisYear = 0;
     }    

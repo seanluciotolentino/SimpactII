@@ -23,16 +23,14 @@ import sim.util.Double2D;
  */
 public class WithMSM extends SimpactII{
     
-    public WithMSM(){
-        super();
-        timeOperator = new TimeOperator()
-                {
-                    public boolean remove(){ return false;  }
-                };
-    }
-    
     public void addAgents(){
         addNAgents(population,Agent.class);
         addNAgents(population/2,MSMAgent.class);
+    }
+    
+    public static void main (String[] args){
+        SimpactII model = new WithMSM(); 
+        model.population = 200;
+        model.run();
     }
 }

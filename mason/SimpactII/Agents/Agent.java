@@ -76,7 +76,7 @@ public class Agent implements Steppable {
         } //for end
     }//step end
     
-    //relationship forming methods
+    //How do I form relationships?
     public boolean isDesirable(Agent other) {
         return other.isLookingFor(this) && (isMale() ^ other.isMale()); //second predicate indicates a heterosexual relationship
     }
@@ -87,7 +87,7 @@ public class Agent implements Steppable {
         return isLooking() && isMale() ^ other.isMale();
     }
     
-    //helpful methods
+    //What do I do when they are formed?
     public double informRelationship(Agent other) {
         this.partners++;
         return 0; //0 means no preference as to the length
@@ -95,6 +95,19 @@ public class Agent implements Steppable {
     public void informDissolution(){
         this.partners--;
     }
+    //When and how am I removed from the system?
+    public boolean remove(){
+        return false; //use the default for the time operator
+    }
+    public Agent replace(SimpactII state){
+        final Class c = this.getClass();
+        try {
+            return (Agent) c.getConstructor(new Class[] {SimpactII.class}).newInstance(state);
+        } catch (Exception e) {
+            throw new RuntimeException("Exception occurred while trying to replace agent " + c + "\n" + e);
+        }
+    }
+    //How am I displayed to the world?
     public String toString(){ return this.getClass() + "" + this.hashCode(); }    
     
     //getters and setters

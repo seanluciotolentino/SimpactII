@@ -22,14 +22,10 @@ public class MSMAgent extends Agent{
     public boolean isDesirable(Agent other){
         return other.isLookingFor(this) && other.isMale();
     }
-    
     public boolean isLookingFor(Agent other){
         return getPartners() < getDNP() && ( other.isMale() );
     }
-    
     public String toString(){
         return "MSM" + this.hashCode();
     }
-    
-    
 }

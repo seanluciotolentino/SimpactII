@@ -29,6 +29,15 @@ public class SexWorkerAgent extends Agent{
         this.age = (state.random.nextDouble()*(MAX_AGE - MIN_AGE)) + MIN_AGE; //random age between MIN and MAX
         this.male = false; //all sex-workers are female (in this model)
     }
+
+    public double informRelationship(Agent other){
+        super.informRelationship(other);
+        return swRelationshipDistribution.nextValue();        
+    }
+    public boolean remove(){
+        return age > MAX_AGE;
+    }
+    //replace agent with a non-sex worker agent 
     public Agent replace(SimpactII state){
         Agent a = new Agent(state); //create a new basic agent to replace the sexworker
         a.age = MAX_AGE;
@@ -38,10 +47,5 @@ public class SexWorkerAgent extends Agent{
     public String toString(){
         return "SexWorker" + this.hashCode();
     }
-    public double informRelationship(Agent other){
-        super.informRelationship(other);
-        return swRelationshipDistribution.nextValue();        
-    }
-    
     
 }
