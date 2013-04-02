@@ -21,8 +21,16 @@ public class WithAgeMixing extends SimpactII{
     
     public double band = 5;
     public double offset = 5;
-
-    //main method
+    
+    //overriding methods
+    public void addAgents(){
+        //NOTE that addNAgents cannot be used here because an age agent requires
+        //additional parameters and it would confuse the method
+        for(int i = 0; i < population ; i++)
+            new AgeAgent(this,band,offset);
+    }
+    
+        //main method
     public static void main(String[] args){
         final WithAgeMixing model = new WithAgeMixing();
         model.timeOperator = new TimeOperator()
@@ -41,13 +49,5 @@ public class WithAgeMixing extends SimpactII{
         //amp.writeCSVRelations(filename);
         //filename = "population" + amp.band + "" + amp.offset + ".csv";
         //amp.writeCSVPopulation(filename);
-    }
-    
-    //overriding methods
-    public void addAgents(){
-        //NOTE that addNAgents cannot be used here because an age agent requires
-        //additional parameters and it would confuse the method
-        for(int i = 0; i < population ; i++)
-            new AgeAgent(this,band,offset);
     }
 }

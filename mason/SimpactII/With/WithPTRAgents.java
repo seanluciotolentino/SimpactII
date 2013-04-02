@@ -16,22 +16,26 @@ import sim.util.Bag;
  */
 public class WithPTRAgents extends SimpactII{
     
-    public static void main(String[] args){
-        final SimpactII model = new WithPTRAgents();
-        model.timeOperator = new TimeOperator()
+    public WithPTRAgents(){
+        final SimpactII model = this;
+        timeOperator = new TimeOperator()
             {
             public Agent replace(SimpactII state, Agent agent){ return new PTRAgent(model,2); }
             };
+    }
+    
+    //just need to override how agents are added
+    public void addAgents(){
+        for(int i = 0; i < population ; i++)
+            new PTRAgent(this,2);
+    }
+    
+    public static void main(String[] args){
+        SimpactII model = new WithPTRAgents();
         model.population = 100;
         model.numberOfYears = 10;
         model.run();
         model.formedRelations(); 
-    }
-    
-    //change how / what agents are added
-    public void addAgents(){
-        for(int i = 0; i < population ; i++)
-            new PTRAgent(this,2);
     }
 
 }
