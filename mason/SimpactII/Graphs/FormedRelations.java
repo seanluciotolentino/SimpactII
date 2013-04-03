@@ -76,7 +76,7 @@ public class FormedRelations extends JFrame {
         //CHART2
         JFreeChart chart2 = ChartFactory.createXYLineChart(
                 "Number of Relations",
-                "Time [weeks]",
+                "Time (weeks)",
                 "Number of Relationships",
                 dataset,
                 PlotOrientation.VERTICAL,

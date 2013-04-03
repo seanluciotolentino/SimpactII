@@ -71,7 +71,7 @@ public class Demographics extends JFrame{
         //create the chart
         JFreeChart chart = ChartFactory.createStackedBarChart(
                 "Demographics", 
-                "Time",
+                "Time (weeks)",
                 "Proportion of the Population",
                 data,
                 PlotOrientation.VERTICAL,

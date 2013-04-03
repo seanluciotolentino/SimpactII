@@ -49,8 +49,8 @@ public class AgeMixingScatter extends JFrame{
         //chart the series
         JFreeChart chart = ChartFactory.createScatterPlot(
                 "Age Mixing Scatter", 
-                "Female Age", 
-                "Male Age", 
+                "Female Age (years)", 
+                "Male Age (years)", 
                 dataset, 
                 PlotOrientation.VERTICAL, 
                 false,   //legend

@@ -94,7 +94,7 @@ public class Prevalence extends JFrame{
         //create the prevalence chart
         JFreeChart chart1 = ChartFactory.createXYLineChart(
                 "Prevalence", 
-                "Time",
+                "Time (weeks)",
                 "Prevalence (%)",
                 dataset1,
                 PlotOrientation.VERTICAL,
@@ -111,7 +111,7 @@ public class Prevalence extends JFrame{
         //create the incidence chart
         JFreeChart chart2 = ChartFactory.createXYLineChart(
                 "Incidence", 
-                "Time",
+                "Time (weeks)",
                 "Incidence (Counts)",
                 dataset2,
                 PlotOrientation.VERTICAL,
