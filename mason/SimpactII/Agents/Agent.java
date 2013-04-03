@@ -2,6 +2,7 @@ package SimpactII.Agents;
 
 import SimpactII.SimpactII;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sim.engine.*;
@@ -36,6 +37,7 @@ public class Agent implements Steppable {
     public Stoppable stoppable; //so that if individual dies, we can stop them in the schedule
     public double timeOfAddition;
     public double timeOfRemoval;
+    public HashMap<String,Object> attributes = new HashMap(); //a place for any additional attributes
     public String[] args;
 
     //basic constructor

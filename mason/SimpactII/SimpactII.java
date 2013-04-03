@@ -77,12 +77,13 @@ public class SimpactII extends SimState {
         this.addPopulations();
 
         //schedule time operator
+        timeOperator.preProcess(this);
         schedule.scheduleRepeating(schedule.EPOCH, 1, timeOperator);
 
         //schedule infection operator
+        infectionOperator.preProcess(this);
         schedule.scheduleRepeating(schedule.EPOCH, 2, infectionOperator);
-        infectionOperator.performInitialInfections(this);
-
+        
         //anonymous class to schedule a stop
         schedule.scheduleOnce(52 * numberOfYears, new Steppable() {
             public void step(SimState state) {

@@ -1,7 +1,6 @@
 package SimpactII.With;
 
 import SimpactII.Agents.Agent;
-import SimpactII.Agents.SyphilisAgent;
 import SimpactII.InfectionOperators.InfectionOperator;
 import SimpactII.InfectionOperators.SyphilisInfectionOperator;
 import SimpactII.SimpactII;
@@ -33,7 +32,7 @@ public class WithSyphilis extends SimpactII{
     
     public WithSyphilis(){
         //to make the GUI that goes with this we must put this here
-        addAgents(SyphilisAgent.class, 2000);
+        addAgents(Agent.class, 2000);
         infectionOperator = new SyphilisInfectionOperator(0.3, 5);//syphilis infectivity / initial number of infected
     }
     

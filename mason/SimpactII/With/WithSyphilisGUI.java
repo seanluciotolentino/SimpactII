@@ -1,8 +1,9 @@
 package SimpactII.With;
 
 import SimpactII.Agents.Agent;
-import SimpactII.Agents.SyphilisAgent;
 import SimpactII.GUI;
+import SimpactII.InfectionOperators.SyphilisInfectionOperator;
+import SimpactII.SimpactII;
 import java.awt.Color;
 import sim.display.Console;
 import sim.display.GUIState;
@@ -28,10 +29,11 @@ public class WithSyphilisGUI extends GUI {
     @Override
     public Color howDoIDraw(Agent agent){
         Color c = super.howDoIDraw(agent);
-        SyphilisAgent sa = (SyphilisAgent) agent;
-        if (sa.syphilisWeeksInfected>0 && sa.weeksInfected>0){ //coinfection!
+        int hivWI = agent.weeksInfected;
+        int syphilisWI = (int) agent.attributes.get("SyphilisInfection");
+        if (syphilisWI>0 && hivWI>0){ //coinfection!
             return Color.ORANGE;
-        }else if( sa. syphilisWeeksInfected > 0){
+        }else if( syphilisWI > 0){
             return Color.CYAN;
         }else{            
             return c;

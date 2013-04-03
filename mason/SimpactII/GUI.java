@@ -27,8 +27,9 @@ public class GUI extends GUIState{
     
     public Display2D display;
     public JFrame displayFrame;
-    ContinuousPortrayal2D worldPortrayal = new ContinuousPortrayal2D();
-    NetworkPortrayal2D networkPortrayal = new NetworkPortrayal2D();
+    public ContinuousPortrayal2D worldPortrayal = new ContinuousPortrayal2D();
+    public NetworkPortrayal2D networkPortrayal = new NetworkPortrayal2D();
+    public SimpactII state;
             
     public static void main(String[] args){
         GUI vid = new GUI();
@@ -125,8 +126,7 @@ public class GUI extends GUIState{
             AgeAgent.class, 
             MSMAgent.class,
             PTRAgent.class, 
-            SexWorkerAgent.class, 
-            SyphilisAgent.class };
+            SexWorkerAgent.class};
         final JComboBox cb = new JComboBox(agents);
         panel.add(cb);
         

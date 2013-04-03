@@ -70,6 +70,10 @@ public class TimeOperator implements Steppable{
         }//end for loop
     }
     
+    public void preProcess(SimpactII aThis) {
+        return;
+    }
+    
     //The two overridable methods
     public boolean remove(Agent agent){
         return agent.remove() || agent.getAge() > MAX_AGE;        
