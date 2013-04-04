@@ -33,9 +33,9 @@ public class AgeMixingScatter extends JFrame{
         
         //create XYseries
         XYSeries data = new XYSeries("Formation Scatter");        
-        int numRelations = state.allRelations.size();
+        int numRelations = state.myRelations.size();
         for(int j = 0 ; j < numRelations; j++){
-            Relationship r = (Relationship) state.allRelations.get(j);
+            Relationship r = (Relationship) state.myRelations.get(j);
             if (r.getAgent1().isMale())
                 data.add(r.getAgent2Age(), r.getAgent1Age()); 
             else

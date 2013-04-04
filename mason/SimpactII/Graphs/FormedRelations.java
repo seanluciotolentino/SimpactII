@@ -27,7 +27,7 @@ public class FormedRelations extends JFrame {
 
         //PART 1: by relationship ID and duration
         XYSeriesCollection allRelations = new XYSeriesCollection();
-        int numRelations = state.allRelations.size();
+        int numRelations = state.myRelations.size();
 
         //PART 2: Number of relationships over time
         XYSeries data = new XYSeries("Number of Relations");
@@ -37,7 +37,7 @@ public class FormedRelations extends JFrame {
         
         //go through relations and add appropriate information
         for (int i = 0; i < numRelations; i++) { 
-            Relationship r = (Relationship) state.allRelations.get(i);
+            Relationship r = (Relationship) state.myRelations.get(i);
 
             //--PART 1 ALL RELATIONSHIPS SECTION--
             XYSeries thisRelationship = new XYSeries("Relation " + i);

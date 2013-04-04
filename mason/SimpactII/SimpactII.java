@@ -4,6 +4,7 @@ import SimpactII.Agents.Agent;
 import SimpactII.DataStructures.Relationship;
 import SimpactII.Graphs.*;
 import SimpactII.InfectionOperators.InfectionOperator;
+import SimpactII.Interventions.Intervention;
 import SimpactII.TimeOperators.TimeOperator;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -30,22 +31,25 @@ public class SimpactII extends SimState {
     //class variables visualization
     public Continuous2D world = new Continuous2D(1.0, 100, 100); //for geographic placement
     public Network network = new Network(false);
+    
     //class variables for the population
     private int population = 0; //default
-    //public double genderRatio = 0.5;
-    private Bag subPopulationTypes = new Bag();
+    private Bag subPopulationTypes = new Bag(); //perhaps these three can be reduced to one for simplicity...???
     private Bag subPopulationNum = new Bag();
     private Bag subPopulationArgs = new Bag();
     public double numberOfYears = 30;
     public Distribution degrees = new PowerLawDistribution(2.0, 1);
     public Distribution ages = new UniformDistribution(15.0, 65.0);//new PowerLawDistribution(1.0,3);
     public Distribution relationshipDurations = new UniformDistribution(1.0, 10.0);//new BetaDistribution(0.1,0.9);
+    
     //class variables for main operations
     public TimeOperator timeOperator = new TimeOperator();
     public InfectionOperator infectionOperator = new InfectionOperator();
+    
     //class variables for data management
-    public Bag allRelations = new Bag();
+    public Bag myRelations = new Bag();
     public Bag myAgents = new Bag();
+    public Bag myInterventions = new Bag();
 
     //all class constructors:
     public SimpactII(long seed) {
@@ -69,7 +73,7 @@ public class SimpactII extends SimState {
 
         //reset everything:
         myAgents.clear();       //all agents ever
-        allRelations.clear();   //all relations ever
+        myRelations.clear();   //all relations ever
         world.clear();          //geographic placements
         network.clear();        //sexual network
 
@@ -106,10 +110,23 @@ public class SimpactII extends SimState {
         this.subPopulationArgs.add(args);
         this.population += N; //add the number of agents to our population
     }
+    
     /** Add N agents of type agentClass to the population. 
     */
     public void addAgents(Class agentClass, int number) {        
         addAgents(agentClass, number, new String[0]);
+    }
+    
+    public void addIntervention(Class c, double start, double spend){
+        try {
+            Agent intervention = (Agent) c.getConstructor(new Class[]{double.class , double.class}).newInstance(start, spend);            
+            this.myInterventions.add(intervention);
+        } catch (Exception e) {
+            throw new RuntimeException("Exception occurred while trying to add intervention " + c + "\n" + e);
+        }        
+    }
+    public void addIntervention(Intervention i){
+        this.myInterventions.add(i);
     }
 
     private final void addPopulations() {
@@ -142,16 +159,16 @@ public class SimpactII extends SimState {
     }
 
     public void formRelationship(Agent agent1, Agent agent2, double duration) {
-        //if the agents didn't have anything to say about how long the relationship should last:
-        if (duration == 0) {
-            duration = relationshipDurations.nextValue();
+        //if the agents didn't have anything to say about how long the relationship should last...
+        if (duration == 0) { //(indicates indifference from agents)
+            duration = relationshipDurations.nextValue();//...use the next value
         }
 
         //add the new relationship to the network
         network.addEdge(agent1, agent2, duration);
 
         //add this relationship to the relation data manager
-        allRelations.add(new Relationship(agent1, agent2,
+        myRelations.add(new Relationship(agent1, agent2,
                 schedule.getTime(), schedule.getTime() + duration));
     }
 
@@ -161,6 +178,13 @@ public class SimpactII extends SimState {
         Agent agent2 = (Agent) e.getTo();
         agent2.informDissolution();
         network.removeEdge(e);
+    }
+    public void addAttribute(String key, Object value){
+        Bag agents = network.getAllNodes();
+        for(int i = 0 ; i < agents.size(); i++){ //add syphilis weeks infected attribute to every one
+            Agent agent = (Agent) agents.get(i);
+            agent.attributes.put(key, value);
+        }
     }
 
     //graph functions
@@ -187,9 +211,9 @@ public class SimpactII extends SimState {
             FileWriter fstream = new FileWriter(filename);
             BufferedWriter out = new BufferedWriter(fstream);
             out.write("maleAge,femaleAge,start,end\n");
-            int numRelations = allRelations.size();
+            int numRelations = myRelations.size();
             for (int j = 0; j < numRelations; j++) {
-                Relationship r = (Relationship) allRelations.get(j);
+                Relationship r = (Relationship) myRelations.get(j);
                 if (r.getAgent1().isMale()) {
                     out.write(r.getAgent1().getAge() + "," + r.getAgent2().getAge());
                 } else {
@@ -318,8 +342,8 @@ public class SimpactII extends SimState {
         doLoop(new MakesSimState() {
             public SimState newInstance(long seed, String[] args) {
                 try {
-                    return state;
-                } //not actually a new instance! it's this instance!
+                    return state;//not actually a new instance! it's this instance!
+                } 
                 catch (Exception e) {
                     throw new RuntimeException("Exception occurred while trying to construct the simulation \n" + e);
                 }
