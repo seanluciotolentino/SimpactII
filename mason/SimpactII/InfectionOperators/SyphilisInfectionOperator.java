@@ -47,15 +47,8 @@ public class SyphilisInfectionOperator extends InfectionOperator {
     
     public void preProcess(SimpactII state){
         super.preProcess(state);
-        addCharacteristics(state);
+        state.addAttribute("SyphilisInfection", 0);
         performInitialInfections(state);
-    }
-    private void addCharacteristics(SimpactII state) {
-        Bag agents = state.network.getAllNodes();
-        for(int i = 0 ; i < agents.size(); i++){ //add syphilis weeks infected attribute to every one
-            Agent agent = (Agent) agents.get(i);
-            agent.attributes.put("SyphilisInfection", 0);
-        }
     }
 
     private void performInitialInfections(SimpactII state) {

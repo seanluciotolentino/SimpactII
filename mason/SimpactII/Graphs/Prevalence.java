@@ -72,8 +72,8 @@ public class Prevalence extends JFrame{
                     //tally him or her for incidence counts
                     if ( timeOfInfection > (t - timeGranularity) && timeOfInfection <= t) //you were infected this week
                         weekInfections++; 
+                    }
                 }
-            }
             
             //after everyone for this time step, add to the data
             //System.out.println("adding: " + t + " , " + totalInfections / population);

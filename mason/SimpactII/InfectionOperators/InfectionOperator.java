@@ -22,7 +22,7 @@ import sim.util.Bag;
 public class InfectionOperator implements Steppable{
     
     //default class variables about infection
-    public double transmissionProbability = 0.01;
+    public double transmissionProbability = 0.01; //this should reflect sex acts per week as well
     public int initialNumberInfected = 5;
     
     public InfectionOperator(){
@@ -41,13 +41,13 @@ public class InfectionOperator implements Steppable{
         this.transmissionProbability = infectivity;
     }
         
-    public final void step(SimState sim){
-        SimpactII state = (SimpactII) sim;
+    public final void step(SimState s){
+        SimpactII state = (SimpactII) s;
         
         //flip coin for possible infections
-        Bag agents = state.network.getAllNodes();
-        for(int i = 0 ; i < agents.size(); i++){
-            Agent agent = (Agent) agents.get(i);
+        int numAgents = state.myAgents.size();
+        for(int i = 0 ; i < numAgents; i++){
+            Agent agent = (Agent) state.myAgents.get(i);
             
             infectionStep(agent,state);           
 

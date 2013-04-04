@@ -13,7 +13,7 @@ import sim.util.Bag;
  * 
  * An infection operator which varies HIV infectivity with weeks infected. This
  * is in line with the literature which indicates that HIV infectivity is very 
- * high at first, then drops down to an asyomptomic phase, then ramps up again
+ * high at first, then drops down to an asymptomic phase, then ramps up again
  * during the last few months of life. 
  * 
  */

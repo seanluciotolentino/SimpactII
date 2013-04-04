@@ -33,7 +33,7 @@ public class Agent implements Steppable {
     public int weeksInfected = 0;
     
     //variables for keeping track in the simulation
-    public Agent infector; //keep track of who infected me
+    public Agent infector; //keep track of who infected me -- perhaps should be migrated to attributes???
     public Stoppable stoppable; //so that if individual dies, we can stop them in the schedule
     public double timeOfAddition;
     public double timeOfRemoval;
@@ -107,7 +107,9 @@ public class Agent implements Steppable {
     public Agent replace(SimpactII state){
         final Class c = this.getClass();
         try {
-            return (Agent) c.getConstructor(new Class[]{SimpactII.class, String[].class}).newInstance(state, args);
+            Agent a = (Agent) c.getConstructor(new Class[]{SimpactII.class, String[].class}).newInstance(state, args);
+            a.attributes.putAll(this.attributes); //copy over attributes -- some attributes might not want to copy directly, i.e. extra condoms???
+            return a;
         } catch (Exception e) {
             throw new RuntimeException("Exception occurred while trying to replace agent " + c + "\n" + e.getMessage());
         }
