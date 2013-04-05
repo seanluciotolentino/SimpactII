@@ -23,8 +23,8 @@ public class Condom implements Intervention{
     public double spend;
     public double condoms;
     
-    //default class variables
-    public double condomInfectivityReduction = 0.9999;
+    //default class variables -- do not change here, change in your script
+    public double condomInfectivityReduction = 0.80;
     public double condomsUsedPerWeek = 2;
     
     public Condom( double startYear , double spend ) {
@@ -50,16 +50,23 @@ public class Condom implements Intervention{
                 target.attributes.put("isCondomUser",true);
             }
                 
+            //change the TO and FROM infectivity
+            double currentInfectivity = (double) target.attributes.get("infectivityChangeTo");
+            target.attributes.put("infectivityChangeTo",currentInfectivity * (1-condomInfectivityReduction)) ;
             
-            double currentInfectivity = (double) target.attributes.get("infectivityChange");
-            target.attributes.put("infectivityChange",currentInfectivity * (1-condomInfectivityReduction)) ;
+            currentInfectivity = (double) target.attributes.get("infectivityChangeFrom");
+            target.attributes.put("infectivityChangeFrom",currentInfectivity * (1-condomInfectivityReduction)) ;
             
             //schedule a step to change it back after the target has used all condoms
-            state.schedule.scheduleOnceIn(howMany/condomsUsedPerWeek, new Steppable() {
+            double willRunOutIn = howMany / (condomsUsedPerWeek * target.partners); //partners actually changes but this is a good proxy I think
+            state.schedule.scheduleOnceIn(willRunOutIn, new Steppable() {
                 @Override
                 public void step(SimState state) {
-                    double currentInfectivity = (double) target.attributes.get("infectivityChange");
-                    target.attributes.put("infectivityChange",currentInfectivity / (1-condomInfectivityReduction));
+                    //revert infectivity
+                    double currentInfectivity = (double) target.attributes.get("infectivityChangeTo");
+                    target.attributes.put("infectivityChangeTo",currentInfectivity / (1-condomInfectivityReduction));
+                    currentInfectivity = (double) target.attributes.get("infectivityChangeFrom");
+                    target.attributes.put("infectivityChangeFrom",currentInfectivity / (1-condomInfectivityReduction));
                 }
             });
             //

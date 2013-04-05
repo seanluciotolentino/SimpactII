@@ -29,8 +29,8 @@ public class LDInfectionOperator extends InfectionOperator{
         this.infectivityGrowth = infectivityGrowth;
     }
     
-    public double infectivity(Agent agent){
-        return agent.weeksInfected*infectivityGrowth;
+    public double infectivity(Agent from, Agent to){
+        return from.weeksInfected*infectivityGrowth;
     }
     
     

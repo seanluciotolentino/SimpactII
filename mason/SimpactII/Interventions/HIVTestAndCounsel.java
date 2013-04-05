@@ -15,18 +15,19 @@ import sim.engine.SimState;
  * An implementation of an week long HIV testing campaign
  * 
  */
-public class HIVTest implements Intervention{
+public class HIVTestAndCounsel implements Intervention{
     
     //intervention variables
     public double start;
     public double spend;
     
-    //HIVtest variables
+    //HIVtest variables -- do not change here, change in your script
     public double costPerTest = 1; 
     public double numberOfTests;
+    private int partnersAfterTest = 1;
     
     
-    public HIVTest(double startYear, double spend){
+    public HIVTestAndCounsel(double startYear, double spend){
         this.start = startYear*52; //convert from year to weeks
         this.spend = spend;
         this.numberOfTests = spend / costPerTest;
@@ -36,12 +37,15 @@ public class HIVTest implements Intervention{
     public void step(SimState s) {
         SimpactII state = (SimpactII) s;
         state.addAttribute("HIVTest", false);
-        System.out.println("----------------------------HIV Test Campaign " + state.schedule.getTime() + "----");
+        //System.out.println("----------------------------HIV Test Campaign " + state.schedule.getTime() + "----");
         
         for(int i = 0; i < numberOfTests ; i++){
             Agent target = findAgent(state);
             target.attributes.put("HIVTest", test(target));
-            System.out.println("Tested Agent" + target.hashCode() + " (s)he was " + test(target));
+            //if positive, counsel them to have fewer partners, but don't reduce infectivity
+            if( test(target) )
+                target.DNP = partnersAfterTest; //note this might actually increase some individuals DNP
+            //System.out.println("Tested Agent" + target.hashCode() + " (s)he was " + test(target));
         }
     }
 

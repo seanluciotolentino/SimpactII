@@ -22,7 +22,7 @@ public class AgeAgent extends Agent{
     //default values of an AgeAgent
     private double band = 5;
     private double offset = 5;
-    
+        
     public AgeAgent(SimpactII state,String[] args){
         super(state,args);
         this.band = Double.parseDouble(args[0]);

@@ -54,7 +54,9 @@ public class TimeOperator implements Steppable{
             //check some removal condition
             if(remove(agent)){ //if some removal condition is met
                 //somehow replace individual:
-                state.network.addNode(replace(state,agent)); 
+                Agent newAgent = replace(state,agent);
+                newAgent.attributes.putAll(agent.attributes); ////copy over attributes -- some attributes might not want to copy directly, i.e. extra condoms???
+                state.network.addNode(newAgent); 
 
                 //remove them from the world:
                 agent.stoppable.stop(); //stop them from being scheduled

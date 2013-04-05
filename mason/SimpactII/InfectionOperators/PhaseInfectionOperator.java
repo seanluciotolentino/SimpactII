@@ -43,10 +43,10 @@ public class PhaseInfectionOperator extends InfectionOperator{
         this.infectivityStage3 = infectivityStage3;
     }
     
-    public double infectivity(Agent agent) {
-        if (agent.weeksInfected < weeksStage1)
+    public double infectivity(Agent from, Agent to) {
+        if (from.weeksInfected < weeksStage1)
             return infectivityStage1;
-        else if (agent.weeksInfected < weeksStage2)
+        else if (from.weeksInfected < weeksStage2)
             return infectivityStage2;
         else
             return infectivityStage3;        

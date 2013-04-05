@@ -107,9 +107,7 @@ public class Agent implements Steppable {
     public Agent replace(SimpactII state){
         final Class c = this.getClass();
         try {
-            Agent a = (Agent) c.getConstructor(new Class[]{SimpactII.class, String[].class}).newInstance(state, args);
-            a.attributes.putAll(this.attributes); //copy over attributes -- some attributes might not want to copy directly, i.e. extra condoms???
-            return a;
+            return (Agent) c.getConstructor(new Class[]{SimpactII.class, String[].class}).newInstance(state, args);
         } catch (Exception e) {
             throw new RuntimeException("Exception occurred while trying to replace agent " + c + "\n" + e.getMessage());
         }

@@ -53,10 +53,6 @@ public class InfectionOperator implements Steppable{
 
         } //for all agents        
     } //end step
-    
-    public double infectivity(Agent agent) {
-        return transmissionProbability;       
-    }
 
     public void infectionStep(Agent agent, SimpactII state) {
         //find those that are actually infected
@@ -68,12 +64,18 @@ public class InfectionOperator implements Steppable{
                 Edge relationship = (Edge) partners.get(j);
                 Agent partner = (Agent) relationship.getOtherNode(agent);
 
-                if (partner.weeksInfected<=0 && state.random.nextDouble() < infectivity(agent) ){
+                if (partner.weeksInfected<=0 && state.random.nextDouble() < infectivity(agent,partner) ){
+                    //System.out.println("Agent " + partner.hashCode() + " was infected by Agent " + agent.hashCode()
+                    //       + "  <-- DNP? " + agent.DNP);
                     partner.setInfector(agent);
                     partner.weeksInfected = 1;
                 }
             } //partners for loop
         } //if agent infected
+    }
+    
+    public double infectivity(Agent from, Agent to) {
+        return transmissionProbability;  //default, it doesn't matter who the agents are     
     }
     
     public void preProcess(SimpactII state){
