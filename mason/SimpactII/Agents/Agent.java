@@ -27,6 +27,7 @@ public class Agent implements Steppable {
     public int DNP; // = desired number of partners
     public boolean male;
     public double age;
+    public HashMap<String,Object> attributes; //a place for any additional attributes
     
     //charateristics which change with time
     public int partners = 0;
@@ -37,29 +38,28 @@ public class Agent implements Steppable {
     public Stoppable stoppable; //so that if individual dies, we can stop them in the schedule
     public double timeOfAddition;
     public double timeOfRemoval;
-    public HashMap<String,Object> attributes = new HashMap(); //a place for any additional attributes
+    
     public String[] args;
 
     //basic constructor
-    public Agent(SimpactII model, String[] args){
-        this.args = args; //save the args for replacement
-        
+    public Agent(SimpactII state, HashMap<String,Object> attributes){        
         //assign random values from distribution
-        this.DNP = Math.round((float) model.degrees.nextValue());
-        this.male = model.random.nextDouble() <= 0.5; //default gender ratio
-        this.age = model.ages.nextValue();
+        this.DNP = Math.round((float) state.degrees.nextValue());
+        this.male = state.random.nextDouble() <= 0.5; //default gender ratio
+        this.age = state.ages.nextValue();
+        this.attributes = attributes;
         
         //add self to schedule and world
-        stoppable = model.schedule.scheduleRepeating(this); //schedule variable inherited from SimState -- adds the agents to the schedule (their step method will be called at each time step)
-        model.network.addNode(this);                //add to network
-        model.myAgents.add(this);
-        timeOfAddition = model.schedule.getTime();  //added now
+        stoppable = state.schedule.scheduleRepeating(this); //schedule variable inherited from SimState -- adds the agents to the schedule (their step method will be called at each time step)
+        state.network.addNode(this);                //add to network
+        state.myAgents.add(this);
+        timeOfAddition = state.schedule.getTime();  //added now
         timeOfRemoval  = Double.MAX_VALUE;          //removed at inf
 
         //for GUI purposes assign a random location in the world
-        model.world.setObjectLocation(this,
-            new Double2D(model.world.getWidth() * model.random.nextDouble() - 0.5,
-                model.world.getHeight() * model.random.nextDouble()));
+        state.world.setObjectLocation(this,
+            new Double2D(state.world.getWidth() * state.random.nextDouble() - 0.5,
+                state.world.getHeight() * state.random.nextDouble()));
     }
 
     //methods here
@@ -107,7 +107,7 @@ public class Agent implements Steppable {
     public Agent replace(SimpactII state){
         final Class c = this.getClass();
         try {
-            return (Agent) c.getConstructor(new Class[]{SimpactII.class, String[].class}).newInstance(state, args);
+            return (Agent) c.getConstructor(new Class[]{SimpactII.class, HashMap.class}).newInstance(state, attributes);
         } catch (Exception e) {
             throw new RuntimeException("Exception occurred while trying to replace agent " + c + "\n" + e.getMessage());
         }

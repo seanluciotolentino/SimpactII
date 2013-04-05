@@ -1,6 +1,7 @@
 package SimpactII.Agents;
 
 import SimpactII.SimpactII;
+import java.util.HashMap;
 
 /**
  *
@@ -14,8 +15,8 @@ import SimpactII.SimpactII;
  */
 public class MSMAgent extends Agent{
     
-    public MSMAgent(SimpactII s, String[] args){
-        super(s,args);
+    public MSMAgent(SimpactII state, HashMap<String,Object> attributes){  
+        super(state,attributes);
         this.male = true;
     }
     

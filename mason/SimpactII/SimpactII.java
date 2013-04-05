@@ -8,6 +8,7 @@ import SimpactII.Interventions.Intervention;
 import SimpactII.TimeOperators.TimeOperator;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.HashMap;
 import javax.swing.JFrame;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
@@ -100,21 +101,21 @@ public class SimpactII extends SimState {
      * provided if the agent class requires additional arguments. If none are
      * required or provided, the default constructor will be called.
     */
-    public void addAgents(Class agentClass, int N, String[] args) {
+    public void addAgents(Class agentClass, int N, HashMap<String,Object> attr) {
         if (agentClass.isInstance(Agent.class)) {
             System.err.println("Can only add type Agent to population");
             System.exit(1);
         }
         this.subPopulationTypes.add(agentClass);
         this.subPopulationNum.add(N);
-        this.subPopulationArgs.add(args);
+        this.subPopulationArgs.add(attr);
         this.population += N; //add the number of agents to our population
     }
     
     /** Add N agents of type agentClass to the population. 
     */
     public void addAgents(Class agentClass, int number) {        
-        addAgents(agentClass, number, new String[0]);
+        addAgents(agentClass, number, new HashMap<String,Object>());
     }
     
     public void addIntervention(Class c, double start, double spend){
@@ -132,19 +133,22 @@ public class SimpactII extends SimState {
     private final void addPopulations() {
         //called at the beginning of the simulation to add agents
         int numSubPopulations = subPopulationTypes.size();
-        if (numSubPopulations<=0){ addAgents(Agent.class,1000); }
+        if (numSubPopulations<=0){ 
+            addAgents(Agent.class,1000); 
+            numSubPopulations = 1;
+        }
         for (int i = 0; i < numSubPopulations; i++) {
             Class population = (Class) subPopulationTypes.get(i);
             int number = (int) subPopulationNum.get(i);
-            String[] args = (String[]) subPopulationArgs.get(i);
-            addNAgents(population, number, args);
+            HashMap attr = (HashMap) subPopulationArgs.get(i);
+            addNAgents(population, number, attr);
         }
     }
 
-    private final void addNAgents(Class c, int N, String[] args) {
+    private final void addNAgents(Class c, int N, HashMap attr) {
         try {
             for (int i = 0; i < N; i++) {
-                Agent a = (Agent) c.getConstructor(new Class[]{SimpactII.class, String[].class}).newInstance(this, args);
+                Agent a = (Agent) c.getConstructor(new Class[]{SimpactII.class, HashMap.class}).newInstance(this, attr);
             }
         } catch (Exception e) {
             throw new RuntimeException("Exception occurred while trying to add agent " + c + "\n" + e);

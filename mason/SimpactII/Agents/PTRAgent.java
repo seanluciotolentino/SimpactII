@@ -5,6 +5,7 @@
 package SimpactII.Agents;
 
 import SimpactII.SimpactII;
+import java.util.HashMap;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -26,9 +27,17 @@ public class PTRAgent extends Agent{
     public int partnersPerYear;
     public int partnersThisYear = 0;
     
-    public PTRAgent(SimpactII state, String[] args){
-        super(state,args);
-        this.partnersPerYear = Integer.parseInt(args[0]);
+    public PTRAgent(SimpactII state, HashMap<String,Object> attributes){  
+        super(state,attributes);
+        
+        //set class fields
+        Integer ppy = (Integer) attributes.get("partnersPerYear");
+        if( ppy == null){ //use default if not supplied
+            attributes.put("partnersPerYear",2);
+            this.partnersPerYear = 2;
+        }else{
+            this.partnersPerYear = (int) ppy;
+        }
         
         //schedule helper to come alive and reset partner every year
         final PTRAgent myAgent = this;
@@ -46,7 +55,7 @@ public class PTRAgent extends Agent{
         return super.informRelationship(other);
     }
     public Agent replace(SimpactII state){
-        return new PTRAgent(state,args); //replace with something similar
+        return new PTRAgent(state,attributes); //replace with something similar
     }
     public String toString(){ return "PTRAgent" + this.hashCode(); }
     

@@ -90,7 +90,7 @@ public class InfectionOperator implements Steppable{
             return;
         }
         for(int i = 0; i < initialNumberInfected; i++){
-            Agent agent = (Agent) state.myAgents.get(state.random.nextInt(pop));
+            Agent agent = (Agent) state.network.allNodes.get(state.random.nextInt(pop));
             agent.weeksInfected = 1;
         }
     }

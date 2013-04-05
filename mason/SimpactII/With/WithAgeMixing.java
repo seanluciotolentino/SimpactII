@@ -5,6 +5,7 @@ import SimpactII.Agents.Agent;
 import SimpactII.Agents.PTRAgent;
 import SimpactII.SimpactII;
 import SimpactII.TimeOperators.TimeOperator;
+import java.util.HashMap;
 import sim.util.Distributions.UniformDistribution;
 
 /**
@@ -22,8 +23,10 @@ public class WithAgeMixing {
     //main method
     public static void main(String[] args){
         SimpactII model = new SimpactII();
-        model.addAgents(AgeAgent.class, 100, new String[] {"5","5"} );
-        model.addAgents(AgeAgent.class, 100, new String[] {"2","-5"} );
+        HashMap ageAttributes = new HashMap<String,Object>();
+        ageAttributes.put("band", 2.0);
+        ageAttributes.put("offset", -5.0);
+        model.addAgents(AgeAgent.class, 100, ageAttributes );
         model.numberOfYears = 10;        
         model.ages = new UniformDistribution(15,65);
         model.relationshipDurations = new UniformDistribution(1,5);

@@ -3,6 +3,7 @@ package SimpactII.Agents;
 import SimpactII.SimpactII;
 import SimpactII.With.WithAgeMixing;
 import SimpactII.With.WithPTRAgents;
+import java.util.HashMap;
 
 /**
  *
@@ -23,12 +24,19 @@ public class AgeAgent extends Agent{
     private double band = 5;
     private double offset = 5;
         
-    public AgeAgent(SimpactII state,String[] args){
-        super(state,args);
-        this.band = Double.parseDouble(args[0]);
-        this.offset = Double.parseDouble(args[1]);
-        if(args.length>2)
-            this.age = Integer.parseInt(args[2]);
+    public AgeAgent(SimpactII state, HashMap<String,Object> attributes){  
+        super(state,attributes);
+        
+        //set defaults if not yet set
+        try{
+            if ( attributes.get("band") != null )
+                band = (double) attributes.get("band");
+            if ( attributes.get("offset") != null )
+                offset =  (double) attributes.get("offset");
+        }catch(Exception e){
+            System.err.println("Band and / or offset provided not castable to double. Please provide double (not ints or Strings).\n" + e);
+            System.exit(-2);
+        }
     }
     public boolean isDesirable(Agent other){
         boolean ageIsRight;
@@ -44,6 +52,6 @@ public class AgeAgent extends Agent{
     }
     
     public Agent replace(SimpactII state){
-        return new AgeAgent(state,new String[] {band+"",offset+"",15+""} );
+        return new AgeAgent(state,attributes );
     }
 }

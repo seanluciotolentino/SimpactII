@@ -5,6 +5,7 @@ import SimpactII.Agents.PTRAgent;
 import SimpactII.DataStructures.Relationship;
 import SimpactII.SimpactII;
 import SimpactII.TimeOperators.TimeOperator;
+import java.util.HashMap;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.network.Edge;
@@ -18,7 +19,9 @@ public class WithPTRAgents{
 
     public static void main(String[] args){
         SimpactII model = new SimpactII();
-        model.addAgents(PTRAgent.class, 100, new String[] {"2"} );
+        HashMap attr = new HashMap<String,Object>();
+        attr.put("partnersPerYear",2);
+        model.addAgents(PTRAgent.class, 100, attr );
         model.numberOfYears = 10;
         model.run();
         model.formedRelations(); 

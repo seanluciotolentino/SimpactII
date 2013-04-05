@@ -5,6 +5,7 @@
 package SimpactII.Agents;
 
 import SimpactII.SimpactII;
+import java.util.HashMap;
 import sim.util.Distributions.Distribution;
 import sim.util.Distributions.UniformDistribution;
 
@@ -23,8 +24,8 @@ public class SexWorkerAgent extends Agent{
     double MIN_AGE = 15;
     double MAX_AGE = 30;
     
-    public SexWorkerAgent(SimpactII state,String[] args){
-        super(state,args);
+    public SexWorkerAgent(SimpactII state, HashMap<String,Object> attributes){  
+        super(state,attributes);
         this.DNP = 16;      //let's say this is the maximum she can have in a week
         this.age = (state.random.nextDouble()*(MAX_AGE - MIN_AGE)) + MIN_AGE; //random age between MIN and MAX
         this.male = false; //all sex-workers are female (in this model)
@@ -39,7 +40,7 @@ public class SexWorkerAgent extends Agent{
     }
     //replace agent with a non-sex worker agent 
     public Agent replace(SimpactII state){
-        Agent a = new Agent(state,args); //create a new basic agent to replace the sexworker
+        Agent a = new Agent(state,attributes); //create a new basic agent to replace the sexworker
         a.age = MAX_AGE;
         a.male = false;
         return a;

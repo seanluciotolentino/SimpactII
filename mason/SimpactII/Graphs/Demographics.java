@@ -27,8 +27,8 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class Demographics extends JFrame{
     
-    private int numBoxes = 5;
-    private int boxSize = 15;
+    private int numBoxes = 7;
+    private int boxSize = 10;
     private int timeGranularity = 4; //4 = 1 month, 52 = 1 year, etc...
     
     public Demographics(int numBoxes, int boxSize, int timeGranularity, SimpactII state){

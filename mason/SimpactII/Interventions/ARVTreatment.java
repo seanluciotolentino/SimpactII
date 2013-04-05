@@ -39,7 +39,6 @@ public class ARVTreatment implements Intervention{
     @Override
     public void step(SimState s) {
         SimpactII state = (SimpactII) s;
-        state.addAttribute("onTreatment", false);
         
         //find all the positives and treat them
         Bag positives = findAgents(state);
@@ -85,20 +84,20 @@ public class ARVTreatment implements Intervention{
     private Bag findAgents(SimpactII state){
         //I assume that if they were tested we are able to easily contact them
         //for followup of treatment
-        Bag agents = state.network.getAllNodes();
+        Bag agents = state.network.allNodes;
         Bag positives = new Bag();
         int numAgents = agents.size();
         for(int i = 0; i < numAgents; i++){
             Agent agent = (Agent) agents.get(i);
-            if ((Boolean) agent.attributes.get("HIVTest"))
-                positives.add( agent ); 
+            System.err.println("========" );
+            System.err.println("In treatment: Agent " + agent.hashCode() + " tested " + agent.attributes.get("HIVTest"));
+            System.err.println(agent.attributes.keySet() );
+            System.err.println(agent.attributes.values() );
+            if ((boolean) agent.attributes.get("HIVTest"))
+                positives.add( agent );             
         }
         if(positives.size() <= 0)
-            System.err.println("No HIV positive individuals found: Note that HIVTestAndCounsel intervention must be performed first");
+            System.err.println(positives.size() + " No HIV positive individuals found: Note that HIVTestAndCounsel intervention must be performed first");
         return positives;
-    }
-
-    private Boolean test(Agent agent) {
-        return agent.weeksInfected>0;
     }
 }
