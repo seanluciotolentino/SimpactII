@@ -58,14 +58,14 @@ public class HIVTestAndCounsel implements Intervention{
     public double getSpend() {
         return spend;
     }
-    int agentCount = 0; //DEBUG
+    //int agentCount = 0; //DEBUG
     private Agent findAgent(SimpactII state){
         //this is a random targeting implementation
         //this may find same person twice -- for now this is okay and reflects
         //the reality in which it is sometimes difficult to recruit new individuals
-        //return (Agent) state.network.allNodes.get(state.random.nextInt(state.getPopulation() )); //note: must pull from network not myAgents
-        agentCount = Math.min(agentCount, state.getPopulation() -1);
-        return (Agent) state.network.allNodes.get(agentCount++ ); //DEBUG -- everyone is tested
+        return (Agent) state.network.allNodes.get(state.random.nextInt(state.getPopulation() )); //note: must pull from network not myAgents
+        //agentCount = Math.min(agentCount, state.getPopulation() -1);
+        //return (Agent) state.network.allNodes.get(agentCount++ ); //DEBUG -- everyone is tested
     }
     
     private Boolean test(Agent agent) {

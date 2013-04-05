@@ -40,8 +40,8 @@ public class MaleCircumcision implements Intervention{
         Bag uncircumcisedMales = findAgents(state);
         int circumcisionsToPerform = (int) Math.min(uncircumcisedMales.size() , circumcisionsPerformed);
         
-        System.out.println("-----------------------MCC " + state.schedule.getTime() + "----");
-        System.out.println("number to treat = " + circumcisionsToPerform);
+        //System.out.println("-----------------------MCC " + state.schedule.getTime() + "----");
+        //System.out.println("number to treat = " + circumcisionsToPerform);
         
         //circumcise those that you can
         for(int i = 0; i < circumcisionsToPerform ; i++){
@@ -50,7 +50,7 @@ public class MaleCircumcision implements Intervention{
             //reduce their infectivity
             double currentInfectivity = (double) target.attributes.get("infectivityChangeTo");
             target.attributes.put("infectivityChangeTo",currentInfectivity * (1-circumcisionInfectivityReduction)) ;     
-            System.out.println("Circumcising " + target.hashCode() );
+            //System.out.println("Circumcising " + target.hashCode() );
         }
     }
 

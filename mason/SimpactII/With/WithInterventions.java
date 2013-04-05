@@ -32,22 +32,22 @@ public class WithInterventions {
         s.infectionOperator = new InterventionInfectionOperator(s.infectionOperator);// change the infection operator to consider interventions
         
         //condoms
-        //s.addIntervention(new Condom(2,10000000));
+        s.addIntervention(new Condom(2,10000000));
         
         //bcc
-        //s.addIntervention(new BehavioralChange(2,10));
+        s.addIntervention(new BehavioralChange(2,10));
         
         //test and treat
         s.addIntervention(new HIVTestAndCounsel(10, 1000));
-//        ARVTreatment intervention = new ARVTreatment(10.0001, 500*1000);
-//        intervention.timeTillNormalInfectivity = 52*20;//let's say no one drops out
-//        intervention.ARVInfectivityReduction = 0.9999;
-//        s.addIntervention(intervention);
+        ARVTreatment intervention = new ARVTreatment(10.0001, 500*1000);
+        intervention.timeTillNormalInfectivity = 52*20;//let's say no one drops out
+        intervention.ARVInfectivityReduction = 0.9999;
+        s.addIntervention(intervention);
         
         //male circumcision
-//        MaleCircumcision MCC = new MaleCircumcision(10, 25000);
-//        MCC.circumcisionInfectivityReduction = 0.99;
-//        s.addIntervention(MCC);
+        MaleCircumcision MCC = new MaleCircumcision(10, 25000);
+        MCC.circumcisionInfectivityReduction = 0.99;
+        s.addIntervention(MCC);
         
         s.run();
         s.prevalence();
