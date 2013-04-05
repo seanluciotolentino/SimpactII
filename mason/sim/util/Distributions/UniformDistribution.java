@@ -10,28 +10,25 @@ import ec.util.MersenneTwisterFast;
  *
  * @author visiting_researcher
  */
-public class UniformDistribution implements Distribution{
-    
+public class UniformDistribution implements Distribution {
+
     private MersenneTwisterFast mtf;
-    public double top;
-    public double bottom;
-    
-    public UniformDistribution(double bottom, double top){
+    private double top;
+    private double bottom;
+
+    public UniformDistribution(double bottom, double top) {
         this.mtf = new MersenneTwisterFast();
         this.top = top;
-        this.bottom = bottom;               
+        this.bottom = bottom;
     }
-    
-    public UniformDistribution(double bottom, double top, long seed){
+
+    public UniformDistribution(double bottom, double top, long seed) {
         this.mtf = new MersenneTwisterFast(seed);
         this.top = top;
-        this.bottom = bottom;               
+        this.bottom = bottom;
     }
-    
+
     public double nextValue() {
-        return bottom + (mtf.nextDouble()*(top-bottom) );
+        return bottom + (mtf.nextDouble() * (top - bottom));
     }
-    
-    
-    
 }

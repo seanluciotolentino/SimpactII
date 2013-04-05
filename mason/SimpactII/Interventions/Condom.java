@@ -11,14 +11,21 @@ import sim.engine.Steppable;
 
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentino
+ * 
+ * An implementation of a week long condom distribution campaign
+ * 
  */
 public class Condom implements Intervention{
     
-    double start;
-    double spend;
-    double condoms;
-    double condomInfectivityReduction = 0.9999;
+    //necessary class variables
+    public double start;
+    public double spend;
+    public double condoms;
+    
+    //default class variables
+    public double condomInfectivityReduction = 0.9999;
+    public double condomsUsedPerWeek = 2;
     
     public Condom( double startYear , double spend ) {
         this.start = startYear*52; //convert from year to weeks
@@ -29,10 +36,6 @@ public class Condom implements Intervention{
     @Override
     public void step(SimState s) {
         SimpactII state = (SimpactII) s;
-        System.out.println("----------------------------------CONDOM INTERVENTION-------------------------------------");
-        System.out.println("time = " + state.schedule.getTime());
-        System.out.println("num condoms = " + condoms);
-        System.out.println("will reach = " + condoms/20 );
         state.addAttribute("isCondomUser", false);
         
         //for each condom, find a person and reduce their infectivity for a while
@@ -51,12 +54,8 @@ public class Condom implements Intervention{
             double currentInfectivity = (double) target.attributes.get("infectivityChange");
             target.attributes.put("infectivityChange",currentInfectivity * (1-condomInfectivityReduction)) ;
             
-            //System.out.println(c + "  target: " + target + " has infectivityChange reduced to " + target.attributes.get("infectivityChange"));
-            
             //schedule a step to change it back after the target has used all condoms
-            double now = state.schedule.getTime();
-            
-            state.schedule.scheduleOnce(now + howMany, new Steppable() {
+            state.schedule.scheduleOnceIn(howMany/condomsUsedPerWeek, new Steppable() {
                 @Override
                 public void step(SimState state) {
                     double currentInfectivity = (double) target.attributes.get("infectivityChange");
@@ -91,7 +90,7 @@ public class Condom implements Intervention{
 
     private int howManyCondoms(Agent target) {
         //this is a constant amount (how many can you give an individual at one time?
-        return 20; 
+        return 1000; 
     }
     
 }
