@@ -20,10 +20,12 @@ public class WithInterventions {
     public static void main (String[] args){
         //base stuff
         SimpactII s = new SimpactII(new Long(3));
-                HashMap ageAttributes = new HashMap<String,Object>();
+        HashMap ageAttributes = new HashMap<String,Object>();
         ageAttributes.put("band", 2.0);
         ageAttributes.put("offset", -5.0);
-        //s.addAgents(AgeAgent.class, 1000, ageAttributes );
+        //s.addAgents(AgeAgent.class, 100, ageAttributes );
+        
+        s.addAgents(Agent.class, 1000, ageAttributes );
         
         s.numberOfYears = 20;
         s.relationshipDurations = new UniformDistribution(24, 52*2);
@@ -43,8 +45,8 @@ public class WithInterventions {
         //s.addIntervention(new BehavioralChange(2,10));
         
         //test and treat
-        s.addIntervention(new HIVTestAndCounsel(10, 5000));
-        ARVTreatment intervention = new ARVTreatment(11, 500*1000);
+        s.addIntervention(new HIVTestAndCounsel(5, 5000));
+        ARVTreatment intervention = new ARVTreatment(5.001, 500*1000);
         intervention.timeTillNormalInfectivity = 52*20;//let's say no one drops out
         intervention.ARVInfectivityReduction = 0.9999;
         s.addIntervention(intervention);
@@ -56,7 +58,7 @@ public class WithInterventions {
         
         s.run();
         s.prevalence();
-        
+        //System.exit(0);
 
         
 

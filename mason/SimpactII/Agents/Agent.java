@@ -27,7 +27,7 @@ public class Agent implements Steppable {
     public int DNP; // = desired number of partners
     public boolean male;
     public double age;
-    public HashMap<String,Object> attributes; //a place for any additional attributes
+    public HashMap attributes = new HashMap<String,Object>(); //a place for any additional attributes
     
     //charateristics which change with time
     public int partners = 0;
@@ -47,7 +47,7 @@ public class Agent implements Steppable {
         this.DNP = Math.round((float) state.degrees.nextValue());
         this.male = state.random.nextDouble() <= 0.5; //default gender ratio
         this.age = state.ages.nextValue();
-        this.attributes = attributes;
+        this.attributes.putAll(attributes);
         
         //add self to schedule and world
         stoppable = state.schedule.scheduleRepeating(this); //schedule variable inherited from SimState -- adds the agents to the schedule (their step method will be called at each time step)

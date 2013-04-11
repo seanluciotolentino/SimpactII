@@ -31,7 +31,7 @@ public class SimpactII extends SimState {
 
     //class variables visualization
     public Continuous2D world = new Continuous2D(1.0, 100, 100); //for geographic placement
-    public Network network = new Network(false);
+    public Network network = new Network(false); //the sexual network
     
     //class variables for the population
     private int population = 0; //default
@@ -69,7 +69,7 @@ public class SimpactII extends SimState {
     }
 
     //all class methods go here:
-    public final void start() {
+    public void start() {
         super.start();
 
         //reset everything:
@@ -97,9 +97,9 @@ public class SimpactII extends SimState {
         });
     }
 
-    /** Add N agents of type agentClass to the population. A String[] may be
-     * provided if the agent class requires additional arguments. If none are
-     * required or provided, the default constructor will be called.
+    /** Add N agents of type agentClass to the population. A HashMap<String,Object>
+     * may be provided if the agent class requires additional arguments. If none 
+     * are required or provided, the default constructor will be called.
     */
     public void addAgents(Class agentClass, int N, HashMap<String,Object> attr) {
         if (agentClass.isInstance(Agent.class)) {

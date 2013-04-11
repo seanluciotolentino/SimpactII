@@ -72,7 +72,7 @@ public class TimeOperator implements Steppable{
         }//end for loop
     }
     
-    public void preProcess(SimpactII aThis) {
+    public void preProcess(SimpactII state) {
         return;
     }
     

@@ -44,14 +44,8 @@ public class ARVTreatment implements Intervention{
         Bag positives = findAgents(state);
         int numberToTreat = (int) Math.min(positives.size() , numberOfARVs);
         
-        //System.out.println("-----------------------ARV Treatment " + state.schedule.getTime() + "----");
-        //System.out.println("number to treat = " + numberToTreat);
-        //System.out.println("time till normal infectivity = " + timeTillNormalInfectivity);
-        
         for(int i = 0; i < numberToTreat ; i++){
             final Agent target = (Agent) positives.get(i);
-            
-            //System.out.println("Treating " + target.hashCode() );
             
             //reduce their infectivity
             double currentInfectivity = (double) target.attributes.get("infectivityChangeFrom");
@@ -63,7 +57,7 @@ public class ARVTreatment implements Intervention{
             state.schedule.scheduleOnceIn(timeOfDropOut + timeTillNormalInfectivity, new Steppable() {
                 @Override
                 public void step(SimState state) {
-                    System.out.println("Agent " + target.hashCode() + " is leaving treatment at " + state.schedule.getTime());
+                    //System.out.println("Agent " + target.hashCode() + " is leaving treatment at " + state.schedule.getTime());
                     double currentInfectivity = (double) target.attributes.get("infectivityChangeFrom");
                     target.attributes.put("infectivityChangeFrom",currentInfectivity / (1-ARVInfectivityReduction));
                 }
@@ -84,20 +78,16 @@ public class ARVTreatment implements Intervention{
     private Bag findAgents(SimpactII state){
         //I assume that if they were tested we are able to easily contact them
         //for followup of treatment
-        Bag agents = state.network.allNodes;
+        Bag agents = state.network.getAllNodes();
         Bag positives = new Bag();
         int numAgents = agents.size();
         for(int i = 0; i < numAgents; i++){
             Agent agent = (Agent) agents.get(i);
-            System.err.println("========" );
-            System.err.println("In treatment: Agent " + agent.hashCode() + " tested " + agent.attributes.get("HIVTest"));
-            System.err.println(agent.attributes.keySet() );
-            System.err.println(agent.attributes.values() );
-            if ((boolean) agent.attributes.get("HIVTest"))
+            if ((boolean) agent.attributes.get("HIVTest")) 
                 positives.add( agent );             
         }
         if(positives.size() <= 0)
-            System.err.println(positives.size() + " No HIV positive individuals found: Note that HIVTestAndCounsel intervention must be performed first");
+            System.err.println(positives.size() + " HIV positive individuals found: Note that HIVTestAndCounsel intervention must be performed first");
         return positives;
     }
 }

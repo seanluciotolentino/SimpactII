@@ -29,7 +29,6 @@ public class GUI extends GUIState{
     public JFrame displayFrame;
     public ContinuousPortrayal2D worldPortrayal = new ContinuousPortrayal2D();
     public NetworkPortrayal2D networkPortrayal = new NetworkPortrayal2D();
-    public SimpactII state;
             
     public static void main(String[] args){
         GUI vid = new GUI();
@@ -162,10 +161,10 @@ public class GUI extends GUIState{
     }
 
     public void setupPortrayals() {
-        SimpactII simpactII = (SimpactII) state; //How is state within this scope?
+        SimpactII s = (SimpactII) super.state;
         
         //tell the portrayals what to portray and how to portray them
-        worldPortrayal.setField(simpactII.world);
+        worldPortrayal.setField(s.world);
         worldPortrayal.setPortrayalForAll(
                 new MovablePortrayal2D(
                     new CircledPortrayal2D(
@@ -183,7 +182,7 @@ public class GUI extends GUIState{
                 0,5.0, Color.green,true))); //circle around node when selected
         
         //tell network portrayal what to portray
-        networkPortrayal.setField(new SpatialNetwork2D(simpactII.world, simpactII.network));
+        networkPortrayal.setField(new SpatialNetwork2D(s.world, s.network));
         networkPortrayal.setPortrayalForAll(new SimpleEdgePortrayal2D());
         
         
@@ -220,7 +219,7 @@ public class GUI extends GUIState{
         displayFrame.setTitle("SimpactII");
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);
-        display.attach( worldPortrayal, "The World" );
+        display.attach(worldPortrayal, "The Agents" );
         display.attach(networkPortrayal,"Sexual Network");
 
     }

@@ -36,21 +36,15 @@ public class HIVTestAndCounsel implements Intervention{
     @Override
     public void step(SimState s) {
         SimpactII state = (SimpactII) s;
+        state.addAttribute("HIVTest", false);
         //System.out.println("----------------------------HIV Test Campaign " + state.schedule.getTime() + "----");
         
         for(int i = 0; i < numberOfTests ; i++){
             Agent target = findAgent(state);
-            System.err.println("========" );
             target.attributes.put("HIVTest", test(target));
             //if positive, counsel them to have fewer partners, but don't reduce infectivity
             if( test(target) )
                 target.DNP = partnersAfterTest; //note this might actually increase some individuals DNP
-            //if ((boolean) target.attributes.get("HIVTest") )
-            System.err.println("In testing: Agent " + target.hashCode() + " (s)he was " + target.attributes.get("HIVTest") );
-            
-            System.err.println(target.attributes.keySet() );
-            System.err.println(target.attributes.values() );
-            
         }
     }
 
@@ -68,9 +62,7 @@ public class HIVTestAndCounsel implements Intervention{
         //this is a random targeting implementation
         //this may find same person twice -- for now this is okay and reflects
         //the reality in which it is sometimes difficult to recruit new individuals
-        return (Agent) state.network.getAllNodes().get(state.random.nextInt(state.getPopulation() )); //note: must pull from network not myAgents
-        //agentCount = Math.min(agentCount, state.getPopulation() -1);
-        //return (Agent) state.network.allNodes.get(agentCount++ ); //DEBUG -- everyone is tested
+        return (Agent) state.network.allNodes.get(state.random.nextInt(state.getPopulation() )); //note: must pull from network not myAgents
     }
     
     private boolean test(Agent agent) {
