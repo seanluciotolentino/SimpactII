@@ -55,7 +55,7 @@ public class TimeOperator implements Steppable{
             if(remove(agent)){ //if some removal condition is met
                 //somehow replace individual:
                 Agent newAgent = replace(state,agent);
-                newAgent.attributes.putAll(agent.attributes); ////copy over attributes -- some attributes might not want to copy directly, i.e. extra condoms???
+                //newAgent.attributes.putAll(agent.attributes); ////copy over attributes -- some attributes might not want to copy directly, i.e. extra condoms??? location???
                 state.network.addNode(newAgent); 
 
                 //remove them from the world:

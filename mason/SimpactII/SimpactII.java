@@ -250,7 +250,7 @@ public class SimpactII extends SimState {
                 }
 
                 out.write(a.hashCode() + "," + a.isMale() + "," + a.getAge() + "," + wi
-                        + "," + a.timeOfAddition + "," + a.timeOfRemoval + "\n");
+                        + "," + a.getTimeOfAddition() + "," + a.timeOfRemoval + "\n");
             }
 
             //Close the output stream

@@ -125,7 +125,8 @@ public class GUI extends GUIState{
             AgeAgent.class, 
             MSMAgent.class,
             PTRAgent.class, 
-            SexWorkerAgent.class};
+            SexWorkerAgent.class,
+            LocalAgent.class};
         final JComboBox cb = new JComboBox(agents);
         panel.add(cb);
         

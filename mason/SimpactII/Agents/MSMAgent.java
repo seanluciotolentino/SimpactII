@@ -20,10 +20,10 @@ public class MSMAgent extends Agent{
         this.male = true;
     }
     
-    public boolean isDesirable(Agent other){
-        return other.isLookingFor(this) && other.isMale();
-    }
     public boolean isLookingFor(Agent other){
+        return other.isSeeking(this) && other.isMale();
+    }
+    public boolean isSeeking(Agent other){
         return getPartners() < getDNP() && ( other.isMale() );
     }
     public String toString(){

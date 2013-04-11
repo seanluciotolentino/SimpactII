@@ -55,7 +55,7 @@ public class Demographics extends JFrame{
                 double age = agent.getAge()*52; //convert age to weeks
                 double ageAtT = age - now + t;
                 
-                if (agent.timeOfAddition > t || agent.timeOfRemoval < t){  continue; } //skip if the agent wasn't born yet or has been removed
+                if (agent.getTimeOfAddition() > t || agent.timeOfRemoval < t){  continue; } //skip if the agent wasn't born yet or has been removed
                 
                 ageAtT/= 52; //convert back to years
                 int level = (int) Math.min(numBoxes-1, Math.floor( ageAtT / boxSize)); 

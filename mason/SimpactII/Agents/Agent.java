@@ -36,7 +36,7 @@ public class Agent implements Steppable {
     //variables for keeping track in the simulation
     public Agent infector; //keep track of who infected me -- perhaps should be migrated to attributes???
     public Stoppable stoppable; //so that if individual dies, we can stop them in the schedule
-    public double timeOfAddition;
+    private double timeOfAddition;
     public double timeOfRemoval;
     
     public String[] args;
@@ -57,9 +57,11 @@ public class Agent implements Steppable {
         timeOfRemoval  = Double.MAX_VALUE;          //removed at inf
 
         //for GUI purposes assign a random location in the world
-        state.world.setObjectLocation(this,
-            new Double2D(state.world.getWidth() * state.random.nextDouble() - 0.5,
-                state.world.getHeight() * state.random.nextDouble()));
+        Double2D location = new Double2D(state.world.getWidth() * state.random.nextDouble() - 0.5,
+                state.world.getHeight() * state.random.nextDouble());
+        this.attributes.put("location", location);
+        state.world.setObjectLocation(this, location );
+        location.distance(location);
     }
 
     //methods here
@@ -67,13 +69,13 @@ public class Agent implements Steppable {
         SimpactII state = (SimpactII) s; //cast state to a SimpactII (from SimState)
                 
         //go through other nodes, try to find partner
-        Bag others = state.network.getAllNodes();
+        Bag others = possiblePartners(state);
         int numOthers = others.size();
         for (int i = 0; i < numOthers; i++) {
             Agent other = (Agent) others.get(i);
             if ( !isLooking() ) //if this agent isn't interested, don't keep looking
                 return;
-            if ( isDesirable(other) ) {
+            if ( isLookingFor(other) ) {
                 double d1 = this.informRelationship(other);
                 double d2 = other.informRelationship(this);
                 state.formRelationship(this,other, Math.max(d1, d2));
@@ -81,14 +83,19 @@ public class Agent implements Steppable {
         } //for end
     }//step end
     
+    //With whom do I form relationships
+    public Bag possiblePartners(SimpactII state){
+        return state.network.getAllNodes();
+    }
+    
     //How do I form relationships?
-    public boolean isDesirable(Agent other) {
-        return other.isLookingFor(this) && (isMale() ^ other.isMale()); //second predicate indicates a heterosexual relationship
+    public boolean isLookingFor(Agent other) {
+        return other.isSeeking(this) && this.isSeeking(other); //second predicate indicates a heterosexual relationship
     }
     public boolean isLooking(){ //if not looking we don't have to check everyone
         return getPartners() < getDNP();
     }
-    public boolean isLookingFor(Agent other) { //other parameter allows to specify who I am looking for
+    public boolean isSeeking(Agent other) { //indicates the question, "do you want to have a relationship with other?"
         return isLooking() && isMale() ^ other.isMale();
     }
     
@@ -127,4 +134,5 @@ public class Agent implements Steppable {
     public void setAge(double age) { this.age = age; }
     public int getPartners() { return partners; }
     public void setPartners(int partners) { this.partners = partners; }
+    public double getTimeOfAddition() { return timeOfAddition;   }
 }

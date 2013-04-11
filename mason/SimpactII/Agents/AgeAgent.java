@@ -38,16 +38,16 @@ public class AgeAgent extends Agent{
             System.exit(-2);
         }
     }
-    public boolean isDesirable(Agent other){
+    public boolean isLookingFor(Agent other){
         boolean ageIsRight;
         if ( isMale() )
             ageIsRight = (getAge() - other.getAge() ) < offset + band && (getAge() - other.getAge() ) > offset - band ; 
         else
             ageIsRight = (other.getAge() - getAge() ) < offset + band && (other.getAge() - getAge() ) > offset - band ; 
         
-        return ageIsRight && other.isLookingFor(this);
+        return ageIsRight && other.isSeeking(this);
     }
-    public boolean isLookingFor(Agent other){
+    public boolean isSeeking(Agent other){
         return getPartners() < getDNP() && (isMale() ^ other.isMale());
     }
     
