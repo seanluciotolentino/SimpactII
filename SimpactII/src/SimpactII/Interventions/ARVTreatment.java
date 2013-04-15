@@ -46,6 +46,7 @@ public class ARVTreatment implements Intervention{
         
         for(int i = 0; i < numberToTreat ; i++){
             final Agent target = (Agent) positives.get(i);
+            target.attributes.put("ARVStart",state.schedule.getTime() );
             
             //reduce their infectivity
             double currentInfectivity = (double) target.attributes.get("infectivityChangeFrom");
@@ -60,6 +61,7 @@ public class ARVTreatment implements Intervention{
                     //System.out.println("Agent " + target.hashCode() + " is leaving treatment at " + state.schedule.getTime());
                     double currentInfectivity = (double) target.attributes.get("infectivityChangeFrom");
                     target.attributes.put("infectivityChangeFrom",currentInfectivity / (1-ARVInfectivityReduction));
+                    target.attributes.put("ARVStop",state.schedule.getTime() );
                 }
             });
         }

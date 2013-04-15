@@ -44,6 +44,8 @@ public class GUI extends GUIState{
         super(state);     
         addSimpactGraphs();
         addAddAgentsPopup();
+        Console c = new Console(this);
+        c.setVisible(true);
     }
     
     public void start(){

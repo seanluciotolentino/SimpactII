@@ -32,35 +32,44 @@ public class SimpactII extends SimState {
     //class variables visualization
     public Continuous2D world = new Continuous2D(1.0, 100, 100); //for geographic placement
     public Network network = new Network(false); //the sexual network
-    
     //class variables for the population
     private int population = 0; //default
     private Bag subPopulationTypes = new Bag(); //perhaps these three can be reduced to one for simplicity...???
     private Bag subPopulationNum = new Bag();
     private Bag subPopulationArgs = new Bag();
-    public double numberOfYears = 30;
+    public double numberOfYears = 10;
     public Distribution degrees = new PowerLawDistribution(2.0, 1);
     public Distribution ages = new UniformDistribution(15.0, 65.0);//new PowerLawDistribution(1.0,3);
     public Distribution relationshipDurations = new UniformDistribution(1.0, 10.0);//new BetaDistribution(0.1,0.9);
-    
     //class variables for main operations
     public TimeOperator timeOperator = new TimeOperator();
     public InfectionOperator infectionOperator = new InfectionOperator();
-    
     //class variables for data management
     public Bag myRelations = new Bag();
     public Bag myAgents = new Bag();
     public Bag myInterventions = new Bag();
 
-    //all class constructors:
-    public SimpactII(long seed) {
-        super(seed); //your run of Simpact II can reseed the RNG
-    }
-
+    //ALL CLASS CONSTRUCTORS
+    /**
+     * Default constructor: Reseeds the random number generator with the current
+     * time of the system and does not add any agents (this allows a user to
+     * specify agents to add – if no agents are added to the simulation, 1000
+     * basic agents are added).
+     */
     public SimpactII() {
         this(System.currentTimeMillis()); //... or not reseed RNG
     }
 
+    /**
+     * Reseeds the random number generator with <b>seed</b>.
+     */
+    public SimpactII(long seed) {
+        super(seed); //your run of Simpact II can reseed the RNG
+    }
+
+    /**
+     * Adds <b>population</b> number of Agents (basic agents)
+     */
     public SimpactII(int population) {
         //a call to this constructor reseeds RNG and creates "population" number
         //of basic agents
@@ -68,7 +77,20 @@ public class SimpactII extends SimState {
         addAgents(Agent.class, population);
     }
 
-    //all class methods go here:
+    /**
+     * Reseeds the random number generator with <b>seed</b> and adds
+     * <b>population</b> number of Agents (basic agents)
+     */
+    public SimpactII(long seed, int population) {
+        this(seed); //your run of Simpact II can reseed the RNG
+        addAgents(Agent.class, population);
+    }
+
+    //ALL CLASS METHODS GO BELOW
+    /**
+     * This method is called by the SimState main loop. To run the simulation,
+     * instead use the <b>run</b> method.
+     */
     public void start() {
         super.start();
 
@@ -88,7 +110,7 @@ public class SimpactII extends SimState {
         //schedule infection operator
         infectionOperator.preProcess(this);
         schedule.scheduleRepeating(schedule.EPOCH, 2, infectionOperator);
-        
+
         //anonymous class to schedule a stop
         schedule.scheduleOnce(52 * numberOfYears, new Steppable() {
             public void step(SimState state) {
@@ -97,11 +119,12 @@ public class SimpactII extends SimState {
         });
     }
 
-    /** Add N agents of type agentClass to the population. A HashMap<String,Object>
-     * may be provided if the agent class requires additional arguments. If none 
-     * are required or provided, the default constructor will be called.
-    */
-    public void addAgents(Class agentClass, int N, HashMap<String,Object> attr) {
+    /**
+     * Add N agents of type agentClass to the population. A
+     * HashMap<String,Object>
+     * may be provided if the agent class requires additional arguments.
+     */
+    public void addAgents(Class agentClass, int N, HashMap<String, Object> attr) {
         if (agentClass.isInstance(Agent.class)) {
             System.err.println("Can only add type Agent to population");
             System.exit(1);
@@ -111,30 +134,101 @@ public class SimpactII extends SimState {
         this.subPopulationArgs.add(attr);
         this.population += N; //add the number of agents to our population
     }
-    
-    /** Add N agents of type agentClass to the population. 
-    */
-    public void addAgents(Class agentClass, int number) {        
-        addAgents(agentClass, number, new HashMap<String,Object>());
+
+    /**
+     * Add N agents of type agentClass to the population.
+     */
+    public void addAgents(Class agentClass, int number) {
+        addAgents(agentClass, number, new HashMap<String, Object>());
     }
-    
-    public void addIntervention(Class c, double start, double spend){
+
+    /**
+     * Add an new intervention of type C with start time <b>start</b> and
+     * spending amount <b>spend</b>.
+     */
+    public void addIntervention(Class c, double start, double spend) {
         try {
-            Agent intervention = (Agent) c.getConstructor(new Class[]{double.class , double.class}).newInstance(start, spend);            
+            Intervention intervention = (Intervention) c.getConstructor(new Class[]{double.class, double.class}).newInstance(start, spend);
             this.myInterventions.add(intervention);
         } catch (Exception e) {
             throw new RuntimeException("Exception occurred while trying to add intervention " + c + "\n" + e);
-        }        
+        }
     }
-    public void addIntervention(Intervention i){
+
+    /**
+     * Add an intervention <b>i</b> that has already been initialized.
+     */
+    public void addIntervention(Intervention i) {
         this.myInterventions.add(i);
     }
 
+    /**
+     * Remove all the added agents from the lists.
+     */
+    public final void resetPopulations() {
+        subPopulationArgs.clear();
+        subPopulationNum.clear();
+        subPopulationTypes.clear();
+        population = 0;
+    }
+
+    /**
+     * Adds an edge to the network between <b>agent1</b> and <b>agent2</b>. If
+     * <b>duration</b> is 0, the next value from the relationship distribution
+     * will be drawn.
+     */
+    public void formRelationship(Agent agent1, Agent agent2, double duration) {
+        //if the agents didn't have anything to say about how long the relationship should last...
+        if (duration == 0) { //(indicates indifference from agents)
+            duration = relationshipDurations.nextValue();//...use the next value
+        }
+
+        //add the new relationship to the network
+        network.addEdge(agent1, agent2, duration);
+
+        //add this relationship to the relation data manager
+        myRelations.add(new Relationship(agent1, agent2,
+                schedule.getTime(), schedule.getTime() + duration));
+    }
+    
+    /**
+     * Removes the relation represented by the edge <b>e</b> from the network. 
+     * Both acting agents in the relationship are informed so that each are able
+     * to update their own number of partners counters.
+     */
+    public void dissolveRelationship(Edge e) {
+        Agent agent1 = (Agent) e.getFrom();
+        agent1.informDissolution();
+        Agent agent2 = (Agent) e.getTo();
+        agent2.informDissolution();
+        network.removeEdge(e);
+    }
+
+    /**
+     * Adds the attribute <b>key</b> to every agent with the values
+     * <b>value</b>.
+     */
+    public void addAttribute(String key, Object value) {
+        Bag agents = network.getAllNodes();
+        for (int i = 0; i < agents.size(); i++) { //add syphilis weeks infected attribute to every one
+            Agent agent = (Agent) agents.get(i);
+            agent.attributes.put(key, value);
+        }
+    }
+
+    /**
+     * Launch the GUI interpretation of this model.
+     */
+    public void launchGUI() {
+        new GUI(this);
+    }
+
+    //PRIVATE METHODS 
     private final void addPopulations() {
         //called at the beginning of the simulation to add agents
         int numSubPopulations = subPopulationTypes.size();
-        if (numSubPopulations<=0){ 
-            addAgents(Agent.class,1000); 
+        if (numSubPopulations <= 0) {
+            addAgents(Agent.class, 1000);
             numSubPopulations = 1;
         }
         for (int i = 0; i < numSubPopulations; i++) {
@@ -154,61 +248,48 @@ public class SimpactII extends SimState {
             throw new RuntimeException("Exception occurred while trying to add agent " + c + "\n" + e);
         }
     }
-    
-    public final void resetPopulations(){
-        subPopulationArgs.clear();
-        subPopulationNum.clear();
-        subPopulationTypes.clear();
-        population = 0;
-    }
 
-    public void formRelationship(Agent agent1, Agent agent2, double duration) {
-        //if the agents didn't have anything to say about how long the relationship should last...
-        if (duration == 0) { //(indicates indifference from agents)
-            duration = relationshipDurations.nextValue();//...use the next value
-        }
-
-        //add the new relationship to the network
-        network.addEdge(agent1, agent2, duration);
-
-        //add this relationship to the relation data manager
-        myRelations.add(new Relationship(agent1, agent2,
-                schedule.getTime(), schedule.getTime() + duration));
-    }
-
-    public void dissolveRelationship(Edge e) {
-        Agent agent1 = (Agent) e.getFrom();
-        agent1.informDissolution();
-        Agent agent2 = (Agent) e.getTo();
-        agent2.informDissolution();
-        network.removeEdge(e);
-    }
-    public void addAttribute(String key, Object value){
-        Bag agents = network.getAllNodes();
-        for(int i = 0 ; i < agents.size(); i++){ //add syphilis weeks infected attribute to every one
-            Agent agent = (Agent) agents.get(i);
-            agent.attributes.put(key, value);
-        }
-    }
-
-    //graph functions
+    //GRAPHING METHODS
+    /**
+     * Generate the age mixing scatter plot. This is a scatter of all
+     * relationships, with age of male along the y-axis, and age of the female
+     * along the x-axis.
+     */
     public final JFrame agemixingScatter() {
         return new AgeMixingScatter(this);
     }
 
+    /**
+     * Generate the demographics plot. This is a series of stacked bar charts
+     * denoting the distribution of ages at different time steps of the model.
+     */
     public final JFrame demographics() {
         return new Demographics(this);
     }
 
+    /**
+     * Generate the formed relations plot. This is a visual representation of
+     * the duration of relationships and the number of relationships at any
+     * given time.
+     */
     public final JFrame formedRelations() {
         return new FormedRelations(this);
     }
 
+    /**
+     * Generate the prevalence plot. This is a time series plot depicting
+     * prevalence of HIV, stratified by gender, over time. Incidence (raw number
+     * of cases each week) is displayed in a second graph.
+     */
     public final JFrame prevalence() {
         return new Prevalence(this);
     }
 
-    //CSV export methods
+    //CSV EXPORT METHODS
+    /**
+     * Generate a comma separated values (csv) file of all relationships which
+     * occurred in the simulation.
+     */
     public final void writeCSVRelations(String filename) {
         try {
             // Create file 
@@ -233,12 +314,17 @@ public class SimpactII extends SimState {
         }
     }
 
+    /**
+     * Generate a comma separated values (csv) file of the details of
+     * individuals within the population.
+     */
     public final void writeCSVPopulation(String filename) {
         try {
             // Create file 
             FileWriter fstream = new FileWriter(filename);
             BufferedWriter out = new BufferedWriter(fstream);
             out.write("personID,gender,age,timeOfInfection,timeOfBirth,timeOfDeath\n");
+            int now = (int) Math.min(this.schedule.getTime(), numberOfYears * 52);
             int numAgents = myAgents.size();
             for (int j = 0; j < numAgents; j++) {
                 Agent a = (Agent) myAgents.get(j);
@@ -246,7 +332,7 @@ public class SimpactII extends SimState {
                 if (a.weeksInfected <= 0) {
                     wi = 0;
                 } else {
-                    wi = (int) ((numberOfYears * 52) - a.weeksInfected);
+                    wi = (int) (now - a.weeksInfected);
                 }
 
                 out.write(a.hashCode() + "," + a.isMale() + "," + a.getAge() + "," + wi
@@ -260,6 +346,11 @@ public class SimpactII extends SimState {
         }
     }
 
+    /**
+     * Generate a comma separated values (csv) file of the time at which events
+     * occurred in the simulation. Currently the only event is infection, but
+     * will later include intervention events as well.
+     */
     public final void writeCSVEventCounter(String filename) {
         try {
             int now = (int) Math.min(numberOfYears * 52, schedule.getTime()); //determine if we are at the end of the simulation or in the middle
@@ -298,7 +389,7 @@ public class SimpactII extends SimState {
         }
     }
 
-    //getters and setters / inspectors for the GUI
+    //GETTERS AND SETTERS (for the GUI)
     public final int getPopulation() {
         return population;
     }
@@ -347,8 +438,7 @@ public class SimpactII extends SimState {
             public SimState newInstance(long seed, String[] args) {
                 try {
                     return state;//not actually a new instance! it's this instance!
-                } 
-                catch (Exception e) {
+                } catch (Exception e) {
                     throw new RuntimeException("Exception occurred while trying to construct the simulation \n" + e);
                 }
             }
@@ -366,7 +456,8 @@ public class SimpactII extends SimState {
 
     public static void main(String[] args) { //for running from the command line
         System.err.println("***Runing SimpactII with default values");
-        doLoop(SimpactII.class, args); //just some necessary java stuff -- running this will run default        
+        SimpactII s = new SimpactII();
+        s.run();
         System.exit(0);
     }
 }

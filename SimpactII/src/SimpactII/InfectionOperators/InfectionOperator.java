@@ -60,7 +60,8 @@ public class InfectionOperator implements Steppable{
             agent.setWeeksInfected(agent.getWeeksInfected() + 1);
 
             Bag partners = state.network.getEdges(agent,new Bag());
-            for(int j = 0 ; j < partners.size(); j++){
+            int numPartners = partners.size();
+            for(int j = 0 ; j < numPartners; j++){
                 Edge relationship = (Edge) partners.get(j);
                 Agent partner = (Agent) relationship.getOtherNode(agent);
 

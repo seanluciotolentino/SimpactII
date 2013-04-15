@@ -2,7 +2,9 @@ package SimpactII.With;
 
 import SimpactII.Agents.*;
 import SimpactII.InfectionOperators.*;
+import SimpactII.Interventions.*;
 import SimpactII.SimpactII;
+import SimpactII.TimeOperators.AIDSDeathTimeOperator;
 
 /**
  *
@@ -21,14 +23,16 @@ public class WithDefault {
     
     public static void main(String[] args) { //for running from the command line
         SimpactII s = new SimpactII();
-        s.addAgents(LocalAgent.class, 1000);
-        s.numberOfYears = 10;
-        s.infectionOperator = new InfectionOperator();//(0.03);
-        s.run(args);
-        s.agemixingScatter();
-        s.demographics();
+        s.addAgents(Agent.class, 1000);
+        s.numberOfYears = 50;
+        s.timeOperator = new AIDSDeathTimeOperator();
+        //s.addIntervention(HIVTestAndCounsel.class, 4.9, 2000);
+        //s.addIntervention(ARVTreatment.class, 5, 1000);
+        s.run();
+//        s.agemixingScatter();
+//        s.demographics();
         s.prevalence();
-        s.formedRelations();
+//        s.formedRelations();
         //s.writeCSVEventCounter("eventfile.csv");
         //System.exit(0);
     }

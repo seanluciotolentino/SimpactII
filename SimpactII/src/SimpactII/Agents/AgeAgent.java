@@ -38,20 +38,23 @@ public class AgeAgent extends Agent{
             System.exit(-2);
         }
     }
-    public boolean isLookingFor(Agent other){
+    public boolean isLookingFor(Agent other){        
+        return ageIsRight(other) && other.isSeeking(this);
+    }
+    public boolean isSeeking(Agent other){
+        return getPartners()<getDNP() && (isMale() ^ other.isMale()) && ageIsRight(other);
+    }
+    
+    public Agent replace(SimpactII state){
+        return new AgeAgent(state,attributes );
+    }
+    
+    public boolean ageIsRight(Agent other){
         boolean ageIsRight;
         if ( isMale() )
             ageIsRight = (getAge() - other.getAge() ) < offset + band && (getAge() - other.getAge() ) > offset - band ; 
         else
             ageIsRight = (other.getAge() - getAge() ) < offset + band && (other.getAge() - getAge() ) > offset - band ; 
-        
-        return ageIsRight && other.isSeeking(this);
-    }
-    public boolean isSeeking(Agent other){
-        return getPartners() < getDNP() && (isMale() ^ other.isMale());
-    }
-    
-    public Agent replace(SimpactII state){
-        return new AgeAgent(state,attributes );
+        return ageIsRight;
     }
 }
