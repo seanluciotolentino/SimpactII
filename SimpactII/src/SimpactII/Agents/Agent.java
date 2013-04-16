@@ -12,14 +12,14 @@ import sim.util.Double2D;
 /**
  *
  * @author Lucio Tolentino
- * 
- * Default Agent.  When created, an agent is given an age, a desired number of 
- * partners (DNP), and a gender from pre-specified distributions. Each step the 
+ *
+ * Default Agent. When created, an agent is given an age, a desired number of
+ * partners (DNP), and a gender from pre-specified distributions. Each step the
  * individual is ask if they are looking ("isLooking"), and iterates through the
- * other nodes to find who this node may be looking for ("isLookingFor").  The 
+ * other nodes to find who this node may be looking for ("isLookingFor"). The
  * third method, "isDesirable(Agent)" defines whether this agent wants to form a
- * relationship with the other.  
- * 
+ * relationship with the other.
+ *
  */
 public class Agent implements Steppable {
 
@@ -27,91 +27,140 @@ public class Agent implements Steppable {
     public int DNP; // = desired number of partners
     public boolean male;
     public double age;
-    public HashMap attributes = new HashMap<String,Object>(); //a place for any additional attributes
-    
+    public HashMap attributes = new HashMap<String, Object>(); //a place for any additional attributes
     //charateristics which change with time
     public int partners = 0;
     public int weeksInfected = 0;
-    
     //variables for keeping track in the simulation
     public Agent infector; //keep track of who infected me -- perhaps should be migrated to attributes???
     public Stoppable stoppable; //so that if individual dies, we can stop them in the schedule
     private double timeOfAddition;
     public double timeOfRemoval;
-    
     public String[] args;
 
     //basic constructor
-    public Agent(SimpactII state, HashMap<String,Object> attributes){        
+    public Agent(SimpactII state, HashMap<String, Object> attributes) {
         //assign random values from distribution
         this.DNP = Math.round((float) state.degrees.nextValue());
         this.male = state.random.nextDouble() <= 0.5; //default gender ratio
         this.age = state.ages.nextValue();
         this.attributes.putAll(attributes);
-        
+
         //add self to schedule and world
         stoppable = state.schedule.scheduleRepeating(this); //schedule variable inherited from SimState -- adds the agents to the schedule (their step method will be called at each time step)
         state.network.addNode(this);                //add to network
         state.myAgents.add(this);
         timeOfAddition = state.schedule.getTime();  //added now
-        timeOfRemoval  = Double.MAX_VALUE;          //removed at inf
+        timeOfRemoval = Double.MAX_VALUE;          //removed at inf
 
         //for GUI purposes assign a random location in the world
         Double2D location = new Double2D(state.world.getWidth() * state.random.nextDouble() - 0.5,
                 state.world.getHeight() * state.random.nextDouble());
         this.attributes.put("location", location);
-        state.world.setObjectLocation(this, location );
+        state.world.setObjectLocation(this, location);
         location.distance(location);
     }
 
     //methods here
-    public void step(SimState s) {//what should my agent do in a step?
+    /**
+     * Lets the agent perform the actions as he / she would in a week. 
+     * @param state
+     */
+    public void step(SimState s) {
         SimpactII state = (SimpactII) s; //cast state to a SimpactII (from SimState)
-                
+
         //go through other nodes, try to find partner
         Bag others = possiblePartners(state);
         int numOthers = others.size();
         for (int i = 0; i < numOthers; i++) {
             Agent other = (Agent) others.get(i);
-            if ( !isLooking() ) //if this agent isn't interested, don't keep looking
+            if (!isLooking()) //if this agent isn't interested, don't keep looking
+            {
                 return;
-            if ( isLookingFor(other) ) {
+            }
+            if (isLookingFor(other)) {
                 double d1 = this.informRelationship(other);
                 double d2 = other.informRelationship(this);
-                state.formRelationship(this,other, Math.max(d1, d2));
+                state.formRelationship(this, other, Math.max(d1, d2));
             }
         } //for end
     }//step end
-    
-    //With whom do I form relationships
-    public Bag possiblePartners(SimpactII state){
+
+    /**
+     * Specifies which agents this agent is interested in forming a relationship
+     * with. The default agent is interested in all other agents. The default 
+     * agent is interested in all other agents.
+     *
+     * @param state
+     * @return Bag of possible partners
+     */
+    public Bag possiblePartners(SimpactII state) {
         return state.network.getAllNodes();
     }
-    
-    //How do I form relationships?
+    /**
+     * Base check to see if this agent is interested in forming relationships
+     * this round.
+     *
+     * @return boolean
+     */
+    public boolean isLooking() { //if not looking we don't have to check everyone
+        return getPartners() < getDNP();
+    }
+    /**
+     * When going through the bag of possible partners, ask this agent if he /
+     * she is looking for the agent <b>other</b>.
+     *
+     * @param other
+     * @return boolean value of whether this agent is looking for <b>other</b>
+     */
     public boolean isLookingFor(Agent other) {
         return other.isSeeking(this) && this.isSeeking(other); //second predicate indicates a heterosexual relationship
     }
-    public boolean isLooking(){ //if not looking we don't have to check everyone
-        return getPartners() < getDNP();
-    }
-    public boolean isSeeking(Agent other) { //indicates the question, "do you want to have a relationship with other?"
+
+    /**
+     * Called when another agent wants to form a relationship with this agent.
+     * Indicates the question, "does this agent want to have a relationship with
+     * <b>other</b> agent?"
+     *
+     * @param other
+     * @return boolean
+     */
+    public boolean isSeeking(Agent other) {
         return isLooking() && isMale() ^ other.isMale();
     }
-    
-    //What do I do when they are formed?
+
+    /**
+     * When a relationship is formed this method is called in order to increment
+     * this agents number of partners. If the agent has a preference for the
+     * length of the relationship, a non-zero double will be returned, else zero
+     * will be returned.
+     *
+     * @param other
+     * @return double indicating preference of relationship length
+     */
     public double informRelationship(Agent other) {
         this.partners++;
         return 0; //0 means no preference as to the length
     }
-    public void informDissolution(){
+    /*
+     * Decrement number of partners.
+     */
+
+    public void informDissolution() {
         this.partners--;
     }
-    //When and how am I removed from the system?
-    public boolean remove(){
+    /*
+     * Return whether the removal criteria of the agent has been met.
+     */
+
+    public boolean remove() {
         return false; //use the default for the time operator
     }
-    public Agent replace(SimpactII state){
+    /*
+     * Returns an agent which replaces this agent after he/she has been removed.
+     */
+
+    public Agent replace(SimpactII state) {
         final Class c = this.getClass();
         try {
             return (Agent) c.getConstructor(new Class[]{SimpactII.class, HashMap.class}).newInstance(state, attributes);
@@ -120,19 +169,57 @@ public class Agent implements Steppable {
         }
     }
     //How am I displayed to the world?
-    public String toString(){ return this.getClass() + "" + this.hashCode(); }    
-    
+
+    public String toString() {
+        return this.getClass() + "" + this.hashCode();
+    }
+
     //getters and setters
-    public void setInfector(Agent agent){ infector = agent;  }
-    public Agent getInfector(){ return infector;  }
-    public int getWeeksInfected() { return weeksInfected; }
-    public void setWeeksInfected(int wi) { weeksInfected = wi; }
-    public int getDNP() { return DNP; }
-    public void setDNP(int DNP) { this.DNP = DNP;}
-    public boolean isMale() {  return male; }
-    public double getAge() { return age; }
-    public void setAge(double age) { this.age = age; }
-    public int getPartners() { return partners; }
-    public void setPartners(int partners) { this.partners = partners; }
-    public double getTimeOfAddition() { return timeOfAddition;   }
+    public void setInfector(Agent agent) {
+        infector = agent;
+    }
+
+    public Agent getInfector() {
+        return infector;
+    }
+
+    public int getWeeksInfected() {
+        return weeksInfected;
+    }
+
+    public void setWeeksInfected(int wi) {
+        weeksInfected = wi;
+    }
+
+    public int getDNP() {
+        return DNP;
+    }
+
+    public void setDNP(int DNP) {
+        this.DNP = DNP;
+    }
+
+    public boolean isMale() {
+        return male;
+    }
+
+    public double getAge() {
+        return age;
+    }
+
+    public void setAge(double age) {
+        this.age = age;
+    }
+
+    public int getPartners() {
+        return partners;
+    }
+
+    public void setPartners(int partners) {
+        this.partners = partners;
+    }
+
+    public double getTimeOfAddition() {
+        return timeOfAddition;
+    }
 }

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.Agents;
 
 import SimpactII.SimpactII;
@@ -11,7 +7,11 @@ import sim.util.Double2D;
 
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentino
+ * 
+ * This kind of agent forms relationships with other agents that are only within
+ * a certain radius of him/herself. 
+ * 
  */
 public class LocalAgent extends Agent{
     
@@ -27,22 +27,27 @@ public class LocalAgent extends Agent{
             System.exit(-2);
         }
     }
-    
+    /*
+     * Returns partners that are within <b>radius</b> of the agent. <b>Radius</b>
+     * is a settable attribute of the agent.
+     */
     public Bag possiblePartners(SimpactII state){
         Double2D myLocation = (Double2D) this.attributes.get("location");
         return state.world.getObjectsWithinDistance(myLocation, radius); //this may include other objects within the radius -- don't think this is a problem but it could be...?
     }
-    
-    public boolean isLookingFor(Agent other){        
-        return isSeeking(other) && other.isSeeking(this);
-    }
-    
+    /*
+     * Returns whether <b>other</b> agent is within the radius of this agent. 
+     * Additionally, the default isLooking() and heterosexual preference must be
+     * met. 
+     */
     public boolean isSeeking(Agent other){
         Double2D myLocation = (Double2D) this.attributes.get("location");
         Double2D otherLocation = (Double2D) other.attributes.get("location");
         return (myLocation.distance(otherLocation) < radius) && (isMale() ^ other.isMale()) && isLooking();
     }
-    
+    /*
+     * Returns the radius attribute for this agent.
+     */
     public double getRadius(){ return radius; }
     
 }
