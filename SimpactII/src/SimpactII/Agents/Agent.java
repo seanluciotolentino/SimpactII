@@ -24,7 +24,7 @@ import sim.util.Double2D;
 public class Agent implements Steppable {
 
     //descriptive class variables:
-    public int DNP; // = desired number of partners
+    public double DNP; // = desired number of partners
     public boolean male;
     public double age;
     public HashMap attributes = new HashMap<String, Object>(); //a place for any additional attributes
@@ -40,11 +40,15 @@ public class Agent implements Steppable {
 
     //basic constructor
     public Agent(SimpactII state, HashMap<String, Object> attributes) {
+        //grab attributes
+        this.attributes.put("genderRatio", 0.5);
+        this.attributes.putAll(attributes); //this might replace gender ratio
+        
         //assign random values from distribution
-        this.DNP = Math.round((float) state.degrees.nextValue());
-        this.male = state.random.nextDouble() <= 0.5; //default gender ratio
+        this.DNP = (double) state.degrees.nextValue();
+        this.male = state.random.nextDouble() <= (double) this.attributes.get("genderRatio"); //default gender ratio
         this.age = state.ages.nextValue();
-        this.attributes.putAll(attributes);
+        
 
         //add self to schedule and world
         stoppable = state.schedule.scheduleRepeating(this); //schedule variable inherited from SimState -- adds the agents to the schedule (their step method will be called at each time step)
@@ -163,7 +167,9 @@ public class Agent implements Steppable {
     public Agent replace(SimpactII state) {
         final Class c = this.getClass();
         try {
-            return (Agent) c.getConstructor(new Class[]{SimpactII.class, HashMap.class}).newInstance(state, attributes);
+            Agent a = (Agent) c.getConstructor(new Class[]{SimpactII.class, HashMap.class}).newInstance(state, attributes);
+            a.age = 15;
+            return a;
         } catch (Exception e) {
             throw new RuntimeException("Exception occurred while trying to replace agent " + c + "\n" + e.getMessage());
         }
@@ -191,7 +197,7 @@ public class Agent implements Steppable {
         weeksInfected = wi;
     }
 
-    public int getDNP() {
+    public double getDNP() {
         return DNP;
     }
 

@@ -37,9 +37,9 @@ public class AgeMixingScatter extends JFrame{
         for(int j = 0 ; j < numRelations; j++){
             Relationship r = (Relationship) state.myRelations.get(j);
             if (r.getAgent1().isMale())
-                data.add(r.getAgent2Age(), r.getAgent1Age()); 
+                data.add(r.getAgent2AgeAtFormation(), r.getAgent1AgeAtFormation()); 
             else
-                data.add(r.getAgent1Age(), r.getAgent2Age()); 
+                data.add(r.getAgent1AgeAtFormation(), r.getAgent2AgeAtFormation()); 
         }
         
         //add the series to the collection?

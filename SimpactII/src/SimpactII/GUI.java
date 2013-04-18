@@ -29,12 +29,6 @@ public class GUI extends GUIState{
     public JFrame displayFrame;
     public ContinuousPortrayal2D worldPortrayal = new ContinuousPortrayal2D();
     public NetworkPortrayal2D networkPortrayal = new NetworkPortrayal2D();
-            
-    public static void main(String[] args){
-        GUI vid = new GUI();
-        Console c = new Console(vid);
-        c.setVisible(true);
-    }
     
     public GUI() {
         this(new SimpactII() );     
@@ -124,7 +118,7 @@ public class GUI extends GUIState{
         //agents combo box
         Object[] agents = new Object[] {
             Agent.class, 
-            AgeAgent.class, 
+            BandAgeAgent.class, 
             MSMAgent.class,
             PTRAgent.class, 
             SexWorkerAgent.class,
@@ -236,6 +230,12 @@ public class GUI extends GUIState{
         displayFrame = null;
         display = null;
                 
+    }
+                    
+    public static void main(String[] args){
+        GUI vid = new GUI();
+        //Console c = new Console(vid);
+        //c.setVisible(true);
     }
     
 }

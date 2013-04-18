@@ -38,7 +38,7 @@ public class SimpactII extends SimState {
     private Bag subPopulationNum = new Bag();
     private Bag subPopulationArgs = new Bag();
     public double numberOfYears = 10;
-    public Distribution degrees = new PowerLawDistribution(2.0, 1);
+    public Distribution degrees = new PowerLawDistribution(2.0);
     public Distribution ages = new UniformDistribution(15.0, 65.0);//new PowerLawDistribution(1.0,3);
     public Distribution relationshipDurations = new UniformDistribution(1.0, 10.0);//new BetaDistribution(0.1,0.9);
     //class variables for main operations
@@ -131,7 +131,7 @@ public class SimpactII extends SimState {
         }
         this.subPopulationTypes.add(agentClass);
         this.subPopulationNum.add(N);
-        this.subPopulationArgs.add(attr);
+        this.subPopulationArgs.add(attr.clone());
         this.population += N; //add the number of agents to our population
     }
 
@@ -288,23 +288,25 @@ public class SimpactII extends SimState {
     //CSV EXPORT METHODS
     /**
      * Generate a comma separated values (csv) file of all relationships which
-     * occurred in the simulation.
+     * occurred in the simulation. Heading is
+     * 
+     * maleAge,femaleAge,start,end
      */
     public final void writeCSVRelations(String filename) {
         try {
             // Create file 
             FileWriter fstream = new FileWriter(filename);
             BufferedWriter out = new BufferedWriter(fstream);
-            out.write("maleAge,femaleAge,start,end\n");
+            out.write("male,female,start,end\n");
             int numRelations = myRelations.size();
             for (int j = 0; j < numRelations; j++) {
                 Relationship r = (Relationship) myRelations.get(j);
                 if (r.getAgent1().isMale()) {
-                    out.write(r.getAgent1().getAge() + "," + r.getAgent2().getAge());
+                    out.write(r.getAgent1().hashCode()+ "," + r.getAgent2().hashCode());
                 } else {
-                    out.write(r.getAgent2().getAge() + "," + r.getAgent1().getAge());
+                    out.write(r.getAgent2().hashCode() + "," + r.getAgent1().hashCode());
                 }
-                out.write(r.getStart() + "," + r.getEnd() + "\n");
+                out.write("," + r.getStart() + "," + r.getEnd() + "\n");
             }
 
             //Close the output stream
@@ -316,14 +318,16 @@ public class SimpactII extends SimState {
 
     /**
      * Generate a comma separated values (csv) file of the details of
-     * individuals within the population.
+     * individuals within the population. Heading is:
+     * 
+     * personID,gender,age,timeOfInfection,timeOfBirth,timeOfDeath
      */
     public final void writeCSVPopulation(String filename) {
         try {
             // Create file 
             FileWriter fstream = new FileWriter(filename);
             BufferedWriter out = new BufferedWriter(fstream);
-            out.write("personID,gender,age,timeOfInfection,timeOfBirth,timeOfDeath\n");
+            out.write("personID,gender,age,timeOfInfection,timeOfBirth,timeOfDeath,attributes\n");
             int now = (int) Math.min(this.schedule.getTime(), numberOfYears * 52);
             int numAgents = myAgents.size();
             for (int j = 0; j < numAgents; j++) {
@@ -336,7 +340,8 @@ public class SimpactII extends SimState {
                 }
 
                 out.write(a.hashCode() + "," + a.isMale() + "," + a.getAge() + "," + wi
-                        + "," + a.getTimeOfAddition() + "," + a.timeOfRemoval + "\n");
+                        + "," + a.getTimeOfAddition() + "," + a.timeOfRemoval + "," +
+                        a.attributes + "\n");
             }
 
             //Close the output stream
@@ -349,7 +354,9 @@ public class SimpactII extends SimState {
     /**
      * Generate a comma separated values (csv) file of the time at which events
      * occurred in the simulation. Currently the only event is infection, but
-     * will later include intervention events as well.
+     * will later include intervention events as well.Heading is:
+     * 
+     * timestep,infections
      */
     public final void writeCSVEventCounter(String filename) {
         try {

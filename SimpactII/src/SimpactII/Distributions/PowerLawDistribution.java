@@ -16,20 +16,21 @@ public class PowerLawDistribution implements Distribution{
     public double cut;
     private MersenneTwisterFast mtf;
     
-    public PowerLawDistribution(double alpha, double cut){
+    public PowerLawDistribution(double alpha){
         this.mtf = new MersenneTwisterFast();
         this.alpha = alpha;
-        this.cut = cut;               
+        //this.cut = cut;               
     }
     
-    public PowerLawDistribution(double alpha, double cut, long seed){
+    public PowerLawDistribution(double alpha, long seed){
         this.mtf = new MersenneTwisterFast(seed);
-        this.alpha = alpha;
-        this.cut = cut;               
+        this.alpha = 1 / alpha;
+        //this.cut = cut;               
     }
 
     public double nextValue() {
-        return sim.util.distribution.Distributions.nextPowLaw(alpha, cut, mtf);
+        //return sim.util.distribution.Distributions.nextPowLaw(alpha, cut, mtf);
+        return Math.pow(mtf.nextDouble() , alpha);
     }
     
     

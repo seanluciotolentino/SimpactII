@@ -1,6 +1,6 @@
 package SimpactII.With;
 
-import SimpactII.Agents.AgeAgent;
+import SimpactII.Agents.BandAgeAgent;
 import SimpactII.Agents.Agent;
 import SimpactII.Agents.PTRAgent;
 import SimpactII.SimpactII;
@@ -26,7 +26,7 @@ public class WithAgeMixing {
         HashMap ageAttributes = new HashMap<String,Object>();
         ageAttributes.put("band", 2.0);
         ageAttributes.put("offset", -5.0);
-        model.addAgents(AgeAgent.class, 100, ageAttributes );
+        model.addAgents(BandAgeAgent.class, 100, ageAttributes );
         model.numberOfYears = 10;        
         model.ages = new UniformDistribution(15,65);
         model.relationshipDurations = new UniformDistribution(1,5);

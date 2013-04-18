@@ -3,6 +3,7 @@ package SimpactII.Agents;
 import SimpactII.SimpactII;
 import SimpactII.With.WithAgeMixing;
 import SimpactII.With.WithPTRAgents;
+import ec.util.MersenneTwisterFast;
 import java.util.HashMap;
 
 /**
@@ -18,13 +19,13 @@ import java.util.HashMap;
  * stays the same as the default.
  * 
  */
-public class AgeAgent extends Agent{
+public class BandAgeAgent extends Agent{
     
     //default values of an AgeAgent
     private double band = 5;
     private double offset = 5;
         
-    public AgeAgent(SimpactII state, HashMap<String,Object> attributes){  
+    public BandAgeAgent(SimpactII state, HashMap<String,Object> attributes){  
         super(state,attributes);
         
         //set defaults if not yet set
@@ -46,7 +47,9 @@ public class AgeAgent extends Agent{
     }
     
     public Agent replace(SimpactII state){
-        return new AgeAgent(state,attributes );
+        Agent a = new BandAgeAgent(state,attributes );
+        a.age = 15;
+        return a;
     }
     
     public boolean ageIsRight(Agent other){
