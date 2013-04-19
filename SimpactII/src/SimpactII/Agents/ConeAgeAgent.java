@@ -22,30 +22,30 @@ import java.util.HashMap;
 public class ConeAgeAgent extends Agent{
     
     //default values of an AgeAgent
-    private double probMult;
-    private double prefAD;
+    private double probabilityMultiplier;
+    private double preferredAgeDifference;
     protected MersenneTwisterFast rng;
-    private double adGrowth;
+    private double preferredAgeDifferenceGrowth;
     private double adDispersion;
     
         
     public ConeAgeAgent(SimpactII state, HashMap<String,Object> attributes){  
         super(state,attributes);
         rng = state.random;
-        prefAD = this.isMale()? 3: -3;
-        probMult = -0.1;
-        adGrowth = 2;
+        preferredAgeDifference = this.isMale()? 3: -3;
+        probabilityMultiplier = -0.1;
+        preferredAgeDifferenceGrowth = 2;
         adDispersion = 0.01;
         
         //set defaults if not yet set
         try{
-            if ( attributes.get("probMult") != null )
-                probMult = (double) attributes.get("probMult");
-            if ( attributes.get("prefAD") != null )
-                prefAD =  (double) attributes.get("prefAD");
-                prefAD = this.isMale()? prefAD: -prefAD;
-            if ( attributes.get("adGrowth") != null )
-                adGrowth = (double) attributes.get("adGrowth");
+            if ( attributes.get("probabilityMultiplier") != null )
+                probabilityMultiplier = (double) attributes.get("probMult");
+            if ( attributes.get("preferredAgeDifference") != null )
+                preferredAgeDifference =  (double) attributes.get("prefAD");
+                preferredAgeDifference = this.isMale()? preferredAgeDifference: -preferredAgeDifference;
+            if ( attributes.get("preferredAgeDifferenceGrowth ") != null )
+                preferredAgeDifferenceGrowth = (double) attributes.get("adGrowth");
             if ( attributes.get("adDispersion") != null )
                 adDispersion = (double) attributes.get("adDispersion");
         }catch(Exception e){
@@ -71,7 +71,7 @@ public class ConeAgeAgent extends Agent{
         double meanAge = ((this.age + other.age)/2)-15;
         
         //return  probability < Math.exp(probMult * Math.abs(ageDifference - (prefAD*meanAge*adGrowth) ) );        
-        return probability < Math.exp(probMult * (Math.abs(ageDifference - (prefAD*meanAge*adGrowth) ) /
-                                            (prefAD*meanAge*adDispersion)) );
+        return probability < Math.exp(probabilityMultiplier * (Math.abs(ageDifference - (preferredAgeDifference*meanAge*preferredAgeDifferenceGrowth) ) /
+                                            (preferredAgeDifference*meanAge*adDispersion)) );
     }
 }

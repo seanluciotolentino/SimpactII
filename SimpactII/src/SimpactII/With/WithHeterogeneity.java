@@ -6,16 +6,12 @@ package SimpactII.With;
 
 import SimpactII.Agents.*;
 import SimpactII.DataStructures.Relationship;
-import SimpactII.GUI;
 import SimpactII.SimpactII;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-import sim.util.Bag;
-import sim.util.Distributions.Distribution;
 import sim.util.Distributions.PowerLawDistribution;
-import sim.util.Distributions.UniformDistribution;
 
 /**
  *
@@ -28,44 +24,26 @@ public class WithHeterogeneity {
         SimpactII s = new SimpactII();
         s.numberOfYears =5;
         s.relationshipDurations = new PowerLawDistribution(-1.1);
-        s.infectionOperator.initialNumberInfected = 0;
+        s.infectionOperator.initialNumberInfected = 80;
         HashMap attri = new HashMap<String,Object>();
-        int population = 1000;
-        
-        //add male agents
-//        attri.put("prefAD", 0.6);
-//        attri.put("probMult", -0.1);
-//        attri.put("adGrowth", 2.0);
-//        attri.put("adDispersion", 0.025);
-//        attri.put("genderRatio", 0.5);
-//        s.addAgents(ConeAgeAgent.class, population/2,attri);
-        
-        //add female agents
-//        attri.clear();
-//        attri.put("band", 5.0);
-//        attri.put("offset", 5.0);
-        int p = 200;
+
+        //make my heterogenous population
         attri.put("genderRatio", 0.0);
-        s.addAgents(Agent.class, p,attri); //add 200 lady agents
+        s.addAgents(Agent.class, 300,attri); //add 200 lady agents
         attri.put("genderRatio", 0.5);
         attri.put("adAge", 15.0);
-        s.addAgents(ExtremeAgeAgent.class, p,attri);
+        s.addAgents(ExtremeAgeAgent.class, 700,attri);
         attri.put("adAge", 25.0);
-        s.addAgents(ExtremeAgeAgent.class, p,attri);
+        s.addAgents(ExtremeAgeAgent.class, 200,attri);
         attri.put("adAge", 35.0);
-        s.addAgents(ExtremeAgeAgent.class, p,attri);
+        s.addAgents(ExtremeAgeAgent.class, 200,attri);
         attri.put("adAge", 45.0);
-        s.addAgents(ExtremeAgeAgent.class, p,attri);
+        s.addAgents(ExtremeAgeAgent.class, 200,attri);
         attri.put("adAge", 55.0);
-        s.addAgents(ExtremeAgeAgent.class, p,attri);
-        
-//        s.launchGUI();
-//        return;
-        
+        s.addAgents(ExtremeAgeAgent.class, 200,attri);
+                        
         //run the model
         s.run();
-        //s.agemixingScatter();
-        //return;
         
         //write files
         String filename;
@@ -112,10 +90,16 @@ public class WithHeterogeneity {
         
         //go through relationships and make the data
         int numAgents = s.myAgents.size();
+        double malePop = 0.0;
+        double femalePop = 0.0;
         int[] hiv = new int[8];
         int[] ad = new int[8];
         for (int j = 0; j < numAgents; j++) {
             Agent a = (Agent) s.myAgents.get(j);
+            if(a.isMale())
+                malePop+=1;
+            else
+                femalePop+=1;
 
             //find agents group
             int group;
@@ -147,11 +131,16 @@ public class WithHeterogeneity {
                 hiv[group]++;
         }
         //after going through population, go through int[] and write to file
-        double pop = population/2.0; //gender stratifed population
-        for(int g =0 ; g <= 7 ; g++){
-            prevHIV.write(g + "," + (hiv[g]/pop) + "\n");
-            prevAD.write(g + "," + (ad[g]/pop) + "\n");
+        for(int g =0 ; g <= 7 ; g+=2){
+            prevHIV.write(g + "," + (hiv[g]/malePop) + "\n");
+            prevAD.write(g + "," + (ad[g]/malePop) + "\n");
         }
+        for(int g =1 ; g <= 7 ; g+=2){
+            prevHIV.write(g + "," + (hiv[g]/femalePop) + "\n");
+            prevAD.write(g + "," + (ad[g]/femalePop) + "\n");
+        }
+        
+        
         prevHIV.flush();
         prevHIV.close();
         prevAD.flush();

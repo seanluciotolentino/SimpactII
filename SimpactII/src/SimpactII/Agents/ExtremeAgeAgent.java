@@ -33,7 +33,7 @@ public class ExtremeAgeAgent extends ConeAgeAgent{
         if (isMale())
             return !(this.age>adAge ^ ad); //male only does AD once he's past the AD age
         else
-            return this.age < 44;// || super.rng.nextDouble() < 0.1; //females looking for any age
+            return this.age <100;// || super.rng.nextDouble() < 0.1; //females looking for any age
 
     }
     public double getADAge(){ return adAge; }
