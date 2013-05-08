@@ -130,12 +130,12 @@ public class GeoMasonTest extends SimState {
             agents.addGeometry(new MasonGeometry(a.getGeometry()));
             schedule.scheduleRepeating(a);
         }
-        schedule.scheduleRepeating(new Steppable() {
-            public void step(SimState state) {
-                System.out.println("========================");
-            }
-        }, 1, 1);
-        System.out.println("num agents = " + NUM_AGENTS);
+//        schedule.scheduleRepeating(new Steppable() {
+//            public void step(SimState state) {
+//                System.out.println("========================");
+//            }
+//        }, 1, 1);
+//        System.out.println("num agents = " + NUM_AGENTS);
     }
 
     @Override

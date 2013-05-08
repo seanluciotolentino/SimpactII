@@ -59,7 +59,7 @@ public class Agent implements Steppable {
         double oldX = location.getX();
         double oldY = location.getY();
         
-        System.out.println("X: " + (newX - oldX) + " Y: " + (newY - oldY));
+        //System.out.println("X: " + (newX - oldX) + " Y: " + (newY - oldY));
         
         AffineTransformation translate = 
                 AffineTransformation.translationInstance(newX - oldX, newY - oldY);
@@ -77,7 +77,7 @@ public class Agent implements Steppable {
         
         //if away from home, move back
         if(!atHome){ 
-            System.out.print("Agent " + this.hashCode() + " is moving home: ");
+            //System.out.print("Agent " + this.hashCode() + " is moving home: ");
             
             setLocation(home);
             atHome = true;
@@ -101,11 +101,11 @@ public class Agent implements Steppable {
                 
         //have agent move to the next closest district
         atHome = false;
-        System.out.print("Agent " + this.hashCode() + " wants to move ");
+        //System.out.print("Agent " + this.hashCode() + " wants to move ");
         double travelDistance = 1; //1 degree is approx 111km ~ 69 miles?
         Bag nearestDistricts = state.magisterialDistricts.getObjectsWithinDistance(location,travelDistance);
         if (nearestDistricts.isEmpty()) { 
-            System.out.println("but can't -- no nearby districts");
+            //System.out.println("but can't -- no nearby districts");
             return; //you don't get to migrate
         } 
         
@@ -113,10 +113,10 @@ public class Agent implements Steppable {
         MasonGeometry nearestDistrict = (MasonGeometry) nearestDistricts.get(state.random.nextInt(nearestDistricts.size()));
         setLocation(nearestDistrict.geometry.getInteriorPoint() );
         
-        System.out.print("AND IS! -- to " + ((AttributeValue) nearestDistrict.getAttribute("NAME_2")).getValue()
-                + ", " + ((AttributeValue) nearestDistrict.getAttribute("NAME_1")).getValue()
-                + ", " + ((AttributeValue) nearestDistrict.getAttribute("NAME_0")).getValue());
-        System.out.println(". Location was " + home + " and now is " + location);
+//        System.out.print("AND IS! -- to " + ((AttributeValue) nearestDistrict.getAttribute("NAME_2")).getValue()
+//                + ", " + ((AttributeValue) nearestDistrict.getAttribute("NAME_1")).getValue()
+//                + ", " + ((AttributeValue) nearestDistrict.getAttribute("NAME_0")).getValue());
+//        System.out.println(". Location was " + home + " and now is " + location);
         
         
         
