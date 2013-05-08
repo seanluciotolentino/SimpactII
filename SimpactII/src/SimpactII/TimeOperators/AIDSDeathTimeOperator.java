@@ -30,12 +30,7 @@ public class AIDSDeathTimeOperator extends TimeOperator{
             }
             
             
-            boolean x = agent.weeksInfected > (52*yearsTillDeath) + lifeProlong; //death after eight years
-            if (x){
-                System.out.println("Agent " + agent.hashCode() + " removed for"
-                        + " AIDS death. Weeks infected = " + agent.weeksInfected);
-            }
-            return x;
+            return agent.weeksInfected > (52*yearsTillDeath) + lifeProlong; //death after eight years
         }
         return super.remove(agent);
     }
