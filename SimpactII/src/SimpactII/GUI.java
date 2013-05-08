@@ -35,7 +35,9 @@ public class GUI extends GUIState{
     }
     
     public GUI(SimState state){
-        super(state);     
+        super(state);
+        SimpactII s = (SimpactII) state;
+        s.numberOfYears = 50;
         addSimpactGraphs();
         addAddAgentsPopup();
         Console c = new Console(this);
