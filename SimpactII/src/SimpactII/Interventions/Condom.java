@@ -27,6 +27,10 @@ public class Condom implements Intervention{
     public double condomInfectivityReduction = 0.80;
     public double condomsUsedPerWeek = 2;
     
+    public Condom(){
+        this(1,0);
+    }
+    
     public Condom( double startYear , double spend ) {
         this.start = startYear*52; //convert from year to weeks
         this.spend = spend;
