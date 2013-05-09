@@ -26,6 +26,7 @@ public class Condom implements Intervention{
     //default class variables -- do not change here, change in your script
     public double condomInfectivityReduction = 0.80;
     public double condomsUsedPerWeek = 2;
+    public int howMany = 10; //how many do you want / can you give to an individual at one time
     
     public Condom(){
         this(1,0);
@@ -67,6 +68,7 @@ public class Condom implements Intervention{
                 @Override
                 public void step(SimState state) {
                     //revert infectivity
+                    target.attributes.put("isCondomUser",false);
                     double currentInfectivity = (double) target.attributes.get("infectivityChangeTo");
                     target.attributes.put("infectivityChangeTo",currentInfectivity / (1-condomInfectivityReduction));
                     currentInfectivity = (double) target.attributes.get("infectivityChangeFrom");
@@ -101,7 +103,7 @@ public class Condom implements Intervention{
 
     private int howManyCondoms(Agent target) {
         //this is a constant amount (how many can you give an individual at one time?
-        return 1000; 
+        return howMany; 
     }
     
 }

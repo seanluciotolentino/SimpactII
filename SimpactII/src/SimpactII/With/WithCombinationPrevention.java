@@ -5,6 +5,7 @@
 package SimpactII.With;
 
 import SimpactII.Agents.Agent;
+import SimpactII.InfectionOperators.InterventionInfectionOperator;
 import SimpactII.Interventions.*;
 import SimpactII.SimpactII;
 import ec.util.MersenneTwisterFast;
@@ -21,19 +22,27 @@ import ec.util.MersenneTwisterFast;
  */
 public class WithCombinationPrevention {
 
-    private final int BUDGET = 1000;
     private MersenneTwisterFast rand = new MersenneTwisterFast();
+    private final int BUDGET = 5000;    
+    private int holdAtOneTime = 20;
+    private int numberOfYears = 10;
+    private double averageOver = 10.0;
 
     public static void main(String[] args) {
+        WithCombinationPrevention wcp = new WithCombinationPrevention();
+    }
+    
+    public WithCombinationPrevention(){
         //set up parameters to optimize
         double[][] variables = {
-            {1, 100, 2, 100, 3, 100}, //init
+            {2, 50, 2.5, 50, 3, 50}, //init
             {0.1, 50, 0.1, 50, 0.1, 50}, //delta
             {1, 0, 1, 0, 1, 0}, //min
             {10, 1000, 10, 1000, 10, 1000},};   //max
         
         //run the SA
         double[] solved = SimulatedAnnealing(variables);
+        //double[] solved = {0, 0, 0, 0, 0, 0};
         System.err.println("======");
         for(int i = 0; i < solved.length; i++){
             System.err.println(solved[i]);
@@ -50,6 +59,8 @@ public class WithCombinationPrevention {
         cost = output[0];
         prev = output[1];
         System.out.println("SOLVED cost: " + cost + " prevalence: " + prev);
+        
+        //graphs of differences
         SimpactII s1 = setup(variables[0]);
         s1.run();
         s1.prevalence();
@@ -61,9 +72,8 @@ public class WithCombinationPrevention {
         
     }
 
-    public static double goodness(double[] output) {
+    public double goodness(double[] output) {
         //how good is the output from the model?
-        int BUDGET = 1000;
         double cost = output[0];
         double prev = output[1];
         if (cost > BUDGET) {
@@ -73,30 +83,36 @@ public class WithCombinationPrevention {
         }
     }
     
-    public static SimpactII setup(double[] args){
+    private SimpactII setup(double[] args){
         SimpactII s = new SimpactII();
-        s.numberOfYears = 10;
+        s.numberOfYears = numberOfYears;
         
         //set up condom interventions
+        
         Condom condom0 = new Condom(args[0],args[1]);
         condom0.condomInfectivityReduction = 0.99;
+        condom0.howMany = holdAtOneTime;
         s.addIntervention(condom0);
 
         Condom condom1 = new Condom(args[2],args[3]);
+        condom1.howMany = holdAtOneTime;
         condom1.condomInfectivityReduction = 0.99;
         s.addIntervention(condom1);
 
         Condom condom2 = new Condom(args[4],args[5]);
+        condom2.howMany = holdAtOneTime;
         condom2.condomInfectivityReduction = 0.99;
         s.addIntervention(condom2);
+        
+        s.infectionOperator = new InterventionInfectionOperator();
         return s;
     }
 
-    public static double[] run(double[] args) {
+    public double[] run(double[] args) {
         SimpactII s = setup(args);
 
         //run the model
-        double averageOver = 10.0;
+        
         double prev = 0;
         for(int i = 0; i < averageOver; i++){
             s.run();
@@ -111,7 +127,7 @@ public class WithCombinationPrevention {
         return new double[]{cost, prev};
     }
 
-    public static double metric(SimpactII state) {
+    public double metric(SimpactII state) {
         //returns the prevalence at the end of the simulation
         double now = Math.min(state.numberOfYears * 52, state.schedule.getTime()); //determine if we are at the end of the simulation or in the middle
         double t = now; //time of interest
@@ -141,8 +157,7 @@ public class WithCombinationPrevention {
         return totalInfections / population;
     }
 
-    public static double[] SimulatedAnnealing(double[][] variables) {
-        MersenneTwisterFast rand = new MersenneTwisterFast();
+    public double[] SimulatedAnnealing(double[][] variables) {
         //initialization
         double[] parameters = variables[0];
         double[] delta = variables[1];
@@ -186,7 +201,7 @@ public class WithCombinationPrevention {
 
     }
 
-    public static double probability(double e, double enew, double T) {
+    public double probability(double e, double enew, double T) {
         if (enew < e) {
             return 1.0;
         } else {
@@ -194,15 +209,14 @@ public class WithCombinationPrevention {
         }
     }
 
-    public static double temperature(int k) {
+    public double temperature(int k) {
         //%this function determines the temperature of the system at step k. This
         //%should be changed relative to the problem and kMax.
         //return Math.pow(.96, k);
         return Math.pow(.8, k);
     }
 
-    public static double[] neighbor(double[] state, double[] delta, double[] min, double[] max, int k) {
-        MersenneTwisterFast rand = new MersenneTwisterFast();
+    public double[] neighbor(double[] state, double[] delta, double[] min, double[] max, int k) {
         int selection = rand.nextInt(state.length);
 
         //allows a change (in either direction) relative to temperature of s
