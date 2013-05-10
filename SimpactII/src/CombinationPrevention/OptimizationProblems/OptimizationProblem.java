@@ -13,7 +13,7 @@ import SimpactII.SimpactII;
  */
 public class OptimizationProblem {
     
-    protected int averageOver = 2;
+    protected int averageOver = 10;
     private final int BUDGET = 5000; 
     private String metric;
     double[] X0;
@@ -35,20 +35,25 @@ public class OptimizationProblem {
         double avg = 0;
         for(int j = 0; j < averageOver; j++){
             s.run();
-            avg += goodness(s);
+           avg+= goodness(combination,s);
         }
+        //s.prevalence();
         return avg / averageOver;       
     };
 
     
-    public double goodness(SimpactII s) {
-        switch (metric){
-            case "totalInfections": return totalInfections(s);
-            case "DALYs": return DALYs(s);
-            case "orphanYearsAverted": return orphanYearsAverted(s);
-            case "multiComponent": return multiComponent(s);
-            default: return -1.0; //this shouldn't happen but Java requires the statement
-        }                
+    public double goodness(double[] args,SimpactII s) {
+        if((args[1] + args[3] + args[5])>BUDGET){
+            return Double.POSITIVE_INFINITY;
+        }else{
+            switch (metric){
+                case "totalInfections": return totalInfections(s);
+                case "DALYs": return DALYs(s);
+                case "orphanYearsAverted": return orphanYearsAverted(s);
+                case "multiComponent": return multiComponent(s);
+                default: return -1.0; //this shouldn't happen but Java requires the statement
+            }                
+        }
     }
 
     private double totalInfections(SimpactII s) {

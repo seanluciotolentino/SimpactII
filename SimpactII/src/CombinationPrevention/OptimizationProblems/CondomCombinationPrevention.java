@@ -24,7 +24,7 @@ public class CondomCombinationPrevention extends OptimizationProblem{
     public CondomCombinationPrevention(String metric){
         super(metric);        
         double[][] parameters = {
-            {2, 50, 2.5, 50, 3, 50},        //init
+            {2, 100, 2.5, 100, 3, 100},        //init
             {0.1, 50, 0.1, 50, 0.1, 50},    //delta
             {1, 0, 1, 0, 1, 0},             //min
             {10,1000,10,1000,10,1000}};    //max
@@ -40,10 +40,11 @@ public class CondomCombinationPrevention extends OptimizationProblem{
         s.infectionOperator = new InterventionInfectionOperator();
         
         //set up condom interventions
-        Condom c = new Condom();
-        c.condomInfectivityReduction = 0.99;        
         for(int i = 0; i <= 4; i+=2){
-            c.start = combination[i];
+            Condom c = new Condom();
+            c.condomInfectivityReduction = 0.99;   
+            c.howMany = 104;
+            c.start = combination[i] * 54;
             c.spend = combination[i+1];
             s.addIntervention(c);
         }

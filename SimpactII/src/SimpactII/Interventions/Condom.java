@@ -35,11 +35,12 @@ public class Condom implements Intervention{
     public Condom( double startYear , double spend ) {
         this.start = startYear*52; //convert from year to weeks
         this.spend = spend;
-        this.condoms = costCurve(spend);
     }
 
     @Override
-    public void step(SimState s) {
+    public void step(SimState s) { 
+        //System.out.println(" ========CONDOM INTERVENTION " + s.schedule.getTime());
+        this.condoms = costCurve(spend);
         SimpactII state = (SimpactII) s;
         state.addAttribute("isCondomUser", false);
         

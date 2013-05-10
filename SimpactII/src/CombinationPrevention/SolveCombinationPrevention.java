@@ -8,6 +8,7 @@ import CombinationPrevention.Heuristics.SimulatedAnnealing;
 import CombinationPrevention.Heuristics.Heuristic;
 import CombinationPrevention.OptimizationProblems.CondomCombinationPrevention;
 import CombinationPrevention.OptimizationProblems.OptimizationProblem;
+import SimpactII.SimpactII;
 
 /**
  *
@@ -24,12 +25,13 @@ public class SolveCombinationPrevention {
         
         //run it
         double[] solution = h.solve(ccp);
+        //double[] solution = ccp.getX0();
         
         //display metrics
         System.err.println("======");
         for(int i = 0; i < solution.length; i++){
             System.err.println(solution[i]);
         }
+        System.out.println("Total Infections: " + ccp.run(solution));
     }
-    
 }

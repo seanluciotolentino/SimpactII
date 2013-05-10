@@ -16,6 +16,7 @@ import ec.util.MersenneTwisterFast;
 public class SimulatedAnnealing implements Heuristic{
     
     private MersenneTwisterFast rand;
+    private int kMax = 100;
     
     public SimulatedAnnealing() {
         rand = new MersenneTwisterFast();
@@ -35,7 +36,6 @@ public class SimulatedAnnealing implements Heuristic{
         double bestEnergy , energy ;
         bestEnergy = energy = op.run(X0);
         int k = 0;
-        int kMax = 10;
         
         //mainloop
         while (energy > 0.001 && k < kMax) {
@@ -55,6 +55,7 @@ public class SimulatedAnnealing implements Heuristic{
             if (energy < bestEnergy) {
                 bestState = state.clone();
                 bestEnergy = energy;
+                System.out.println("============NEW BEST: " + bestEnergy);
             }
             k = k + 1;
         }
@@ -74,15 +75,15 @@ public class SimulatedAnnealing implements Heuristic{
     private double temperature(int k) {
         //%this function determines the temperature of the system at step k. This
         //%should be changed relative to the problem and kMax.
-        //return Math.pow(.96, k);
-        return Math.pow(.8, k);
+        return Math.pow(.96, k);
+        //return Math.pow(.8, k);
     }
 
     private double[] neighbor(double[] state, double[] delta, double[] min, double[] max, int k) {
         int selection = rand.nextInt(state.length);
 
         //allows a change (in either direction) relative to temperature of s
-        int ca = (int) Math.ceil(4 * temperature(k)); //4 is max step size?
+        int ca = (int) Math.ceil(10 * temperature(k)); //4 is max step size?
         int direction = rand.nextBoolean()? 1: -1;
         double changeamount = direction * ca;
 

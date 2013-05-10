@@ -77,7 +77,7 @@ public class WithCombinationPrevention {
         double cost = output[0];
         double prev = output[1];
         if (cost > BUDGET) {
-            return Integer.MAX_VALUE; //infinity
+            return Double.POSITIVE_INFINITY; //infinity
         } else {
             return prev;
         }
