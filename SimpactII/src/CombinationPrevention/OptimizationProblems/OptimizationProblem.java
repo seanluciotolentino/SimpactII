@@ -1,0 +1,84 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package CombinationPrevention.OptimizationProblems;
+
+import SimpactII.Agents.Agent;
+import SimpactII.SimpactII;
+
+/**
+ *
+ * @author visiting_researcher
+ */
+public class OptimizationProblem {
+    
+    protected int averageOver = 2;
+    private final int BUDGET = 5000; 
+    private String metric;
+    double[] X0;
+    double[] delta;
+    double[] LB;
+    double[] UB;
+    
+    public OptimizationProblem(String metric){
+        this.metric = metric;
+    }
+        
+    public SimpactII setup(double[] combination){
+        return new SimpactII(); //this should be overwritten
+    }
+    
+    public double run(double[] combination){
+        //average over some runs and return
+        SimpactII s = setup(combination);
+        double avg = 0;
+        for(int j = 0; j < averageOver; j++){
+            s.run();
+            avg += goodness(s);
+        }
+        return avg / averageOver;       
+    };
+
+    
+    public double goodness(SimpactII s) {
+        switch (metric){
+            case "totalInfections": return totalInfections(s);
+            case "DALYs": return DALYs(s);
+            case "orphanYearsAverted": return orphanYearsAverted(s);
+            case "multiComponent": return multiComponent(s);
+            default: return -1.0; //this shouldn't happen but Java requires the statement
+        }                
+    }
+
+    private double totalInfections(SimpactII s) {
+        //returns the total infections which occurred in the simualtion
+        double totalInfections = 0;
+
+        //go through agents and tally
+        int numAgents = s.myAgents.size();
+        for (int i = 0; i < numAgents; i++) {
+            Agent agent = (Agent) s.myAgents.get(i);
+            totalInfections += (agent.weeksInfected>=1)? 1:0; //add if you were infected
+        }
+        return totalInfections;
+    }
+
+    private double DALYs(SimpactII s) {
+        return -1.0;
+    }
+
+    private double orphanYearsAverted(SimpactII s) {
+        return -1.0;
+    }
+
+    private double multiComponent(SimpactII s) {
+        return -1.0;
+    }
+        
+    public double[] getX0() { return X0; }
+    public double[] getDelta() { return delta; }        
+    public double[] getUB() { return UB; }
+    public double[] getLB() { return LB; }
+    
+}
