@@ -10,7 +10,7 @@ import CombinationPrevention.OptimizationProblems.*;
 public class SolveCombinationPrevention {
 
     public static void main(String[] args) throws InterruptedException {
-        String metric = "deathsAverted";
+        String metric = "DALYs";
         
         //set optimization problem
         OptimizationProblem ccp = new CondomCombinationPrevention(metric);
@@ -20,8 +20,8 @@ public class SolveCombinationPrevention {
         Heuristic h = new Genetic();
 
         //run it
-        double[] solution = h.solve(ccp);
-        //double[] solution = ccp.getX0();
+        //double[] solution = h.solve(ccp);
+        double[] solution = ccp.getX0();
         //double[] solution = new double[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
 
         //display metrics

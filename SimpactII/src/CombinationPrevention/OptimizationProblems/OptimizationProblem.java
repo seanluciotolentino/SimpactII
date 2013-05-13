@@ -69,8 +69,6 @@ public class OptimizationProblem {
                     return deathsAverted(s);
                 case "DALYs":
                     return DALYs(s);
-                case "orphanYearsAverted":
-                    return orphanYearsAverted(s);
                 case "multiComponent":
                     return multiComponent(s);
                 default:
@@ -114,11 +112,18 @@ public class OptimizationProblem {
     }
 
     private double DALYs(SimpactII s) {
-        return -1.0;
-    }
+        //returns the total number of deaths which occured in the simulation
+        double DALYs = 0;
 
-    private double orphanYearsAverted(SimpactII s) {
-        return -1.0;
+        //go through agents and tally
+        int numAgents = s.myAgents.size();
+        for (int i = 0; i < numAgents; i++) {
+            Agent agent = (Agent) s.myAgents.get(i);
+            if( agent.timeOfRemoval>=Double.MAX_VALUE || 
+                    agent.getAge() > s.timeOperator.getMAX_AGE()  ){ continue;}
+            DALYs += (s.timeOperator.getMAX_AGE() - agent.getAge() ); 
+        }
+        return DALYs;
     }
 
     private double multiComponent(SimpactII s) {
