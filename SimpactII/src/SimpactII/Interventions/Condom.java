@@ -29,7 +29,7 @@ public class Condom implements Intervention{
     public int howMany = 10; //how many do you want / can you give to an individual at one time
     
     public Condom(){
-        this(1,0);
+        this(0,0);
     }
     
     public Condom( double startYear , double spend ) {

@@ -1,37 +1,34 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package CombinationPrevention;
 
-import CombinationPrevention.Heuristics.SimulatedAnnealing;
-import CombinationPrevention.Heuristics.Heuristic;
-import CombinationPrevention.OptimizationProblems.CondomCombinationPrevention;
-import CombinationPrevention.OptimizationProblems.OptimizationProblem;
-import SimpactII.SimpactII;
+import CombinationPrevention.Heuristics.*;
+import CombinationPrevention.OptimizationProblems.*;
 
 /**
  *
  * @author visiting_researcher
  */
 public class SolveCombinationPrevention {
+
+    public static void main(String[] args) throws InterruptedException {
+        String metric = "deathsAverted";
         
-    public static void main(String[] args){
         //set optimization problem
-        OptimizationProblem ccp = new CondomCombinationPrevention("totalInfections");
-        
+        OptimizationProblem ccp = new CondomCombinationPrevention(metric);
+
         //set heuristic
-        Heuristic h = new SimulatedAnnealing();
-        
+        //Heuristic h = new SimulatedAnnealing();
+        Heuristic h = new Genetic();
+
         //run it
         double[] solution = h.solve(ccp);
         //double[] solution = ccp.getX0();
-        
+        //double[] solution = new double[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+
         //display metrics
         System.err.println("======");
-        for(int i = 0; i < solution.length; i++){
+        for (int i = 0; i < solution.length; i++) {
             System.err.println(solution[i]);
         }
-        System.out.println("Total Infections: " + ccp.run(solution));
+        System.out.println(metric + ": " + ccp.run(solution));
     }
 }
