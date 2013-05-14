@@ -1,8 +1,9 @@
-package SimpactII.Interventions;
+package CombinationPrevention.Interventions;
 
 import SimpactII.Agents.Agent;
 import SimpactII.Agents.MSMAgent;
 import SimpactII.Agents.SexWorkerAgent;
+import SimpactII.Interventions.Intervention;
 import SimpactII.SimpactII;
 import sim.engine.SimState;
 import sim.util.Bag;
@@ -11,7 +12,7 @@ import sim.util.Bag;
  *
  * @author visiting_researcher
  */
-public class MaleCircumcisionCP implements Intervention{
+public class MaleCircumcision implements Intervention{
     //settable parameters
     private String target;
     private double circumcisions;
@@ -20,9 +21,10 @@ public class MaleCircumcisionCP implements Intervention{
     //parameters that are constant for CP paper
     public double start = 2.0*52;
     public double circumcisionInfectivityReduction = 0.6;
+    private double costPerCircumcision = 50;
     
     
-    public MaleCircumcisionCP(String target, double circumcisions, double recruitment){
+    public MaleCircumcision(String target, double circumcisions, double recruitment){
         this.target = target;
         this.circumcisions = circumcisions;
         this.recruitment = recruitment;
@@ -55,7 +57,7 @@ public class MaleCircumcisionCP implements Intervention{
 
     @Override
     public double getSpend() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return circumcisions * costPerCircumcision;
     }
     
     protected Bag findAgents(SimpactII state) {

@@ -1,5 +1,7 @@
 package CombinationPrevention.OptimizationProblems;
 
+import CombinationPrevention.Interventions.Condom;
+import CombinationPrevention.Interventions.MaleCircumcision;
 import SimpactII.Agents.*;
 import SimpactII.InfectionOperators.InterventionInfectionOperator;
 import SimpactII.Interventions.*;
@@ -59,13 +61,14 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
         s.addAttribute("isCondomUser", false); //must be added to use CondomCP -- come up with a better solution later?
         String[] targets = new String[] {"generalPopulation","msm","sexWorker","young","highRisk"};
         for(int i = 0; i< targets.length; i++)
-            s.addIntervention( new CondomCP(targets[i], args[17+i], args[16+i+2]));
+            s.addIntervention( new Condom(targets[i], args[17+i], args[16+i+2]));
         
         //MC
         targets = new String[] {"generalPopulation","msm","young","highRisk"};
         for(int i = 0; i< targets.length; i++)
-            s.addIntervention( new MaleCircumcisionCP(targets[i], args[9+i], args[16+i+2]));        
+            s.addIntervention( new MaleCircumcision(targets[i], args[9+i], args[16+i+2]));        
         
+        //Test and treat
         
         return s;
     }

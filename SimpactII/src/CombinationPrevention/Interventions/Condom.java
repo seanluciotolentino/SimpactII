@@ -1,6 +1,7 @@
-package SimpactII.Interventions;
+package CombinationPrevention.Interventions;
 
 import SimpactII.Agents.*;
+import SimpactII.Interventions.Intervention;
 import SimpactII.SimpactII;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -13,7 +14,7 @@ import sim.util.Bag;
  * The Condom distribution campaign used in the combination prevention paper.
  * 
  */
-public class CondomCP implements Intervention {
+public class Condom implements Intervention {
     
     //settable parameters
     private String target;
@@ -29,7 +30,7 @@ public class CondomCP implements Intervention {
     private double condomsUsedPerWeek = 2; //2 sex acts
     private double condomInfectivityReduction = 0.80;
     
-    public CondomCP(String target, double condoms, double interval){
+    public Condom(String target, double condoms, double interval){
         this.target = target;
         this.condomsPerInterval = (int) condoms;
         this.interval = (int) interval;

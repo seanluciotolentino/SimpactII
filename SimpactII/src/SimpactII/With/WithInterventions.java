@@ -4,6 +4,7 @@
  */
 package SimpactII.With;
 
+import CombinationPrevention.Interventions.Condom;
 import SimpactII.Agents.*;
 import SimpactII.InfectionOperators.*;
 import SimpactII.Interventions.*;
@@ -22,7 +23,7 @@ public class WithInterventions {
         SimpactII s = new SimpactII();
         s.numberOfYears = 50;
         s.infectionOperator = new InterventionInfectionOperator();
-        CondomCP ccp = new CondomCP("young",5000,1);
+        Condom ccp = new Condom("young",5000,1);
         ccp.howMany = 20;
         s.addIntervention(ccp);
         s.run();
