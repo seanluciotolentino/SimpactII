@@ -21,7 +21,7 @@ public class MSMAgent extends Agent{
     }
     
     public boolean isLookingFor(Agent other){
-        return other.isSeeking(this) && other.isMale();
+        return other.isSeeking(this) && other.isMale() && !other.equals(this);//(avoid forming relationship with self)
     }
     public boolean isSeeking(Agent other){
         return getPartners() < getDNP() && ( other.isMale() );
