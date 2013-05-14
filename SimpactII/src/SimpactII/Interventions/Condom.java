@@ -48,6 +48,7 @@ public class Condom implements Intervention{
         int c = 0;
         while( c < condoms){
             final Agent target = findAgent(state);
+            if(target == null){ break; }
             int howMany = howManyCondoms(target);
             if((boolean) target.attributes.get("isCondomUser")){
                 c+=howMany; //this would be wastage I guess
@@ -95,7 +96,7 @@ public class Condom implements Intervention{
         return (spend /0.05); //perhaps overly simplistic right now
     }
     
-    private Agent findAgent(SimpactII state){
+    protected Agent findAgent(SimpactII state){
         //this is a random targeting implementation
         //this may find same person twice -- for now this is okay and reflects
         //the reality in which it is sometimes difficult to recruit new individuals

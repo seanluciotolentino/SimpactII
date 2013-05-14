@@ -13,7 +13,8 @@ public class SolveCombinationPrevention {
         String metric = "DALYs";
         
         //set optimization problem
-        OptimizationProblem ccp = new CondomCombinationPrevention(metric);
+        //OptimizationProblem op = new CondomCombinationPrevention(metric);
+        OptimizationProblem op = new MultipleCombinationPrevention(metric);
 
         //set heuristic
         //Heuristic h = new SimulatedAnnealing();
@@ -21,7 +22,7 @@ public class SolveCombinationPrevention {
 
         //run it
         //double[] solution = h.solve(ccp);
-        double[] solution = ccp.getX0();
+        double[] solution = op.getX0();
         //double[] solution = new double[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
 
         //display metrics
@@ -29,6 +30,6 @@ public class SolveCombinationPrevention {
         for (int i = 0; i < solution.length; i++) {
             System.err.println(solution[i]);
         }
-        System.out.println(metric + ": " + ccp.run(solution));
+        System.out.println(metric + ": " + op.run(solution));
     }
 }

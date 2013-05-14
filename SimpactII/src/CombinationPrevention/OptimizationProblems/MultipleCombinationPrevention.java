@@ -1,25 +1,22 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package CombinationPrevention.OptimizationProblems;
 
-import CombinationPrevention.OptimizationProblems.OptimizationProblem;
-import SimpactII.Agents.Agent;
+import SimpactII.Agents.*;
 import SimpactII.InfectionOperators.InterventionInfectionOperator;
 import SimpactII.Interventions.Condom;
 import SimpactII.SimpactII;
 import SimpactII.TimeOperators.AIDSDeathTimeOperator;
 
-
-
 /**
  *
- * @author visiting_researcher
+ * @author Lucio Tolentino
+ * 
+ * Combination Prevention optimization problem for multiple HIV prevention
+ * programs. Every intervention starts at year 2 (week 2*52 = 104).  
+ * 
  */
-public class CondomCombinationPrevention extends OptimizationProblem{
-    
-    public CondomCombinationPrevention(String metric){
+public class MultipleCombinationPrevention extends OptimizationProblem{
+
+    public MultipleCombinationPrevention(String metric){
         super(metric);        
         double[][] parameters = {
             {2, 100, 2.5, 100, 3, 100},        //init
@@ -33,10 +30,19 @@ public class CondomCombinationPrevention extends OptimizationProblem{
     }
     
     public SimpactII setup(double[] combination) {
+        //basic simulation stuff        
         SimpactII s = new SimpactII();
         s.numberOfYears = 10;
         s.timeOperator = new AIDSDeathTimeOperator();
         s.infectionOperator = new InterventionInfectionOperator();
+        
+        //heterogenous population stuff
+        int population = 1000; //make this larger when running actual simulations?
+        s.addAgents(SexWorkerAgent.class, (int) (population * 0.04));
+        s.addAgents(MSMAgent.class, (int) (population * 0.04));
+        s.addAgents(BiAgent.class, (int) (population * 0.04));
+        s.addAgents(BandAgeAgent.class, population - s.getPopulation()); //the rest are band age agents
+        
         
         //set up condom interventions
         for(int i = 0; i <= 4; i+=2){
@@ -49,4 +55,6 @@ public class CondomCombinationPrevention extends OptimizationProblem{
         }
         return s;
     }
+
+
 }
