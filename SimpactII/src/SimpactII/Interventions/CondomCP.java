@@ -3,6 +3,7 @@ package SimpactII.Interventions;
 import SimpactII.Agents.*;
 import SimpactII.SimpactII;
 import sim.engine.SimState;
+import sim.engine.Steppable;
 import sim.util.Bag;
 
 /**
@@ -12,7 +13,7 @@ import sim.util.Bag;
  * The Condom distribution campaign used in the combination prevention paper.
  * 
  */
-public class CondomCP extends Condom {
+public class CondomCP implements Intervention {
     
     //settable parameters
     private String target;
@@ -24,18 +25,56 @@ public class CondomCP extends Condom {
     private double weeklyEmployeeSalary = 150;//$150 ~ R1250, the weekly income of an NGO employee
     private double numWeeks = 8.0 * 52; //from year 2 to 10
     private double costOfCondom = 0.05;
+    public int howMany = 10;
+    private double condomsUsedPerWeek = 2; //2 sex acts
+    private double condomInfectivityReduction = 0.80;
     
-    public CondomCP(String target, int condoms, int interval){
+    public CondomCP(String target, double condoms, double interval){
         this.target = target;
-        this.condomsPerInterval = condoms;
-        this.interval = interval;
+        this.condomsPerInterval = (int) condoms;
+        this.interval = (int) interval;
     }
 
     @Override
     public void step(SimState s) {
-        //System.out.println("===========" + s.schedule.getTime() + "=======");
-        this.spend = condomsPerInterval*costOfCondom;
-        super.step(s);
+        SimpactII state = (SimpactII) s;
+        
+        //for each condom, find a person and reduce their infectivity for a while
+        int c = 0;
+        while( c < condomsPerInterval){
+            final Agent target = findAgent(state);
+            if(target == null){ break; }
+            if((boolean) target.attributes.get("isCondomUser")){
+                c+=howMany; //this would be wastage I guess
+                continue;   //don't reduce infectivity anymore
+            }else{
+                target.attributes.put("isCondomUser",true);
+            }
+                
+            //change the TO and FROM infectivity
+            double currentInfectivity = (double) target.attributes.get("infectivityChangeTo");
+            target.attributes.put("infectivityChangeTo",currentInfectivity * (1-condomInfectivityReduction)) ;
+            
+            currentInfectivity = (double) target.attributes.get("infectivityChangeFrom");
+            target.attributes.put("infectivityChangeFrom",currentInfectivity * (1-condomInfectivityReduction)) ;
+            
+            //schedule a step to change it back after the target has used all condoms
+            double partners = Math.max(1, target.partners);
+            double willRunOutIn = howMany / (condomsUsedPerWeek * partners); //partners actually changes but this is a good proxy I think
+            state.schedule.scheduleOnceIn(willRunOutIn, new Steppable() {
+                @Override
+                public void step(SimState state) {
+                    //revert infectivity
+                    target.attributes.put("isCondomUser",false);
+                    double currentInfectivity = (double) target.attributes.get("infectivityChangeTo");
+                    target.attributes.put("infectivityChangeTo",currentInfectivity / (1-condomInfectivityReduction));
+                    currentInfectivity = (double) target.attributes.get("infectivityChangeFrom");
+                    target.attributes.put("infectivityChangeFrom",currentInfectivity / (1-condomInfectivityReduction));
+                }
+            });
+            //
+            c+=howMany;
+        }//end while
         s.schedule.scheduleOnceIn(interval, this);
     }
 

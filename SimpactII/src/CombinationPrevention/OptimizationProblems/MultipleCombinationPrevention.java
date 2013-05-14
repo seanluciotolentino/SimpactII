@@ -2,7 +2,7 @@ package CombinationPrevention.OptimizationProblems;
 
 import SimpactII.Agents.*;
 import SimpactII.InfectionOperators.InterventionInfectionOperator;
-import SimpactII.Interventions.Condom;
+import SimpactII.Interventions.*;
 import SimpactII.SimpactII;
 import SimpactII.TimeOperators.AIDSDeathTimeOperator;
 
@@ -19,17 +19,28 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
     public MultipleCombinationPrevention(String metric){
         super(metric);        
         double[][] parameters = {
-            {2, 100, 2.5, 100, 3, 100},        //init
-            {0.1, 50, 0.1, 50, 0.1, 50},    //delta
-            {1, 0, 1, 0, 1, 0},             //min
-            {10,5000,10,5000,10,5000}};    //max
+            //init:
+            {0,1,2, 3,4,5,  6,7,8,      //test and treat (0-8)
+                
+             9,10,  11,12,  13,14,  15,16,         //MC (9-14)
+             
+             17,18,  19,20,  21,22,  23,24,  25,26},//condom (15-24)
+            
+            //delta:
+            {0.1, 50, 0.1, 50, 0.1, 50},   
+            
+            //min
+            {1, 0, 1, 0, 1, 0},            
+            
+            //max
+            {10,5000,10,5000,10,5000}};    
         this.X0 = parameters[0];
         this.delta = parameters[1];
         this.LB = parameters[2];
         this.UB = parameters[3];
     }
     
-    public SimpactII setup(double[] combination) {
+    public SimpactII setup(double[] args) {
         //basic simulation stuff        
         SimpactII s = new SimpactII();
         s.numberOfYears = 10;
@@ -43,16 +54,19 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
         s.addAgents(BiAgent.class, (int) (population * 0.04));
         s.addAgents(BandAgeAgent.class, population - s.getPopulation()); //the rest are band age agents
         
+        //intervention stuff    
+        //condom
+        s.addAttribute("isCondomUser", false); //must be added to use CondomCP -- come up with a better solution later?
+        String[] targets = new String[] {"generalPopulation","msm","sexWorker","young","highRisk"};
+        for(int i = 0; i< targets.length; i++)
+            s.addIntervention( new CondomCP(targets[i], args[17+i], args[16+i+2]));
         
-        //set up condom interventions
-        for(int i = 0; i <= 4; i+=2){
-            Condom c = new Condom();
-            c.condomInfectivityReduction = 0.99;   
-            c.howMany = 104;
-            c.start = combination[i] * 54;
-            c.spend = combination[i+1];
-            s.addIntervention(c);
-        }
+        //MC
+        targets = new String[] {"generalPopulation","msm","young","highRisk"};
+        for(int i = 0; i< targets.length; i++)
+            s.addIntervention( new MaleCircumcisionCP(targets[i], args[9+i], args[16+i+2]));        
+        
+        
         return s;
     }
 

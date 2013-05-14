@@ -1,36 +1,33 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimpactII.Interventions;
 
 import SimpactII.Agents.Agent;
+import SimpactII.Agents.MSMAgent;
+import SimpactII.Agents.SexWorkerAgent;
 import SimpactII.SimpactII;
 import sim.engine.SimState;
-import sim.engine.Steppable;
 import sim.util.Bag;
 
 /**
  *
  * @author visiting_researcher
  */
-public class MaleCircumcision implements Intervention{
+public class MaleCircumcisionCP implements Intervention{
+    //settable parameters
+    private String target;
+    private double circumcisions;
+    private double recruitment;
     
-    //necessary class variables
-    public double start;
-    public double spend;
-    public double circumcisionsPerformed;
+    //parameters that are constant for CP paper
+    public double start = 2.0*52;
+    public double circumcisionInfectivityReduction = 0.6;
     
-    //default class variables
-    public double circumcisionInfectivityReduction = 0.65;
-    public double circumcisionCost = 50; //one circumcision costs about 50 USD
     
-    public MaleCircumcision( double startYear , double spend ) {
-        this.start = startYear*52; //convert from year to weeks
-        this.spend = spend;
-        this.circumcisionsPerformed = spend / circumcisionCost;
+    public MaleCircumcisionCP(String target, double circumcisions, double recruitment){
+        this.target = target;
+        this.circumcisions = circumcisions;
+        this.recruitment = recruitment;
     }
-
+    
     @Override
     public void step(SimState s) {
         SimpactII state = (SimpactII) s;
@@ -38,10 +35,7 @@ public class MaleCircumcision implements Intervention{
         //find males
         state.addAttribute("circumcised", false);
         Bag uncircumcisedMales = findAgents(state);
-        int circumcisionsToPerform = (int) Math.min(uncircumcisedMales.size() , circumcisionsPerformed);
-        
-        //System.out.println("-----------------------MCC " + state.schedule.getTime() + "----");
-        //System.out.println("number to treat = " + circumcisionsToPerform);
+        int circumcisionsToPerform = (int) Math.min(uncircumcisedMales.size() , circumcisions);
         
         //circumcise those that you can
         for(int i = 0; i < circumcisionsToPerform ; i++){
@@ -56,14 +50,14 @@ public class MaleCircumcision implements Intervention{
 
     @Override
     public double getStart() {
-        return this.start;
+        return start;
     }
 
     @Override
     public double getSpend() {
-        return this.spend;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     protected Bag findAgents(SimpactII state) {
         //I assume it's not too difficult to find young men... admittedly this is a weak assumption
         Bag agents = state.network.getAllNodes();
@@ -71,10 +65,27 @@ public class MaleCircumcision implements Intervention{
         int numAgents = agents.size();
         for(int i = 0; i < numAgents; i++){
             Agent agent = (Agent) agents.get(i);
-            if ( agent.isMale() )
+            if ( agent.isMale() && isTarget(agent) )
                 uncircumcisedMales.add( agent ); 
         }
         return uncircumcisedMales;
     }
+
+    private boolean isTarget(Agent agent) {
+            switch (target) {
+                case "generalPopulation":
+                    return true;
+                case "msm":
+                    return agent.getClass() == MSMAgent.class;
+                case "young":
+                    return agent.getAge() <= 25;
+                case "highRisk":
+                    return agent.partners > 1;
+                default:
+                    return false; //this shouldn't happen but Java requires the statement
+            }
+    }
+
+
     
 }

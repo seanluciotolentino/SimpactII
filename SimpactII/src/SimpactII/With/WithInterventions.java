@@ -22,7 +22,7 @@ public class WithInterventions {
         SimpactII s = new SimpactII();
         s.numberOfYears = 50;
         s.infectionOperator = new InterventionInfectionOperator();
-        Condom ccp = new CondomCP("young",5000,1);
+        CondomCP ccp = new CondomCP("young",5000,1);
         ccp.howMany = 20;
         s.addIntervention(ccp);
         s.run();
