@@ -34,6 +34,7 @@ public class TestAndTreat implements Intervention {
     private final double timeTillNormalInfectivity = 4;
     private final double ARVInfectivityReduction = 0.96;
     private final double costOfTreatment = 500/52.0; //cost of ART per week
+    private final double costOfTest = 1.0;
     
     //class variables
     private int patientsOnTreatment = 0;
@@ -74,7 +75,7 @@ public class TestAndTreat implements Intervention {
 
     @Override
     public double getSpend() {        
-        return treatmentTime*costOfTreatment ; //???
+        return treatmentTime*costOfTreatment + (costOfTest * numTests * numWeeks); //???
     }
 
     /**

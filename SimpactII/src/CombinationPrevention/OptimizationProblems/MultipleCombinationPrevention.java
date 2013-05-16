@@ -16,15 +16,15 @@ import sim.util.Distributions.PowerLawDistribution;
  * 
  */
 public class MultipleCombinationPrevention extends OptimizationProblem{
+    
+    private int population;
 
-    public MultipleCombinationPrevention(String metric){
+    public MultipleCombinationPrevention(String metric, int population){
         super(metric);        
         double[][] parameters = {
             //init:
             {0,1,2, 3,4,5,  6,7,8,      //test and treat (0-8)
-                
              9,  10,  11,  12,         //MC (9-14)
-             
              13,14,  15,16,  17,18,  19,20,  21,22},//condom (15-24)
             
             //delta:
@@ -39,6 +39,7 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
         this.delta = parameters[1];
         this.LB = parameters[2];
         this.UB = parameters[3];
+        this.population = population;
     }
     
     public SimpactII setup(double[] args) {
@@ -49,12 +50,11 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
         s.timeOperator = new AIDSDeathTimeOperator();
         s.infectionOperator = new InterventionInfectionOperator();
         
-        //heterogenous population stuff
-        int population = 1000; //make this larger when running actual simulations?
+        //heterogenous population stuff        
         s.addAgents(SexWorkerAgent.class, (int) (population * 0.04));
         s.addAgents(MSMAgent.class, (int) (population * 0.04));
         s.addAgents(BiAgent.class, (int) (population * 0.04));
-        s.addAgents(BandAgeAgent.class, population - s.getPopulation()); //the rest are band age agents
+        s.addAgents(BandAgeAgent.class, (int) population - s.getPopulation()); //the rest are band age agents
         
         //intervention stuff    
         //Test and treat
@@ -70,7 +70,7 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
         //condom
         targets = new String[] {"generalPopulation","msm","sexWorker","young","highRisk"};
         for(int i = 0; i< targets.length; i++)
-            s.addIntervention( new Condom(targets[i], args[13+i], args[13+i+2]));
+            s.addIntervention( new Condom(targets[i], args[13+i], args[13+i+1]));
         
         
         

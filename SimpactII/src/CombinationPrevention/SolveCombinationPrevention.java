@@ -10,11 +10,14 @@ import CombinationPrevention.OptimizationProblems.*;
 public class SolveCombinationPrevention {
 
     public static void main(String[] args) throws InterruptedException {
-        String metric = "DALYs";
+        //set parameters
+        String metric = args[0];//"DALYs";
+        int population = Integer.parseInt(args[1]);//1000;
+        System.out.println("metric: " + metric + " population: " + population);
         
         //set optimization problem
         //OptimizationProblem op = new CondomCombinationPrevention(metric);
-        OptimizationProblem op = new MultipleCombinationPrevention(metric);
+        OptimizationProblem op = new MultipleCombinationPrevention(metric,population);
 
         //set heuristic
         //Heuristic h = new SimulatedAnnealing();
