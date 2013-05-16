@@ -1,12 +1,11 @@
 package CombinationPrevention.OptimizationProblems;
 
-import CombinationPrevention.Interventions.Condom;
-import CombinationPrevention.Interventions.MaleCircumcision;
+import CombinationPrevention.Interventions.*;
 import SimpactII.Agents.*;
 import SimpactII.InfectionOperators.InterventionInfectionOperator;
-import SimpactII.Interventions.*;
 import SimpactII.SimpactII;
 import SimpactII.TimeOperators.AIDSDeathTimeOperator;
+import sim.util.Distributions.PowerLawDistribution;
 
 /**
  *
@@ -24,9 +23,9 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
             //init:
             {0,1,2, 3,4,5,  6,7,8,      //test and treat (0-8)
                 
-             9,10,  11,12,  13,14,  15,16,         //MC (9-14)
+             9,  10,  11,  12,         //MC (9-14)
              
-             17,18,  19,20,  21,22,  23,24,  25,26},//condom (15-24)
+             13,14,  15,16,  17,18,  19,20,  21,22},//condom (15-24)
             
             //delta:
             {0.1, 50, 0.1, 50, 0.1, 50},   
@@ -46,6 +45,7 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
         //basic simulation stuff        
         SimpactII s = new SimpactII();
         s.numberOfYears = 10;
+        s.relationshipDurations = new PowerLawDistribution(-1.1);
         s.timeOperator = new AIDSDeathTimeOperator();
         s.infectionOperator = new InterventionInfectionOperator();
         
@@ -57,18 +57,22 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
         s.addAgents(BandAgeAgent.class, population - s.getPopulation()); //the rest are band age agents
         
         //intervention stuff    
-        //condom
-        s.addAttribute("isCondomUser", false); //must be added to use CondomCP -- come up with a better solution later?
-        String[] targets = new String[] {"generalPopulation","msm","sexWorker","young","highRisk"};
+        //Test and treat
+        String[] targets = new String[] {"generalPopulation","msm","sexWorker"};
         for(int i = 0; i< targets.length; i++)
-            s.addIntervention( new Condom(targets[i], args[17+i], args[16+i+2]));
+            s.addIntervention( new TestAndTreat(targets[i], args[i], args[i+1],args[i+2]));
         
         //MC
         targets = new String[] {"generalPopulation","msm","young","highRisk"};
         for(int i = 0; i< targets.length; i++)
-            s.addIntervention( new MaleCircumcision(targets[i], args[9+i], args[16+i+2]));        
+            s.addIntervention( new MaleCircumcision(targets[i], args[9+i]));     
         
-        //Test and treat
+        //condom
+        targets = new String[] {"generalPopulation","msm","sexWorker","young","highRisk"};
+        for(int i = 0; i< targets.length; i++)
+            s.addIntervention( new Condom(targets[i], args[13+i], args[13+i+2]));
+        
+        
         
         return s;
     }

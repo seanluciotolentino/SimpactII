@@ -85,7 +85,7 @@ public class ARVTreatment implements Intervention{
         int numAgents = agents.size();
         for(int i = 0; i < numAgents; i++){
             Agent agent = (Agent) agents.get(i);
-            if ((boolean) agent.attributes.get("HIVTest")) 
+            if ((boolean) agent.attributes.get("HIVTest") && agent.attributes.get("ARVStart") == null)  
                 positives.add( agent );             
         }
         if(positives.size() <= 0)

@@ -22,25 +22,36 @@ public class Condom implements Intervention {
     private int interval;
     
     //parameters that are set for the combination prevention paper
-    public double start = 2.0*52;
-    private double weeklyEmployeeSalary = 150;//$150 ~ R1250, the weekly income of an NGO employee
-    private double numWeeks = 8.0 * 52; //from year 2 to 10
-    private double costOfCondom = 0.05;
-    public int howMany = 10;
-    private double condomsUsedPerWeek = 2; //2 sex acts
-    private double condomInfectivityReduction = 0.80;
+    private final double start = 2.0*52;
+    private final double numWeeks = 8.0 * 52; //from year 2 to 10
+    private final double weeklyEmployeeSalary = 150;//$150 ~ R1250, the weekly income of an NGO employee
+    private final double costOfCondom = 0.05;
+    private final int howMany = 10;
+    private final double condomsUsedPerWeek = 2; //2 sex acts
+    private final double condomInfectivityReduction = 0.80;
     
-    public Condom(String target, double condoms, double interval){
+    public Condom(String target, double condomsPerInterval, double interval){
         this.target = target;
-        this.condomsPerInterval = (int) condoms;
+        this.condomsPerInterval = (int) condomsPerInterval;
         this.interval = (int) interval;
     }
 
     @Override
-    public void step(SimState s) {
-        SimpactII state = (SimpactII) s;
+    public void step(SimState state) {
+        SimpactII s = (SimpactII) state;
+        s.addAttribute("isCondomUser", false);
         
-        //for each condom, find a person and reduce their infectivity for a while
+        s.schedule.scheduleRepeating(new Steppable(){
+            @Override
+            public void step(SimState state) {
+                distributeCondoms((SimpactII) state);
+            }            
+        });
+        
+
+    }
+    
+    private void distributeCondoms(SimpactII state){
         int c = 0;
         while( c < condomsPerInterval){
             final Agent target = findAgent(state);
@@ -76,7 +87,6 @@ public class Condom implements Intervention {
             //
             c+=howMany;
         }//end while
-        s.schedule.scheduleOnceIn(interval, this);
     }
 
     @Override
