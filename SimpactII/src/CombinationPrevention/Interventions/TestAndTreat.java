@@ -124,7 +124,7 @@ public class TestAndTreat implements Intervention {
             }
         });
         
-        treatmentTime += timeOfDropOut; //add the amount of time on ART for cost purposes
+        treatmentTime += Math.min(timeOfDropOut,numWeeks); //add the amount of time on ART for cost purposes
     }
 
     protected Agent findAgent(SimpactII state) {

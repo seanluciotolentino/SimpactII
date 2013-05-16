@@ -19,8 +19,8 @@ import SimpactII.TimeOperators.AIDSDeathTimeOperator;
  */
 public class CondomCombinationPrevention extends OptimizationProblem{
     
-    public CondomCombinationPrevention(String metric){
-        super(metric);        
+    public CondomCombinationPrevention(String metric,int population){
+        super(metric,population);        
         double[][] parameters = {
             {2, 100, 2.5, 100, 3, 100},        //init
             {0.1, 50, 0.1, 50, 0.1, 50},    //delta

@@ -77,10 +77,10 @@ public class Prevalence extends JFrame{
             
             //after everyone for this time step, add to the data
             //System.out.println("adding: " + t + " , " + totalInfections / population);
-            prevData.add( t , totalInfections / population );
-            malePrev.add( t, maleInfections / malePopulation );
-            femalePrev.add( t, femaleInfections / femalePopulation );
-            inciData.add( t , weekInfections );
+            prevData.add( t/52.0 , totalInfections / population );
+            malePrev.add( t/52.0, maleInfections / malePopulation );
+            femalePrev.add( t/52.0, femaleInfections / femalePopulation );
+            inciData.add( t/52.0 , weekInfections );
         }
         
         //this is an odd bit of [necessary] code. 
@@ -94,7 +94,7 @@ public class Prevalence extends JFrame{
         //create the prevalence chart
         JFreeChart chart1 = ChartFactory.createXYLineChart(
                 "Prevalence", 
-                "Time (weeks)",
+                "Time (years)",
                 "Prevalence (%)",
                 dataset1,
                 PlotOrientation.VERTICAL,
@@ -111,7 +111,7 @@ public class Prevalence extends JFrame{
         //create the incidence chart
         JFreeChart chart2 = ChartFactory.createXYLineChart(
                 "Incidence", 
-                "Time (weeks)",
+                "Time (years)",
                 "Incidence (Counts)",
                 dataset2,
                 PlotOrientation.VERTICAL,

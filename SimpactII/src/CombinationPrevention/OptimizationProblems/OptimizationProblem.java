@@ -13,9 +13,10 @@ import SimpactII.SimpactII;
  */
 public class OptimizationProblem {
 
-    protected int averageOver = 10;
-    protected final int BUDGET = 5000;
+    protected int averageOver = 1;
+    protected final double BUDGET = Double.POSITIVE_INFINITY;
     protected String metric;
+    protected int population;
     protected double[] X0;
     protected double[] delta;
     protected double[] LB;
@@ -23,23 +24,22 @@ public class OptimizationProblem {
     private double numberInfections;
     private double numberDeaths;
 
-    public OptimizationProblem(String metric) {
+    public OptimizationProblem(String metric, int population) {
+        this.population = population;
         //grab number of infections & deaths
         if(metric.equals("infectionsAverted")){
+            System.err.println("Running baseline comparison...");
             this.metric = "totalInfections";
-            numberInfections = run(new double[]{0, 0, 0, 0, 0, 0, 0, 0, 0});            
+            numberInfections = run(new double[24]);            
         }
         
         if(metric.equals("deathsAverted")){
+            System.err.println("Running baseline comparison...");
             this.metric = "totalDeaths";
-            numberDeaths = run(new double[]{0, 0, 0, 0, 0, 0, 0, 0, 0});
+            numberDeaths = run(new double[24]);
         }
 
         this.metric = metric;
-    }
-
-    public SimpactII setup(double[] combination) {
-        return new SimpactII(); //this should be overwritten
     }
 
     public double run(double[] combination) {
@@ -53,9 +53,13 @@ public class OptimizationProblem {
         //s.prevalence();
         return avg / averageOver;
     }
+    
+    public SimpactII setup(double[] combination) {
+        return new SimpactII(); //this should be overwritten
+    }
 
     public double goodness(double[] args, SimpactII s) {
-        if ((args[1] + args[3] + args[5]) > BUDGET) {
+        if (cost(args,s) > BUDGET) {
             return Double.POSITIVE_INFINITY;
         } else {
             switch (metric) {
@@ -75,6 +79,10 @@ public class OptimizationProblem {
                     return -101.0; //this shouldn't happen but Java requires the statement
             }
         }
+    }
+    
+    public double cost(double[] args, SimpactII s){
+        return -1; //this should also be overwritten
     }
 
     private double totalInfections(SimpactII s) {

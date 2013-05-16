@@ -33,11 +33,12 @@ public class Condom implements Intervention {
     public Condom(String target, double condomsPerInterval, double interval){
         this.target = target;
         this.condomsPerInterval = (int) condomsPerInterval;
-        this.interval = (int) interval;
+        this.interval = (int) interval;//someone might try to give you an interval of 0
     }
 
     @Override
     public void step(SimState state) {
+        if(interval<=0){return;} //intervention doesn't happen if interval is 0
         SimpactII s = (SimpactII) state;
         s.addAttribute("isCondomUser", false);
         
@@ -96,6 +97,7 @@ public class Condom implements Intervention {
 
     @Override
     public double getSpend() {
+        if(interval<=0){return 0.0;} //intervention doesn't happen if interval is 0
         double cost = weeklyEmployeeSalary; //let's say it takes a week to scout locations
         cost += (numWeeks/interval)*condomsPerInterval*costOfCondom;     //cost of condoms
         cost += weeklyEmployeeSalary *      //cost of employeeing someone full time to do this
