@@ -12,7 +12,7 @@ public class SolveCombinationPrevention {
 
     public static void main(String[] args) throws InterruptedException {
         //set parameters
-        String metric = "infectionsAverted";//args[0];//
+        String metric = "DALYs";//args[0];//
         int population = 1000;//Integer.parseInt(args[1]);//
         System.out.println("metric: " + metric + " population: " + population);
         
@@ -27,7 +27,10 @@ public class SolveCombinationPrevention {
         //run it
         //double[] solution = h.solve(ccp);
         //double[] solution = op.getX0();
-        double[] solution = new double[24];
+        double[] solution = new double[]
+            {0,0,0.5, 0,0,0.5,  0,0,0.5,    //test and treat (0-8)
+             0,  0,  0,  0,                         //MC (9-14)
+             100,4,  100,4,  100,4,  100,4,  100,4};    //condoms
 
         //display metrics
         System.err.println("======");
