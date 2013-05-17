@@ -21,7 +21,6 @@ public class Weibull implements Distribution{
         this.r = r;
     }
 
-    @Override
     public double nextValue() {
         return scale * Math.pow(-Math.log(1.0 - r.nextDouble()), 1.0 / shape);
     }
