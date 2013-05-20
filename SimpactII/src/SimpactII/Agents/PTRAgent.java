@@ -54,8 +54,8 @@ public class PTRAgent extends Agent{
         partnersThisYear++;
         return super.informRelationship(other);
     }
-    public Agent replace(SimpactII state){
-        return new PTRAgent(state,attributes); //replace with something similar
+    public void replace(SimpactII state){
+        new PTRAgent(state,attributes); //replace with something similar
     }
     public String toString(){ return "PTRAgent" + this.hashCode(); }
     

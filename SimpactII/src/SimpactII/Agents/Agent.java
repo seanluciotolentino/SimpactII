@@ -164,12 +164,12 @@ public class Agent implements Steppable {
      * Returns an agent which replaces this agent after he/she has been removed.
      */
 
-    public Agent replace(SimpactII state) {
+    public void replace(SimpactII state) {
         final Class c = this.getClass();
         try {
             Agent a = (Agent) c.getConstructor(new Class[]{SimpactII.class, HashMap.class}).newInstance(state, attributes);
             a.age = 15;
-            return a;
+            //return a;
         } catch (Exception e) {
             throw new RuntimeException("Exception occurred while trying to replace agent " + c + "\n" + e.getMessage());
         }

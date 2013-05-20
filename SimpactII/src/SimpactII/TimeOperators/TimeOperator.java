@@ -54,9 +54,10 @@ public class TimeOperator implements Steppable{
             //check some removal condition
             if(remove(agent)){ //if some removal condition is met
                 //somehow replace individual:
-                Agent newAgent = replace(state,agent);
+                replace(state,agent);
+                //Agent newAgent = replace(state,agent);
                 //newAgent.attributes.putAll(agent.attributes); ////copy over attributes -- some attributes might not want to copy directly, i.e. extra condoms??? location???
-                state.network.addNode(newAgent); 
+                //state.network.addNode(newAgent); //agent constructor ages the agent to the network
 
                 //remove them from the world:
                 agent.stoppable.stop(); //stop them from being scheduled
@@ -81,9 +82,9 @@ public class TimeOperator implements Steppable{
         return agent.remove() || agent.getAge() > getMAX_AGE();        
     }
     
-    public Agent replace(SimpactII state, Agent agent){
+    public void replace(SimpactII state, Agent agent){
         //return state.addAgent(agent.getClass());
-        return agent.replace(state);
+        agent.replace(state);
         //        final Class c = agent.getClass();
         //        try {
         //            return (Agent) c.getConstructor(new Class[] {SimpactII.class}).newInstance(state);

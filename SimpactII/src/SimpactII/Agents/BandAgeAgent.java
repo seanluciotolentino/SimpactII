@@ -46,10 +46,10 @@ public class BandAgeAgent extends Agent{
         return getPartners()<getDNP() && (isMale() ^ other.isMale()) && ageIsRight(other);
     }
     
-    public Agent replace(SimpactII state){
+    public void replace(SimpactII state){
         Agent a = new BandAgeAgent(state,attributes );
         a.age = 15;
-        return a;
+        //return a;
     }
     
     public boolean ageIsRight(Agent other){

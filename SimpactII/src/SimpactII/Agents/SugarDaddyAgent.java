@@ -30,8 +30,8 @@ public class SugarDaddyAgent extends Agent{
         return other.getAge() < 25 && other.isSeeking(this); 
     }
     
-    public Agent replace(SimpactII state){
-        return new SugarDaddyAgent(state,attributes);
+    public void replace(SimpactII state){
+        new SugarDaddyAgent(state,attributes);
     }
     
 }
