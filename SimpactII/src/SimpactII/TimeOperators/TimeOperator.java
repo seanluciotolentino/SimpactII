@@ -35,7 +35,7 @@ public class TimeOperator implements Steppable{
         SimpactII state = (SimpactII) s;
         
         //increments agent ages
-        Bag agents = state.network.getAllNodes();
+        Bag agents = state.myAgents; //must increment the ages of everyone
         int numOthers = agents.size();
         for(int i = 0 ; i < numOthers; i++){
             //increment ages
@@ -52,7 +52,7 @@ public class TimeOperator implements Steppable{
             }
             
             //check some removal condition
-            if(remove(agent)){ //if some removal condition is met
+            if(remove(agent) && agent.timeOfRemoval >= Double.MAX_VALUE){ //if some removal condition is met && not already removed
                 //somehow replace individual:
                 replace(state,agent);
                 //Agent newAgent = replace(state,agent);

@@ -14,6 +14,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.data.category.DefaultCategoryDataset;
+import sim.util.Bag;
 
 /**
  *
@@ -27,9 +28,9 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class Demographics extends JFrame{
     
-    private int numBoxes = 7;
+    private int numBoxes = 9;
     private int boxSize = 10;
-    private int timeGranularity = 4; //4 = 1 month, 52 = 1 year, etc...
+    private int timeGranularity = 52; //4 = 1 month, 52 = 1 year, etc...
     
     public Demographics(int numBoxes, int boxSize, int timeGranularity, SimpactII state){
         this.numBoxes = numBoxes;
@@ -52,11 +53,10 @@ public class Demographics extends JFrame{
             //go through agents...
             for (int i = 0; i < numAgents; i++) { 
                 Agent agent = (Agent) state.myAgents.get(i);
+                if (agent.getTimeOfAddition() >= t || agent.timeOfRemoval < t){  continue; } //skip if the agent wasn't born yet or has been removed
+
                 double age = agent.getAge()*52; //convert age to weeks
-                double ageAtT = age - now + t;
-                
-                if (agent.getTimeOfAddition() > t || agent.timeOfRemoval < t){  continue; } //skip if the agent wasn't born yet or has been removed
-                
+                double ageAtT = age - now + t;        
                 ageAtT/= 52; //convert back to years
                 int level = (int) Math.min(numBoxes-1, Math.floor( ageAtT / boxSize)); 
                 demographic[ level ] += 1; //...and add them to their delineations level
@@ -72,7 +72,7 @@ public class Demographics extends JFrame{
         JFreeChart chart = ChartFactory.createStackedBarChart(
                 "Demographics", 
                 "Time (weeks)",
-                "Proportion of the Population",
+                "Population (number of persons)",
                 data,
                 PlotOrientation.VERTICAL,
                 true,   //legend
