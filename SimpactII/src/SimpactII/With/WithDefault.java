@@ -4,7 +4,6 @@ import SimpactII.Agents.*;
 import SimpactII.InfectionOperators.*;
 import SimpactII.Interventions.*;
 import SimpactII.SimpactII;
-import SimpactII.TimeOperators.AIDSDeathTimeOperator;
 
 /**
  *
@@ -25,7 +24,6 @@ public class WithDefault {
         SimpactII s = new SimpactII();
         s.addAgents(Agent.class, 1000);
         s.numberOfYears = 50;
-        s.timeOperator = new AIDSDeathTimeOperator();
         //s.addIntervention(HIVTestAndCounsel.class, 4.9, 2000);
         //s.addIntervention(ARVTreatment.class, 5, 1000);
         s.run();

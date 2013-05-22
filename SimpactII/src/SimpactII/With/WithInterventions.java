@@ -8,7 +8,6 @@ import CombinationPrevention.Interventions.*;
 import SimpactII.Agents.*;
 import SimpactII.InfectionOperators.*;
 import SimpactII.SimpactII;
-import SimpactII.TimeOperators.AIDSDeathTimeOperator;
 import sim.util.Distributions.*;
 
 /**
@@ -53,8 +52,7 @@ public class WithInterventions {
         SimpactII s = new SimpactII();
         s.numberOfYears = 30;
         s.relationshipDurations = new PowerLawDistribution(-1.1);
-        s.timeOperator = new AIDSDeathTimeOperator();
-        s.infectionOperator = new InterventionInfectionOperator();
+        s.infectionOperator = new InterventionInfectionOperator(new AIDSDeathInfectionOperator() );
         
         //heterogenous population stuff        
         int population = 1000;

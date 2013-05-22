@@ -2,10 +2,10 @@ package CombinationPrevention.OptimizationProblems;
 
 import CombinationPrevention.Interventions.*;
 import SimpactII.Agents.*;
-import SimpactII.InfectionOperators.InterventionInfectionOperator;
+import SimpactII.InfectionOperators.*;
 import SimpactII.Interventions.Intervention;
 import SimpactII.SimpactII;
-import SimpactII.TimeOperators.AIDSDeathTimeOperator;
+import SimpactII.TimeOperators.*;
 import sim.util.Distributions.PowerLawDistribution;
 
 /**
@@ -56,8 +56,8 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
         SimpactII s = new SimpactII();
         s.numberOfYears = 10;
         s.relationshipDurations = new PowerLawDistribution(-1.1);
-        s.timeOperator = new AIDSDeathTimeOperator();
-        s.infectionOperator = new InterventionInfectionOperator();
+        s.timeOperator = new DemographicTimeOperator();
+        s.infectionOperator = new InterventionInfectionOperator(new AIDSDeathInfectionOperator() );
         
         //heterogenous population stuff        
         s.addAgents(SexWorkerAgent.class, (int) (population * 0.04));

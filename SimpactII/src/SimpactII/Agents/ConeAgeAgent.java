@@ -60,10 +60,10 @@ public class ConeAgeAgent extends Agent{
         return getPartners()<getDNP() && (isMale() ^ other.isMale()) && ageIsRight(other);
     }
     
-    public void replace(SimpactII state){
+    public Agent replace(SimpactII state){
         Agent a = new ConeAgeAgent(state,attributes );
         a.age = 15;
-        //return a;
+        return a;
     }
     public boolean ageIsRight(Agent other){
         double probability = rng.nextDouble();

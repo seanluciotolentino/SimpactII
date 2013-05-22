@@ -65,14 +65,15 @@ public class InfectionOperator implements Steppable{
                 Edge relationship = (Edge) partners.get(j);
                 Agent partner = (Agent) relationship.getOtherNode(agent);
 
-                if (partner.weeksInfected<=0 && state.random.nextDouble() < infectivity(agent,partner) ){
-                    //System.out.println("Agent " + partner.hashCode() + " was infected by Agent " + agent.hashCode()
-                    //       + "  <-- DNP? " + agent.DNP);
-                    partner.setInfector(agent);
-                    partner.weeksInfected = 1;
-                }
+                if (partner.weeksInfected<=0 && state.random.nextDouble() < infectivity(agent,partner) )
+                    infect(partner,agent);                
             } //partners for loop
         } //if agent infected
+    }
+    
+    public void infect(Agent infected, Agent infector){
+        infected.setInfector(infector);
+        infected.weeksInfected = 1;
     }
     
     public double infectivity(Agent from, Agent to) {

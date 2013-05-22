@@ -47,7 +47,8 @@ public class DemographicTimeOperator extends TimeOperator{
                     
                     int age = (int) Math.floor(agent.age/5)-3 ;                    
                     if(s.random.nextDouble() < fertility[age][year]){
-                        Agent a = new Agent(s,new HashMap<String,Object>());
+                        Agent a = agent.replace(s);
+                        a.attributes.remove("AIDSDeath");
                         a.age = 0;                        
                     }
                 }
@@ -61,7 +62,11 @@ public class DemographicTimeOperator extends TimeOperator{
     
     //remove based on mortality curves -- from ASSA2008 / Johnson paper
     @Override
-    public boolean remove(Agent agent){        
+    public boolean remove(Agent agent){
+        Double ttd = (Double) agent.attributes.get("AIDSDeath");
+        if(ttd != null &&  state.schedule.getTime() > ttd.doubleValue())
+            return true;
+        
         //return false;
         int year = (int) Math.floor(state.schedule.getTime()/52);
         year = (int) Math.min(maxYears, year); //no data beyond maxYears (2025)

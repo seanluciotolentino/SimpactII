@@ -6,10 +6,10 @@ package CombinationPrevention.OptimizationProblems;
 
 import CombinationPrevention.OptimizationProblems.OptimizationProblem;
 import SimpactII.Agents.Agent;
-import SimpactII.InfectionOperators.InterventionInfectionOperator;
+import SimpactII.InfectionOperators.*;
 import SimpactII.Interventions.Condom;
 import SimpactII.SimpactII;
-import SimpactII.TimeOperators.AIDSDeathTimeOperator;
+import SimpactII.TimeOperators.*;
 
 
 
@@ -35,8 +35,8 @@ public class CondomCombinationPrevention extends OptimizationProblem{
     public SimpactII setup(double[] combination) {
         SimpactII s = new SimpactII();
         s.numberOfYears = 10;
-        s.timeOperator = new AIDSDeathTimeOperator();
-        s.infectionOperator = new InterventionInfectionOperator();
+        s.timeOperator = new DemographicTimeOperator();
+        s.infectionOperator = new InterventionInfectionOperator(new AIDSDeathInfectionOperator() );
         
         //set up condom interventions
         for(int i = 0; i <= 4; i+=2){

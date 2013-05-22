@@ -39,16 +39,16 @@ public class SexWorkerAgent extends Agent{
         return age > MAX_AGE;
     }
     //replace agent with a non-sex worker agent 
-    public void replace(SimpactII state){
+    public Agent replace(SimpactII state){
         Agent a = new Agent(state,attributes)
             {
-                public void replace(SimpactII state){
-                    new SexWorkerAgent(state, attributes);
+                public Agent replace(SimpactII state){
+                    return new SexWorkerAgent(state, attributes);
                 }
             }; //create a new basic agent to replace the sexworker, the new agent is replaced by sexworker
         a.age = MAX_AGE;
         a.male = false;
-        //return a;
+        return a;
     }
     public String toString(){
         return "SexWorker" + this.hashCode();
