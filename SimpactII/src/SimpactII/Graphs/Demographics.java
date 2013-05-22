@@ -64,7 +64,7 @@ public class Demographics extends JFrame{
             
             //add the delineations to the data
             for (int j = 0; j < numBoxes; j++) { 
-                data.addValue(demographic[j], j*boxSize + " - " + (j+1)*boxSize, t + "");
+                data.addValue(demographic[j], j*boxSize + " - " + (((j+1)*boxSize)-1), t + "");
             }
         }
         

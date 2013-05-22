@@ -17,8 +17,10 @@ public class WithDemographics {
     public static void main (String[] args){
         SimpactII s = new SimpactII();
         s.addAgents(Agent.class, 1000);
+        s.numberOfYears = 50;
+        
+        //set the initial age distribution based on data
         s.ages = new Distribution() {
-            
             //initial age population in 1980
             private double[] dist = new double[] {0.1549, 0.2941, 0.4155, 
                 0.5198, 0.6118, 0.6905, 0.7543, 0.8088, 0.8545, 0.8932, 
@@ -29,13 +31,10 @@ public class WithDemographics {
             public double nextValue() {
                 double r = Math.random();
                 int i = 0;
-                for(; r > dist[i]; i++){
-                    continue;
-                }
+                for(; r > dist[i]; i++){ continue; }
                 return (i * 5) + noise.nextValue();
             }
         };
-        s.numberOfYears = 30;
         
         //modified time operator 
         s.timeOperator = new DemographicTimeOperator();
