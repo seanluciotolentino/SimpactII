@@ -124,6 +124,12 @@ public class TestAndTreat implements Intervention {
             }
         });
         
+        //push AIDS death back by timeOfDropOut
+        Double AIDSDeath = (Double) patient.attributes.get("AIDSDeath");
+        AIDSDeath += timeOfDropOut;
+        patient.attributes.put("AIDSDeath",AIDSDeath);//I don't think this is necessary
+            
+        
         treatmentTime += Math.min(timeOfDropOut,numWeeks); //add the amount of time on ART for cost purposes
     }
 
