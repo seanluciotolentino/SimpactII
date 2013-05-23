@@ -22,7 +22,7 @@ public class Condom implements Intervention {
     private int interval;
     
     //parameters that are set for the combination prevention paper
-    private final double start = 2.0*52;
+    private final double start = 20.0*52;
     private final double numWeeks = 8.0 * 52; //from year 2 to 10
     private final double weeklyEmployeeSalary = 150;//$150 ~ R1250, the weekly income of an NGO employee
     private final double costOfCondom = 0.05;

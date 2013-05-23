@@ -57,8 +57,7 @@ public class WithDemographics {
         
         //check for correctness
         //s.launchGUI();
-        String[] a = {"-docheckpoint","1040"} ; //1040 = 20 years
-        s.run( a );
+        s.run();
         s.demographics();
         s.prevalence();
         //s.agemixingScatter();

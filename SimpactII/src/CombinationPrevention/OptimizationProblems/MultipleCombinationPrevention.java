@@ -6,7 +6,10 @@ import SimpactII.InfectionOperators.*;
 import SimpactII.Interventions.Intervention;
 import SimpactII.SimpactII;
 import SimpactII.TimeOperators.*;
+import java.util.HashMap;
+import sim.util.Distributions.Distribution;
 import sim.util.Distributions.PowerLawDistribution;
+import sim.util.Distributions.UniformDistribution;
 
 /**
  *
@@ -54,16 +57,40 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
     public SimpactII setup(double[] args) {
         //basic simulation stuff        
         SimpactII s = new SimpactII();
-        s.numberOfYears = 10;
+        s.numberOfYears = 30;
         s.relationshipDurations = new PowerLawDistribution(-1.1);
         s.timeOperator = new DemographicTimeOperator();
         s.infectionOperator = new InterventionInfectionOperator(new AIDSDeathInfectionOperator() );
+        
+        //set the initial age distribution based on data
+        s.ages = new Distribution() {
+            //initial age population in 1980
+            private double[] dist = new double[] {0.1549, 0.2941, 0.4155, 
+                0.5198, 0.6118, 0.6905, 0.7543, 0.8088, 0.8545, 0.8932, 
+                0.9247, 0.9495, 0.9690, 0.9825, 0.9915, 0.9964, 1.0000};
+            private Distribution noise = new UniformDistribution(0, 4);
+        
+            @Override
+            public double nextValue() {
+                double r = Math.random();
+                int i = 0;
+                for(; r > dist[i]; i++){ continue; }
+                return (i * 5) + noise.nextValue();
+            }
+        };
         
         //heterogenous population stuff        
         s.addAgents(SexWorkerAgent.class, (int) (population * 0.04));
         s.addAgents(MSMAgent.class, (int) (population * 0.04));
         s.addAgents(BiAgent.class, (int) (population * 0.04));
-        s.addAgents(BandAgeAgent.class, (int) population - s.getPopulation()); //the rest are band age agents
+        //s.addAgents(BandAgeAgent.class, (int) population - s.getPopulation()); //the rest are band age agents
+        //add special sex debut agents
+        Distribution sexualDebutAges = new UniformDistribution(13, 18);
+        HashMap<String,Object> attri = new HashMap<>();
+        for(int i =0 ; s.getPopulation() < population; i++){
+            attri.put("debutAge", sexualDebutAges.nextValue());
+            s.addAgents(SexDebutAgent.class, 1,attri);
+        }
         
         //intervention stuff  
         //{0,1,2, 3,4,5,  6,7,8,                    //test and treat (0-8)
