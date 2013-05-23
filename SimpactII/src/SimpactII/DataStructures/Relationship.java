@@ -1,6 +1,7 @@
 package SimpactII.DataStructures;
 
 import SimpactII.Agents.Agent;
+import java.io.Serializable;
 
 /**
  *
@@ -9,7 +10,7 @@ import SimpactII.Agents.Agent;
  * Basic data structure to keep track of all relationships that are formed.
  * 
  */
-public class Relationship {
+public class Relationship implements Serializable{
     
     private Agent agent1;
     private Agent agent2;

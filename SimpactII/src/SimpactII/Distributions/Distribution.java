@@ -4,10 +4,12 @@
  */
 package sim.util.Distributions;
 
+import java.io.Serializable;
+
 /**
  *
  * @author visiting_researcher
  */
-public interface Distribution {
+public interface Distribution extends Serializable{
     public double nextValue();    
 }

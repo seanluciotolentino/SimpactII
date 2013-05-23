@@ -40,7 +40,7 @@ public class TestAndTreat implements Intervention {
     private int patientsOnTreatment = 0;
     private Queue<Agent> treatmentQueue = new LinkedList();
     private Bag targets;
-    public Distribution dropoutTimes = new ExponentialDecay(52, retentionRate);
+    public Distribution dropoutTimes ;
     public double treatmentTime = 0;
 
     public TestAndTreat(String target, double numSlots,
@@ -50,6 +50,7 @@ public class TestAndTreat implements Intervention {
         this.numSlots = numSlots;
         this.numTests = numTests;
         this.retentionRate = retentionRate;
+        this.dropoutTimes = new ExponentialDecay(52, retentionRate);
     }
 
     @Override

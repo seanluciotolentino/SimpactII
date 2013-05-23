@@ -7,6 +7,7 @@ package SimpactII.InfectionOperators;
 import SimpactII.Agents.Agent;
 import SimpactII.Interventions.Intervention;
 import SimpactII.SimpactII;
+import sim.field.network.Edge;
 import sim.util.Bag;
 
 /**
@@ -50,4 +51,13 @@ public class InterventionInfectionOperator extends InfectionOperator{
         }
     }
     
+//    public void infectionStep(Agent agent, SimpactII state) {
+//        parent.infectionStep(agent, state);
+//    }
+    
+    public void infect(Agent infected, Agent infector){
+        parent.infect(infected, infector);
+    }
+    
+        
 }

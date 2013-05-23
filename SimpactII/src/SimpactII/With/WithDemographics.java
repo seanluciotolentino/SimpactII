@@ -1,7 +1,9 @@
 package SimpactII.With;
 
+import CombinationPrevention.Interventions.TestAndTreat;
 import SimpactII.Agents.*;
 import SimpactII.InfectionOperators.*;
+import SimpactII.Interventions.Intervention;
 import SimpactII.SimpactII;
 import SimpactII.TimeOperators.*;
 import java.util.HashMap;
@@ -17,7 +19,7 @@ public class WithDemographics {
     
     public static void main (String[] args){
         SimpactII s = new SimpactII();
-        s.numberOfYears = 30;
+        s.numberOfYears = 30; // (1) 1985 | (30) 2015 | (45) 2030
         
         //add special sex debut agents
         Distribution sexualDebutAges = new UniformDistribution(13, 18);
@@ -47,14 +49,30 @@ public class WithDemographics {
         
         //modified operators
         s.timeOperator = new DemographicTimeOperator();
-        s.infectionOperator = new AIDSDeathInfectionOperator();
+        s.infectionOperator = new InterventionInfectionOperator(new AIDSDeathInfectionOperator());
+        
+        //test interventions
+        //Intervention testAndTreat = new TestAndTreat("generalPopulation", 1000,1000,0.9);
+        //s.addIntervention(testAndTreat);
         
         //check for correctness
         //s.launchGUI();
-        s.run();
+        String[] a = {"-docheckpoint","1040"} ; //1040 = 20 years
+        s.run( a );
         s.demographics();
         s.prevalence();
-        s.agemixingScatter();
+        //s.agemixingScatter();
+        
+//        Distribution dist = new ExponentialDecay(52, 0.5);
+//        int num = 1000;
+//        //System.out.print("hold off; bins = hist([ ");
+//        System.out.print("bins = hist([ ");
+//        for(int i = 0; i < num; i++)
+//            //System.out.print(dist.nextValue() + ", ");
+//            System.out.print(Math.round(dist.nextValue()) + ", ");
+//            //System.out.print(dist.nextValue() + ", ");
+//        //System.out.println("],0:5:length(x)*5); plot(bins/sum(bins)); hold all; plot(x)");
+//        System.out.println("],0:52:(52*10)); plot(bins/sum(bins))");
         
     }
     
