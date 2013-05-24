@@ -49,6 +49,14 @@ public class DemographicTimeOperator extends TimeOperator{
                     if(s.random.nextDouble() < fertility[age][year]){
                         Agent a = agent.replace(s);
                         a.attributes.remove("AIDSDeath");
+                        a.attributes.remove("HIVTest");
+                        a.attributes.remove("ARVStart");
+                        a.attributes.remove("ARVStop");
+                        a.attributes.remove("HIVTest");
+                        a.attributes.put("circumcised",false);
+                        a.attributes.put("isCondomUser",false);
+                        a.attributes.put("infectivityChangeFrom", 1.0);
+                        a.attributes.put("infectivityChangeTo", 1.0);
                         a.age = 0;                        
                     }
                 }

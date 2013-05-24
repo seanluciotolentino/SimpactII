@@ -45,7 +45,7 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
             //max
             {1000,1000,0.99, 1000,1000,0.99,  1000,1000,0.99, //test and treat (0-8)
              1000,  1000,  1000,  1000,                          //MC (9-14)
-             1000,24,  1000,24,  1000,24,  1000,24,  21,24}};   //condom (15-24)   
+             1000,52,  1000,52,  1000,52,  1000,52,  1000,52}};   //condom (15-24)   
         
         this.X0 = parameters[0];
         this.delta = parameters[1];
@@ -100,17 +100,16 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
         //Test and treat
         String[] targets = new String[] {"generalPopulation","msm","sexWorker"};
         for(int i = 0; i< targets.length; i++)
-            s.addIntervention( new TestAndTreat(targets[i], args[i], args[i+1],args[i+2]));
-        
+            s.addIntervention( new TestAndTreat(targets[i], args[(3*i)], args[(3*i)+1],args[(3*i)+2]));
         //MC
         targets = new String[] {"generalPopulation","msm","young","highRisk"};
         for(int i = 0; i< targets.length; i++)
-            s.addIntervention( new MaleCircumcision(targets[i], args[9+i]));     
+            s.addIntervention( new MaleCircumcision(targets[i], args[i+9]));     
         
         //condom
         targets = new String[] {"generalPopulation","msm","sexWorker","young","highRisk"};
         for(int i = 0; i< targets.length; i++)
-            s.addIntervention( new Condom(targets[i], args[13+i], args[13+i+1]));
+            s.addIntervention( new Condom(targets[i], args[(2*i)+13], args[(2*i)+13+1]));
         
         
         

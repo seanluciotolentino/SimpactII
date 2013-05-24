@@ -21,7 +21,7 @@ public class MaleCircumcision implements Intervention {
     
     //constants
     private final double start = 20.0 * 52;
-    private final double numWeeks = 8.0 * 52; //from year 2 to 10
+    private final double numWeeks = 10.0 * 52; //from year 20 to 30
     private final double circumcisionInfectivityReduction = 0.6;
     private final double costPerCircumcision = 50;
     

@@ -29,7 +29,7 @@ public class TestAndTreat implements Intervention {
     
     //constants
     private final double start = 20.0 * 52;
-    private final double numWeeks = 8.0 * 52; //from year 2 to 10
+    private final double numWeeks = 10.0 * 52; //from year 20 to 30
     private final double refuseTesting = 0.24;
     private final double timeTillNormalInfectivity = 4;
     private final double ARVInfectivityReduction = 0.96;
@@ -130,8 +130,8 @@ public class TestAndTreat implements Intervention {
         AIDSDeath += timeOfDropOut;
         patient.attributes.put("AIDSDeath",AIDSDeath);//I don't think this is necessary
             
-        
-        treatmentTime += Math.min(timeOfDropOut,numWeeks); //add the amount of time on ART for cost purposes
+        double timeLeft = (30*52) - state.schedule.getTime();
+        treatmentTime += Math.min(timeOfDropOut,timeLeft); //add the amount of time on ART for cost purposes
     }
 
     protected Agent findAgent(SimpactII state) {

@@ -14,7 +14,7 @@ import SimpactII.SimpactII;
 public class OptimizationProblem {
 
     protected int averageOver = 1;
-    protected final double BUDGET = Double.POSITIVE_INFINITY;
+    protected final double BUDGET = 50000000.0;// 50 million = $5,000/person year
     protected String metric;
     protected int population;
     protected double[] X0;
