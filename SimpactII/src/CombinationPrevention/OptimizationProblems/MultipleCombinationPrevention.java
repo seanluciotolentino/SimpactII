@@ -25,9 +25,9 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
         super(metric,population);        
         double[][] parameters = {
             //init:
-            {100,100,0.5, 100,100,0.5,  100,100,0.5,      //test and treat (0-8)
-             10,  10,  10,  10,         //MC (9-14)
-             100,4,  100,4,  100,4,  100,4,  100,4},//condom (15-24)
+            {100,1,0.1, 100,10,0.1,  100,10,0.1,      //test and treat (0-8)
+             10,  0,  0,  0,         //MC (9-14)
+             100,4,  100,0,  100,0,  100,0,  100,0},//condom (15-24)
 //            {0,0,0.5, 0,0,0.5,  0,0,0.5,      //test and treat (0-8)
 //             0,  0,  0,  0,         //MC (9-14)
 //             0,0,  0,0,  0,0,  0,0,  0,0},//condom (15-24)
@@ -43,8 +43,8 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
              0,1,  0,1,  0,1,  0,1,  0,1},    //condom (15-24)           
             
             //max
-            {1000,1000,0.99, 1000,1000,0.99,  1000,1000,0.99, //test and treat (0-8)
-             1000,  1000,  1000,  1000,                          //MC (9-14)
+            {1000,100,0.99, 1000,100,0.99,  1000,100,0.99, //test and treat (0-8)
+             50,  50,  50,  50,                          //MC (9-14)
              1000,52,  1000,52,  1000,52,  1000,52,  1000,52}};   //condom (15-24)   
         
         this.X0 = parameters[0];

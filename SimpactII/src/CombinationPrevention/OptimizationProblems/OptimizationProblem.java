@@ -14,8 +14,8 @@ import SimpactII.SimpactII;
 public class OptimizationProblem {
 
     protected int averageOver = 1;
-    protected final double BUDGET = 50000000.0;// 50 million = $5,000/person year
-    protected String metric;
+    protected final double BUDGET = 400000.0;// 50 million = $5,000/person year
+    private String metric;
     protected int population;
     protected double[] X0;
     protected double[] delta;
@@ -26,19 +26,6 @@ public class OptimizationProblem {
 
     public OptimizationProblem(String metric, int population) {
         this.population = population;
-        //grab number of infections & deaths
-        if(metric.equals("infectionsAverted")){
-            System.err.println("Running baseline comparison...");
-            this.metric = "totalInfections";
-            numberInfections = run(new double[24]);            
-        }
-        
-        if(metric.equals("deathsAverted")){
-            System.err.println("Running baseline comparison...");
-            this.metric = "totalDeaths";
-            numberDeaths = run(new double[24]);
-        }
-
         this.metric = metric;
     }
 
@@ -57,33 +44,27 @@ public class OptimizationProblem {
     public SimpactII setup(double[] combination) {
         return new SimpactII(); //this should be overwritten
     }
-
-    public double goodness(double[] args, SimpactII s) {
-        if (cost(args,s) > BUDGET) {
-            return Double.POSITIVE_INFINITY;
-        } else {
-            switch (metric) {
-                case "totalInfections":
-                    return totalInfections(s);
-                case "totalDeaths":
-                    return totalDeaths(s);
-                case "infectionsAverted":
-                    return infectionsAverted(s);
-                case "deathsAverted":
-                    return deathsAverted(s);
-                case "DALYs":
-                    return DALYs(s);
-                case "multiComponent":
-                    return multiComponent(s);
-                default:
-                    return -101.0; //this shouldn't happen but Java requires the statement
-            }
-        }
-    }
     
     public double cost(double[] args, SimpactII s){
         return -1; //this should also be overwritten
     }
+    
+    public double goodness(double[] args, SimpactII s) {
+        double goodness = (cost(args,s) > BUDGET)? cost(args,s): 0;
+        switch ( getMetric() ) {
+                case "totalInfections":
+                    goodness += totalInfections(s);
+                    break;
+                case "totalDeaths":
+                    goodness += totalDeaths(s);
+                    break;
+                case "totalLifeYears":
+                    goodness += totalLifeYears(s);
+                    break;
+        }
+        return goodness;
+    }
+
 
     private double totalInfections(SimpactII s) {
         //returns the total infections which occurred in the simualtion
@@ -96,10 +77,6 @@ public class OptimizationProblem {
             totalInfections += (agent.weeksInfected >= 1) ? 1 : 0; //add if you were infected
         }
         return totalInfections;
-    }
-
-    private double infectionsAverted(SimpactII s) {
-        return totalInfections(s) - numberInfections; //this order because it's a minimization problem
     }
 
     private double totalDeaths(SimpactII s) {
@@ -115,27 +92,19 @@ public class OptimizationProblem {
         return totalDeaths;
     }
 
-    private double deathsAverted(SimpactII s) {
-        return totalDeaths(s) - numberDeaths;
-    }
-
-    private double DALYs(SimpactII s) {
-        //returns the total number of deaths which occured in the simulation
-        double DALYs = 0;
-
+    private double totalLifeYears(SimpactII s){
+        //returns the total number of life years which occured in the simulation
+        double lifeYears = 0;
+        double now = 52*30; //this shouldn't be so strict but schedule.getTime() returns infinity... 
         //go through agents and tally
         int numAgents = s.myAgents.size();
         for (int i = 0; i < numAgents; i++) {
             Agent agent = (Agent) s.myAgents.get(i);
-            if( agent.timeOfRemoval>=Double.MAX_VALUE || 
-                    agent.getAge() > s.timeOperator.getMAX_AGE()  ){ continue;}
-            DALYs += (s.timeOperator.getMAX_AGE() - agent.getAge() ); 
+            double addition = agent.getTimeOfAddition();
+            double removal = Math.min(now,agent.timeOfRemoval);
+            lifeYears += removal - addition;
         }
-        return DALYs;
-    }
-
-    private double multiComponent(SimpactII s) {
-        return -1.0;
+        return lifeYears;
     }
 
     public double[] getX0() {
@@ -152,5 +121,19 @@ public class OptimizationProblem {
 
     public double[] getLB() {
         return LB;
+    }
+
+    /**
+     * @return the metric
+     */
+    public String getMetric() {
+        return metric;
+    }
+
+    /**
+     * @param metric the metric to set
+     */
+    public void setMetric(String metric) {
+        this.metric = metric;
     }
 }
