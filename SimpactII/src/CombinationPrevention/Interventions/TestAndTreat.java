@@ -31,7 +31,7 @@ public class TestAndTreat implements Intervention {
     private final double start = 20.0 * 52;
     private final double numWeeks = 10.0 * 52; //from year 20 to 30
     private final double refuseTesting = 0.24;
-    private final double timeTillNormalInfectivity = 4;
+    private final double timeTillNormalInfectivity = 0;
     private final double ARVInfectivityReduction = 0.96;
     private final double costOfTreatment = 500/52.0; //cost of ART per week
     private final double costOfTest = 1.0;
@@ -66,7 +66,7 @@ public class TestAndTreat implements Intervention {
                 testStep(s);
                 treatStep(s);
             }
-        });
+        },4);
     } //end step method
 
     @Override
@@ -76,7 +76,7 @@ public class TestAndTreat implements Intervention {
 
     @Override
     public double getSpend() {        
-        return treatmentTime*costOfTreatment + (costOfTest * numTests * numWeeks); //???
+        return treatmentTime*costOfTreatment + (costOfTest * numTests * (numWeeks/4)); //???
     }
 
     /**

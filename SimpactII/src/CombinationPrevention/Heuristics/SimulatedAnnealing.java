@@ -38,7 +38,7 @@ public class SimulatedAnnealing implements Heuristic{
         int k = 0;
         
         //mainloop
-        while (energy > 0.001 && k < kMax) {
+        while ( k < kMax) {
             double T = temperature(k);
             double[] newstate = neighbor(state, delta, min, max, k);
             double newenergy  = op.run(newstate);

@@ -55,7 +55,7 @@ public class MaleCircumcision implements Intervention {
                     target.attributes.put("infectivityChangeTo", currentInfectivity * (1 - circumcisionInfectivityReduction));
                 }
             }
-        });
+        },4);
 
 
     }
@@ -67,7 +67,7 @@ public class MaleCircumcision implements Intervention {
 
     @Override
     public double getSpend() {
-        return numCircumcisions * costPerCircumcision * numWeeks;
+        return numCircumcisions * costPerCircumcision * (numWeeks/4);
     }
 
     protected Bag findAgents(SimpactII state) {
