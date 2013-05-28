@@ -6,6 +6,10 @@ package CombinationPrevention.OptimizationProblems;
 
 import SimpactII.Agents.Agent;
 import SimpactII.SimpactII;
+import java.util.concurrent.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import sim.util.Bag;
 
 /**
  *
@@ -13,8 +17,8 @@ import SimpactII.SimpactII;
  */
 public class OptimizationProblem {
 
-    protected int averageOver = 1;
-    protected final double BUDGET = 400000.0;// 50 million = $5,000/person year
+    protected int averageOver = 5;
+    protected final double BUDGET = 400_000.0;// 50 million = $5,000/person year
     private String metric;
     protected int population;
     protected double[] X0;
@@ -30,15 +34,45 @@ public class OptimizationProblem {
     }
 
     public double run(double[] combination) {
-        //average over some runs and return
-        SimpactII s = setup(combination);
+        //run combination n times and add to results bag
+        ExecutorService executor = Executors.newFixedThreadPool(averageOver); //for parallelization
+        Bag results = new Bag(averageOver);
+        for (int j = 0; j < averageOver; j++) {
+            final SimpactII s = setup(combination);
+            Callable run = new Callable(){
+                @Override
+                public Object call() {
+                    s.run();
+                    return s;
+                }
+            };
+            results.add(executor.submit(run));
+        }
+        executor.shutdown();
+        
+        //average over the results bag when they are all done
         double avg = 0;
         for (int j = 0; j < averageOver; j++) {
-            s.run();
-            avg += goodness(combination, s);
+            try {
+                SimpactII s = (SimpactII) ((Future) results.get(j)).get();
+                avg += goodness(combination, s);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(OptimizationProblem.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ExecutionException ex) {
+                Logger.getLogger(OptimizationProblem.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         //s.prevalence();
         return avg / averageOver;
+        
+        //SimpactII s = setup(combination);
+        //double avg = 0;
+        //for (int j = 0; j < averageOver; j++) {
+        //    s.run();
+        //    avg += goodness(combination, s);
+        //}
+        ////s.prevalence();
+        //return avg / averageOver;
     }
     
     public SimpactII setup(double[] combination) {

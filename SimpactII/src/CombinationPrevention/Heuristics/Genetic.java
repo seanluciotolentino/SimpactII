@@ -6,9 +6,14 @@ package CombinationPrevention.Heuristics;
 
 import CombinationPrevention.OptimizationProblems.OptimizationProblem;
 import ec.util.MersenneTwisterFast;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.PriorityQueue;
+import java.util.concurrent.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sim.util.Bag;
 
 /**
@@ -35,7 +40,7 @@ public class Genetic implements Heuristic{
         rand = new MersenneTwisterFast();
     }
     
-    public double[] solve(OptimizationProblem op){
+    public double[] solve(final OptimizationProblem op){
         //initialization
         solutionLength = op.getX0().length;
         min = op.getLB();
@@ -65,12 +70,39 @@ public class Genetic implements Heuristic{
         double bestFitness = Double.POSITIVE_INFINITY;
         for(int i =0; i < generateLimit; i++){
             System.out.println( " ============== generation " + i + "===========");
-            //evaluate each and add to the priority queue
-            for( int j = 0; j < populationLimit; j++){
-                double[] thisSolution = (double[]) solutions.get(j);
-                double fitness = op.run( thisSolution );
-                pq.add( new Object[] {thisSolution, fitness}  ); //I'm not sure how this will work...
+            //evaluate each 
+            ExecutorService executor = Executors.newFixedThreadPool(populationLimit); //for parallelization
+            Bag results = new Bag(populationLimit);
+            for( int j = 0; j < populationLimit; j++ ){
+                final double[] thisSolution = (double[]) solutions.get(j);
+                Callable optInstance = new Callable(){
+                    @Override
+                    public Object call() {
+                        return op.run(thisSolution);
+                    }   
+                };
+                results.add( executor.submit(optInstance) );
             }
+            executor.shutdown(); //wait for them all to finish
+            
+            //...and add to the priority queue
+            for( int j = 0; j < results.size(); j++){
+                try {
+                    double[] solution = (double[]) solutions.get(j);
+                    double fitness = (double) ((Future) results.get(j)).get();
+                    pq.add( new Object[] {solution, fitness}  ); 
+                } catch (InterruptedException ex) { //I'm not sure why either of these would happen....
+                    Logger.getLogger(Genetic.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ExecutionException ex) { //...but netbeans makes me have them
+                    Logger.getLogger(Genetic.class.getName()).log(Level.SEVERE, null, ex);
+                }                
+            }
+            
+//            for( int j = 0; j < populationLimit; j++){
+//                double[] thisSolution = (double[]) solutions.get(j);
+//                double fitness = op.run( thisSolution );
+//                pq.add( new Object[] {thisSolution, fitness}  ); //I'm not sure how this will work...
+//            }
             
             //check if better than the best
             Object[] topSolution = (Object[]) pq.peek();

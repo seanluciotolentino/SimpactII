@@ -25,14 +25,14 @@ public class SolveCombinationPrevention {
         OptimizationProblem op = new MultipleCombinationPrevention(metric,population);
 
         //set heuristic
-        Heuristic h = new SimulatedAnnealing();
-        //Heuristic h = new Genetic();
+        //Heuristic h = new SimulatedAnnealing();
+        Heuristic h = new Genetic();
 
         //find solution
-        //double[] solution = h.solve(op);
+        double[] solution = h.solve(op);
         //double[] solution = op.getX0();
         //double[] solution = loadSolution();
-        double[] solution = new double[24];
+        //double[] solution = new double[24];
         
         //display metrics
         System.err.println("Running for output...");
