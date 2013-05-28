@@ -5,6 +5,7 @@
 package CombinationPrevention.Interventions;
 
 import SimpactII.Agents.*;
+import SimpactII.Distributions.*;
 import SimpactII.Interventions.Intervention;
 import SimpactII.SimpactII;
 import java.util.LinkedList;
@@ -12,8 +13,6 @@ import java.util.Queue;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
-import sim.util.Distributions.Distribution;
-import sim.util.Distributions.ExponentialDecay;
 
 /**
  *

@@ -9,8 +9,7 @@ import SimpactII.SimpactII;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
-import sim.util.Distributions.Distribution;
-import sim.util.Distributions.ExponentialDecay;
+import SimpactII.Distributions.*;
 
 /**
  *

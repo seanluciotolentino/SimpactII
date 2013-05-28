@@ -6,7 +6,7 @@ import SimpactII.Agents.PTRAgent;
 import SimpactII.SimpactII;
 import SimpactII.TimeOperators.TimeOperator;
 import java.util.HashMap;
-import sim.util.Distributions.UniformDistribution;
+import SimpactII.Distributions.*;
 
 /**
  *

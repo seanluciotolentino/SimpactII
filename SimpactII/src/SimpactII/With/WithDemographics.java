@@ -9,7 +9,7 @@ import SimpactII.TimeOperators.*;
 import java.util.HashMap;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.util.Distributions.*;
+import SimpactII.Distributions.*;
 
 /**
  *

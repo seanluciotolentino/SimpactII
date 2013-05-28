@@ -8,8 +8,7 @@ import SimpactII.Agents.Agent;
 import SimpactII.SimpactII;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.util.Distributions.UniformDistribution;
-
+import SimpactII.Distributions.*;
 /**
  *
  * @author visiting_researcher

@@ -4,10 +4,9 @@
  */
 package SimpactII.Agents;
 
+import SimpactII.Distributions.*;
 import SimpactII.SimpactII;
 import java.util.HashMap;
-import sim.util.Distributions.Distribution;
-import sim.util.Distributions.UniformDistribution;
 
 /**
  *

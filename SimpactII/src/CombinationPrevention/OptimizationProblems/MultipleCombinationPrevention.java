@@ -2,14 +2,12 @@ package CombinationPrevention.OptimizationProblems;
 
 import CombinationPrevention.Interventions.*;
 import SimpactII.Agents.*;
+import SimpactII.Distributions.*;
 import SimpactII.InfectionOperators.*;
 import SimpactII.Interventions.Intervention;
 import SimpactII.SimpactII;
 import SimpactII.TimeOperators.*;
 import java.util.HashMap;
-import sim.util.Distributions.Distribution;
-import sim.util.Distributions.PowerLawDistribution;
-import sim.util.Distributions.UniformDistribution;
 
 /**
  *

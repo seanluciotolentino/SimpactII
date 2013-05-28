@@ -2,6 +2,7 @@ package SimpactII;
 
 import SimpactII.Agents.Agent;
 import SimpactII.DataStructures.Relationship;
+import SimpactII.Distributions.*;
 import SimpactII.Graphs.*;
 import SimpactII.InfectionOperators.InfectionOperator;
 import SimpactII.Interventions.Intervention;
@@ -14,7 +15,6 @@ import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.field.network.*;
 import sim.util.Bag;
-import sim.util.Distributions.*;
 
 /**
  *

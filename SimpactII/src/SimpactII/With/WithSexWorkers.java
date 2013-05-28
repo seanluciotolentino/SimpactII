@@ -8,8 +8,7 @@ import SimpactII.Agents.Agent;
 import SimpactII.Agents.SexWorkerAgent;
 import SimpactII.SimpactII;
 import SimpactII.TimeOperators.TimeOperator;
-import sim.util.Distributions.Distribution;
-import sim.util.Distributions.UniformDistribution;
+import SimpactII.Distributions.*;
 
 /**
  *

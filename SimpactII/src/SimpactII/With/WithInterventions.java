@@ -8,7 +8,7 @@ import CombinationPrevention.Interventions.*;
 import SimpactII.Agents.*;
 import SimpactII.InfectionOperators.*;
 import SimpactII.SimpactII;
-import sim.util.Distributions.*;
+import SimpactII.Distributions.*;
 
 /**
  *
