@@ -40,12 +40,12 @@ public class ConeAgeAgent extends Agent{
         //set defaults if not yet set
         try{
             if ( attributes.get("probabilityMultiplier") != null )
-                probabilityMultiplier = (double) attributes.get("probMult");
+                probabilityMultiplier = (double) attributes.get("probabilityMultiplier");
             if ( attributes.get("preferredAgeDifference") != null )
-                preferredAgeDifference =  (double) attributes.get("prefAD");
+                preferredAgeDifference =  (double) attributes.get("preferredAgeDifference");
                 preferredAgeDifference = this.isMale()? preferredAgeDifference: -preferredAgeDifference;
-            if ( attributes.get("preferredAgeDifferenceGrowth ") != null )
-                preferredAgeDifferenceGrowth = (double) attributes.get("adGrowth");
+            if ( attributes.get("preferredAgeDifferenceGrowth") != null )
+                preferredAgeDifferenceGrowth = (double) attributes.get("preferredAgeDifferenceGrowth");
             if ( attributes.get("adDispersion") != null )
                 adDispersion = (double) attributes.get("adDispersion");
         }catch(Exception e){
@@ -57,7 +57,7 @@ public class ConeAgeAgent extends Agent{
         return ageIsRight(other) && other.isSeeking(this);
     }
     public boolean isSeeking(Agent other){
-        return getPartners()<getDNP() && (isMale() ^ other.isMale()) && ageIsRight(other);
+        return isLooking() && (isMale() ^ other.isMale()) && ageIsRight(other);
     }
     
     public Agent replace(SimpactII state){
@@ -66,12 +66,17 @@ public class ConeAgeAgent extends Agent{
         return a;
     }
     public boolean ageIsRight(Agent other){
+        double maleAge = this.isMale()? age: other.age;
+        double femaleAge = this.isMale()? other.age: age;
+        
         double probability = rng.nextDouble();
         double ageDifference = this.age - other.age;
-        double meanAge = ((this.age + other.age)/2)-15;
+        //double ageDifference = femaleAge - maleAge;
+        double meanAge = ((this.age + other.age)/2);
         
         //return  probability < Math.exp(probMult * Math.abs(ageDifference - (prefAD*meanAge*adGrowth) ) );        
-        return probability < Math.exp(probabilityMultiplier * (Math.abs(ageDifference - (preferredAgeDifference*meanAge*preferredAgeDifferenceGrowth) ) /
-                                            (preferredAgeDifference*meanAge*adDispersion)) );
+        return probability < Math.exp(probabilityMultiplier * (Math.abs(ageDifference - 
+                (preferredAgeDifference*meanAge*preferredAgeDifferenceGrowth) ) /
+                (preferredAgeDifference*meanAge*adDispersion)) );
     }
 }

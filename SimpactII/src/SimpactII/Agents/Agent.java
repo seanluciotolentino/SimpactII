@@ -40,6 +40,7 @@ public class Agent implements Steppable {
 
     //basic constructor
     public Agent(SimpactII state, HashMap<String, Object> attributes) {
+        try{
         //grab attributes
         this.attributes.put("genderRatio", 0.5);
         this.attributes.putAll(attributes); //this might replace gender ratio
@@ -63,6 +64,10 @@ public class Agent implements Steppable {
         this.attributes.put("location", location);
         state.world.setObjectLocation(this, location);
         location.distance(location);
+        }catch(ClassCastException e){
+            System.err.println("Attribute provided not castable to double. Please provide double (not ints or Strings).\n" + e);
+            System.exit(-2);
+        }
     }
 
     //methods here
@@ -108,7 +113,7 @@ public class Agent implements Steppable {
      * @return boolean
      */
     public boolean isLooking() { //if not looking we don't have to check everyone
-        return getPartners() < getDNP();
+        return getPartners() < getDNP() && age > 15;
     }
     /**
      * When going through the bag of possible partners, ask this agent if he /
@@ -130,7 +135,8 @@ public class Agent implements Steppable {
      * @return boolean
      */
     public boolean isSeeking(Agent other) {
-        return isLooking() && isMale() ^ other.isMale();
+        boolean genderIsRight = isMale() ^ other.isMale();
+        return isLooking() && genderIsRight;
     }
 
     /**

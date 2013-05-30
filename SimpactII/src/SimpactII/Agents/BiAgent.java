@@ -22,7 +22,7 @@ public class BiAgent extends Agent{
         return other.isSeeking(this) ;
     }
     public boolean isSeeking(Agent other){
-        return getPartners() < getDNP();
+        return isLooking();
     }
     public String toString(){
         return "MSM" + this.hashCode();

@@ -24,7 +24,7 @@ public class MSMAgent extends Agent{
         return other.isSeeking(this) && other.isMale() && !other.equals(this);//(avoid forming relationship with self)
     }
     public boolean isSeeking(Agent other){
-        return getPartners() < getDNP() && ( other.isMale() );
+        return isLooking() && ( other.isMale() );
     }
     public String toString(){
         return "MSM" + this.hashCode();

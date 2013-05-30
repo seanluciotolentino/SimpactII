@@ -45,7 +45,7 @@ public class SolveCombinationPrevention {
         op.setMetric("totalLifeYears");
         System.out.println(op.goodness(solution, s));
         //s.prevalence();
-        //print(s,op,solution);
+        print(s,op,solution);
         System.exit(1);
     }
     

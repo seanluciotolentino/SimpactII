@@ -17,7 +17,7 @@ import sim.util.Bag;
  */
 public class OptimizationProblem {
 
-    protected int averageOver = 5;
+    protected int averageOver = 1;
     protected final double BUDGET = 400_000.0;// 50 million = $5,000/person year
     private String metric;
     protected int population;
@@ -35,44 +35,44 @@ public class OptimizationProblem {
 
     public double run(double[] combination) {
         //run combination n times and add to results bag
-        ExecutorService executor = Executors.newFixedThreadPool(averageOver); //for parallelization
-        Bag results = new Bag(averageOver);
-        for (int j = 0; j < averageOver; j++) {
-            final SimpactII s = setup(combination);
-            Callable run = new Callable(){
-                @Override
-                public Object call() {
-                    s.run();
-                    return s;
-                }
-            };
-            results.add(executor.submit(run));
-        }
-        executor.shutdown();
+//        ExecutorService executor = Executors.newFixedThreadPool(averageOver); //for parallelization
+//        Bag results = new Bag(averageOver);
+//        for (int j = 0; j < averageOver; j++) {
+//            final SimpactII s = setup(combination);
+//            Callable run = new Callable(){
+//                @Override
+//                public Object call() {
+//                    s.run();
+//                    return s;
+//                }
+//            };
+//            results.add(executor.submit(run));
+//        }
+//        executor.shutdown();
+//        
+//        //average over the results bag when they are all done
+//        double avg = 0;
+//        for (int j = 0; j < averageOver; j++) {
+//            try {
+//                SimpactII s = (SimpactII) ((Future) results.get(j)).get();
+//                avg += goodness(combination, s);
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(OptimizationProblem.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (ExecutionException ex) {
+//                Logger.getLogger(OptimizationProblem.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+//        //s.prevalence();
+//        return avg / averageOver;
         
-        //average over the results bag when they are all done
+        SimpactII s = setup(combination);
         double avg = 0;
         for (int j = 0; j < averageOver; j++) {
-            try {
-                SimpactII s = (SimpactII) ((Future) results.get(j)).get();
-                avg += goodness(combination, s);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(OptimizationProblem.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ExecutionException ex) {
-                Logger.getLogger(OptimizationProblem.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            s.run();
+            avg += goodness(combination, s);
         }
         //s.prevalence();
         return avg / averageOver;
-        
-        //SimpactII s = setup(combination);
-        //double avg = 0;
-        //for (int j = 0; j < averageOver; j++) {
-        //    s.run();
-        //    avg += goodness(combination, s);
-        //}
-        ////s.prevalence();
-        //return avg / averageOver;
     }
     
     public SimpactII setup(double[] combination) {

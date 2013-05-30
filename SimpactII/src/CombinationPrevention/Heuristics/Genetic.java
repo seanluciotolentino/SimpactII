@@ -28,7 +28,7 @@ public class Genetic implements Heuristic{
     private int populationLimit = 10; //number of initial random solutions
     private int numCrossOverGen = 5; //the best to pick 
     private int numHoldOverGen = 3; //new blood = populationLimit - numCrossOverGen - numHoldOverGen
-    private int generateLimit = 10;
+    private int generateLimit = 20;
     
     //optimization problem
     private int solutionLength;
@@ -69,7 +69,7 @@ public class Genetic implements Heuristic{
         double[] bestSolution = randomSolution(); //double[] of zeros
         double bestFitness = Double.POSITIVE_INFINITY;
         for(int i =0; i < generateLimit; i++){
-            System.out.println( " ============== generation " + i + "===========");
+            System.err.println( " ============== generation " + i + "===========");
             //evaluate each 
             ExecutorService executor = Executors.newFixedThreadPool(populationLimit); //for parallelization
             Bag results = new Bag(populationLimit);
@@ -86,6 +86,7 @@ public class Genetic implements Heuristic{
             executor.shutdown(); //wait for them all to finish
             
             //...and add to the priority queue
+            pq.clear();
             for( int j = 0; j < results.size(); j++){
                 try {
                     double[] solution = (double[]) solutions.get(j);
@@ -107,7 +108,7 @@ public class Genetic implements Heuristic{
             //check if better than the best
             Object[] topSolution = (Object[]) pq.peek();
             if( (double) topSolution[1] < bestFitness){
-                System.out.println( " new best --> " + topSolution[1] );
+                System.err.println( " new best --> " + topSolution[1] );
                 bestSolution = (double[]) topSolution[0];
                 bestFitness = (double) topSolution[1];
             }

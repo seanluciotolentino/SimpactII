@@ -34,6 +34,11 @@ public class SexWorkerAgent extends Agent{
         super.informRelationship(other);
         return swRelationshipDistribution.nextValue();        
     }
+    
+    public boolean isLooking(){
+        return false;
+    }
+    
     public boolean remove(){
         return age > MAX_AGE;
     }

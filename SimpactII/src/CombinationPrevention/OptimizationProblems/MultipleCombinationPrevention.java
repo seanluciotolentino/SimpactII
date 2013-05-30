@@ -51,7 +51,7 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
         this.UB = parameters[3];
         this.population = population;
     }
-    
+   
     public SimpactII setup(double[] args) {
         //basic simulation stuff        
         SimpactII s = new SimpactII();
@@ -81,14 +81,7 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
         s.addAgents(SexWorkerAgent.class, (int) (population * 0.04));
         s.addAgents(MSMAgent.class, (int) (population * 0.04));
         s.addAgents(BiAgent.class, (int) (population * 0.04));
-        //s.addAgents(BandAgeAgent.class, (int) population - s.getPopulation()); //the rest are band age agents
-        //add special sex debut agents
-        Distribution sexualDebutAges = new UniformDistribution(13, 18);
-        HashMap<String,Object> attri = new HashMap<>();
-        for(int i =0 ; s.getPopulation() < population; i++){
-            attri.put("debutAge", sexualDebutAges.nextValue());
-            s.addAgents(SexDebutAgent.class, 1,attri);
-        }
+        s.addAgents(BandAgeAgent.class, (int) population - s.getPopulation()); //the rest are band age agents        
         
         //intervention stuff  
         //{0,1,2, 3,4,5,  6,7,8,                    //test and treat (0-8)

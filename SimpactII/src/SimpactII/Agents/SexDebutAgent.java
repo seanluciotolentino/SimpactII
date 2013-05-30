@@ -33,5 +33,12 @@ public class SexDebutAgent extends BandAgeAgent{
     public Agent replace(SimpactII state){
         return new SexDebutAgent(state,attributes);
     }
+
+    /**
+     * @return the debutAge
+     */
+    public double getDebutAge() {
+        return debutAge;
+    }
     
 }

@@ -1,6 +1,6 @@
 package SimpactII.TimeOperators;
 
-import SimpactII.Agents.Agent;
+import SimpactII.Agents.*;
 import SimpactII.SimpactII;
 import java.util.HashMap;
 import sim.engine.SimState;
@@ -47,17 +47,26 @@ public class DemographicTimeOperator extends TimeOperator{
                     
                     int age = (int) Math.floor(agent.age/5)-3 ;                    
                     if(s.random.nextDouble() < fertility[age][year]){
-                        Agent a = agent.replace(s);
+                        //kinda hacky:
+                        Agent a;
+                        if (state.random.nextDouble() < 0.04){
+                            a = new MSMAgent(s, agent.attributes);
+                        }else if (state.random.nextDouble() < 0.04){
+                            a = new BiAgent(s, agent.attributes);
+                        }else if (state.random.nextDouble() < 0.04){
+                            a = new SexWorkerAgent(s, agent.attributes);
+                        }else{
+                            a = new BandAgeAgent(s,agent.attributes);
+                        }
+                        a.age = 0;
                         a.attributes.remove("AIDSDeath");
-                        a.attributes.remove("HIVTest");
                         a.attributes.remove("ARVStart");
                         a.attributes.remove("ARVStop");
                         a.attributes.remove("HIVTest");
                         a.attributes.put("circumcised",false);
                         a.attributes.put("isCondomUser",false);
                         a.attributes.put("infectivityChangeFrom", 1.0);
-                        a.attributes.put("infectivityChangeTo", 1.0);
-                        a.age = 0;                        
+                        a.attributes.put("infectivityChangeTo", 1.0);                       
                     }
                 }
             }
