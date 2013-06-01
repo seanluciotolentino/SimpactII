@@ -11,9 +11,9 @@ import java.util.HashMap;
  *
  * @author visiting_researcher
  */
-public class AgeAgent extends ConeAgeAgent{
+public class TriAgeAgent extends ConeAgeAgent{
     
-    public AgeAgent(SimpactII state, HashMap<String,Object> attributes){ 
+    public TriAgeAgent(SimpactII state, HashMap<String,Object> attributes){ 
         super(state,attributes);
     }
     

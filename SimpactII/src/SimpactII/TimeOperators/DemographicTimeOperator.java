@@ -62,7 +62,7 @@ public class DemographicTimeOperator extends TimeOperator{
                         if(s.random.nextBoolean()){
                             HashMap attributes = new HashMap<String,Object>();
                             attributes.put("genderRatio", 1.0);
-                            if(s.random.nextDouble() < (350/500)){
+                            if(s.random.nextDouble() < (350.0/500)){
                                 attributes.put("preferredAgeDifference",0.9);
                                 attributes.put("probabilityMultiplier",-0.1);
                                 attributes.put("preferredAgeDifferenceGrowth",0.02);

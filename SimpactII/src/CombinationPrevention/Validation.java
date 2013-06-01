@@ -42,8 +42,9 @@ public class Validation {
         s.relationshipDurations = new PowerLawDistribution(-1.1);
         s.timeOperator = new DemographicTimeOperator();
         s.infectionOperator = new AIDSDeathInfectionOperator() ;
-        s.infectionOperator.transmissionProbability = 0.01;
-        
+        s.infectionOperator.transmissionProbability = 0.015;
+        s.infectionOperator.initialNumberInfected = 10;
+                
         //set the initial age distribution based on data
         s.ages = new Distribution() {
             //initial age population in 1980
@@ -77,13 +78,16 @@ public class Validation {
         attributes.put("preferredAgeDifference",2.0);
         attributes.put("probabilityMultiplier",-0.9);
         attributes.put("preferredAgeDifferenceGrowth",0.01);
-        s.addAgents(AgeAgent.class,250,attributes);
+        s.addAgents(TriAgeAgent.class,250,attributes);
         
         //other half of female agent AD forming
         attributes.put("preferredAgeDifference",2.0);
         attributes.put("probabilityMultiplier",-0.5);
         attributes.put("preferredAgeDifferenceGrowth",0.01);
-        s.addAgents(AgeAgent.class,250,attributes);
+        s.addAgents(TriAgeAgent.class,250,attributes);
+        
+        //add sex workers to fuel epidemic!
+        s.addAgents(SexWorkerAgent.class,40);
                         
         //run the model
 //        s.run();
