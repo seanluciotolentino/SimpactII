@@ -4,6 +4,7 @@ import CombinationPrevention.OptimizationProblems.MultipleCombinationPrevention;
 import SimpactII.Agents.*;
 import SimpactII.DataStructures.Relationship;
 import SimpactII.Distributions.Distribution;
+import SimpactII.Distributions.ExponentialDecay;
 import SimpactII.Distributions.PowerLawDistribution;
 import SimpactII.Distributions.UniformDistribution;
 import SimpactII.InfectionOperators.AIDSDeathInfectionOperator;
