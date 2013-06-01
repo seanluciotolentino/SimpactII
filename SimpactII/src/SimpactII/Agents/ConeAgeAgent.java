@@ -22,11 +22,11 @@ import java.util.HashMap;
 public class ConeAgeAgent extends Agent{
     
     //default values of an AgeAgent
-    private double probabilityMultiplier;
-    private double preferredAgeDifference;
+    protected double probabilityMultiplier;
+    protected double preferredAgeDifference;
     protected MersenneTwisterFast rng;
-    private double preferredAgeDifferenceGrowth;
-    private double adDispersion;
+    protected double preferredAgeDifferenceGrowth;
+    protected double adDispersion;
     
         
     public ConeAgeAgent(SimpactII state, HashMap<String,Object> attributes){  
