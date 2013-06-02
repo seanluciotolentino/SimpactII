@@ -48,10 +48,10 @@ public class Validation {
                 
         //set the initial age distribution based on data
         s.ages = new Distribution() {
-            //initial age population in 1980
-            private double[] dist = new double[] {0.1549, 0.2941, 0.4155, 
-                0.5198, 0.6118, 0.6905, 0.7543, 0.8088, 0.8545, 0.8932, 
-                0.9247, 0.9495, 0.9690, 0.9825, 0.9915, 0.9964, 1.0000};
+            //initial age population in 1985
+            private double[] dist = new double[] {0.1489, 0.2830, 0.4048, 0.5113,
+                0.6028, 0.6835, 0.7524, 0.8077, 0.8545, 0.8931, 0.9250, 0.9501,
+                0.9689, 0.9827, 0.9914, 0.9965, 1.0000};
             private Distribution noise = new UniformDistribution(0, 4);
         
             @Override
@@ -71,7 +71,7 @@ public class Validation {
         attributes.put("adDispersion",0.005);
         attributes.put("genderRatio", 1.0);        
         s.addAgents(ConeAgeAgent.class,350,attributes);
-        
+                        
         s.addAgents(Agent.class,150); //50 men all over the place
         
         //half female band agents non-AD
@@ -98,6 +98,7 @@ public class Validation {
         //foo(s);
         //bar(s);
         s.run();
+        
         s.agemixingScatter();
         s.demographics();                
         s.prevalence();
