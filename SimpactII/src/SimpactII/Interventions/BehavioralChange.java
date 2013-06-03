@@ -29,7 +29,7 @@ public class BehavioralChange implements Intervention{
         SimpactII state = (SimpactII) s;
         
         //change the distribution of relationships... maybe add some more sophistication to this
-        state.relationshipDurations=new UniformDistribution(52,100);        
+        state.relationshipDurations=new UniformDistribution(52,100,s.random);        
     }
 
     @Override

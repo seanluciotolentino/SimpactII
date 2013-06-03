@@ -22,18 +22,18 @@ public class WithAgeMixing {
        
     //main method
     public static void main(String[] args){
-        SimpactII model = new SimpactII();
+        SimpactII s = new SimpactII();
         HashMap ageAttributes = new HashMap<String,Object>();
         ageAttributes.put("band", 2.0);
         ageAttributes.put("offset", -5.0);
-        model.addAgents(BandAgeAgent.class, 100, ageAttributes );
-        model.numberOfYears = 10;        
-        model.ages = new UniformDistribution(15,65);
-        model.relationshipDurations = new UniformDistribution(1,5);
-        model.run();
+        s.addAgents(BandAgeAgent.class, 100, ageAttributes );
+        s.numberOfYears = 10;        
+        s.ages = new UniformDistribution(15,65,s.random);
+        s.relationshipDurations = new UniformDistribution(1,5,s.random);
+        s.run();
         
         //after the run produce results
-        model.agemixingScatter();
+        s.agemixingScatter();
         //String filename = "relations" + amp.band + "" + amp.offset + ".csv";
         //amp.writeCSVRelations(filename);
         //filename = "population" + amp.band + "" + amp.offset + ".csv";

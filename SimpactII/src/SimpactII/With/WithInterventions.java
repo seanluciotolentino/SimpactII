@@ -51,7 +51,7 @@ public class WithInterventions {
         //basic simulation stuff        
         SimpactII s = new SimpactII();
         s.numberOfYears = 30;
-        s.relationshipDurations = new PowerLawDistribution(-1.1);
+        s.relationshipDurations = new PowerLawDistribution(1.0,-1.1,s.random);
         s.infectionOperator = new InterventionInfectionOperator(new AIDSDeathInfectionOperator() );
         
         //heterogenous population stuff        

@@ -19,7 +19,7 @@ import java.util.HashMap;
  */
 public class SexWorkerAgent extends Agent{
     
-    Distribution swRelationshipDistribution = new UniformDistribution(1.0, 2.0);
+    Distribution swRelationshipDistribution ;
     double MIN_AGE = 15;
     double MAX_AGE = 30;
     
@@ -28,6 +28,7 @@ public class SexWorkerAgent extends Agent{
         this.DNP = 7;      //let's say this is the maximum she can have in a week
         this.age = (state.random.nextDouble()*(MAX_AGE - MIN_AGE)) + MIN_AGE; //random age between MIN and MAX
         this.male = false; //all sex-workers are female (in this model)
+        swRelationshipDistribution = new UniformDistribution(1.0, 2.0,state.random);
     }
 
     public double informRelationship(Agent other){

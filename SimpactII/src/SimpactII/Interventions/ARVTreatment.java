@@ -23,7 +23,7 @@ public class ARVTreatment implements Intervention{
     
     //ARV variables-- do not change here, change in your script
     public double ARVInfectivityReduction = 0.96;
-    public Distribution retentionRate = new ExponentialDecay(1,0.1/52);
+    public Distribution retentionRate;
     public double costPerARV = 500; 
     public double timeTillNormalInfectivity = 4; //4 weeks -- a guess from Wim
     public double numberOfARVs;
@@ -37,6 +37,7 @@ public class ARVTreatment implements Intervention{
 
     @Override
     public void step(SimState s) {
+        retentionRate = new ExponentialDecay(1,0.1/52,s.random);
         SimpactII state = (SimpactII) s;
         
         //find all the positives and treat them

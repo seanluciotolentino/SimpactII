@@ -74,7 +74,12 @@ public class DemographicTimeOperator extends TimeOperator{
                         }else{
                             a = agent.replace(s);
                         }
-                            
+                        
+                        //START EXPERIMENTS STUFF
+                        //Agent a = new Agent(s,agent.attributes);
+                        //Agent a = new ConeAgeAgent(s,agent.attributes);
+                        //Agent a = new TriAgeAgent(s, agent.attributes);
+                        
                         a.age = 0;
                         a.attributes.remove("AIDSDeath");
                         a.attributes.remove("ARVStart");
@@ -87,6 +92,9 @@ public class DemographicTimeOperator extends TimeOperator{
                     }
                 }
             }
+            //print fertility for this year
+            //for()
+            
         }, 52);
     }
     

@@ -11,6 +11,7 @@ import SimpactII.InfectionOperators.AIDSDeathInfectionOperator;
 import SimpactII.InfectionOperators.InterventionInfectionOperator;
 import SimpactII.SimpactII;
 import SimpactII.TimeOperators.DemographicTimeOperator;
+import ec.util.MersenneTwisterFast;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,18 +34,39 @@ public class Validation {
                 + "\\SimulatedData\\Simulated";
     
     public static void main(String[] args) throws IOException{
-        new Validation();
+        //new Validation();
+        
+        //test my degree distribution
+        int num = 1000;
+        //Distribution dist = new PowerLawDistribution(-2);   
+        final double cut = 0.5;        
+        final double alpha = -2;
+        final MersenneTwisterFast r = new MersenneTwisterFast();
+        Distribution dist = new Distribution() {
+            @Override
+            public double nextValue() {
+                return cut*Math.pow(r.nextDouble(), 1.0/(alpha+1.0) ) ;
+            }
+        };
+        System.out.print("hist([ ");
+        for(int i = 0; i < num; i++){
+            System.out.print(Math.round(dist.nextValue()) + ", ");
+            //System.out.print(dist.nextValue() + ", ");
+        }
+        //System.out.println("],0:5:length(x)*5); plot(bins/sum(bins)); hold all; plot(x)");
+        System.out.println("],0:10); ");
+
     }
 
     public Validation() throws IOException{
         //make new model and add agents
-        SimpactII s = new SimpactII();
+        final SimpactII s = new SimpactII();
         s.numberOfYears = 30;
-        s.relationshipDurations = new PowerLawDistribution(-1.1);
+        s.relationshipDurations = new PowerLawDistribution(1,-1.1,s.random);
         s.timeOperator = new DemographicTimeOperator();
         s.infectionOperator = new AIDSDeathInfectionOperator() ;
-        s.infectionOperator.transmissionProbability = 0.015;
-        s.infectionOperator.initialNumberInfected = 10;
+        s.infectionOperator.transmissionProbability = 0.01;
+        s.infectionOperator.initialNumberInfected = 5;
                 
         //set the initial age distribution based on data
         s.ages = new Distribution() {
@@ -52,7 +74,7 @@ public class Validation {
             private double[] dist = new double[] {0.1489, 0.2830, 0.4048, 0.5113,
                 0.6028, 0.6835, 0.7524, 0.8077, 0.8545, 0.8931, 0.9250, 0.9501,
                 0.9689, 0.9827, 0.9914, 0.9965, 1.0000};
-            private Distribution noise = new UniformDistribution(0, 4);
+            private Distribution noise = new UniformDistribution(0, 4,s.random);
         
             @Override
             public double nextValue() {
@@ -63,6 +85,7 @@ public class Validation {
             }
         };
         
+        //>>>>>>> ADD AGENTS
         //male cone agents
         HashMap attributes = new HashMap<String,Object>();
         attributes.put("preferredAgeDifference",0.9);
@@ -79,6 +102,7 @@ public class Validation {
         attributes.put("preferredAgeDifference",2.0);
         attributes.put("probabilityMultiplier",-0.9);
         attributes.put("preferredAgeDifferenceGrowth",0.01);
+        attributes.put("genderRatio", 0.0);        
         s.addAgents(TriAgeAgent.class,250,attributes);
         
         //other half of female agent AD forming
@@ -86,19 +110,14 @@ public class Validation {
         attributes.put("probabilityMultiplier",-0.5);
         attributes.put("preferredAgeDifferenceGrowth",0.01);
         s.addAgents(TriAgeAgent.class,250,attributes);
-        
-        //add sex workers to fuel epidemic!
-        s.addAgents(SexWorkerAgent.class,40);
-                        
-        //run the model
-//        s.run();
-//        s.agemixingScatter();
-        
+        //
+                
         //write files        
         //foo(s);
         //bar(s);
-        s.run();
         
+        //debug runs
+        s.run();        
         s.agemixingScatter();
         s.demographics();                
         s.prevalence();

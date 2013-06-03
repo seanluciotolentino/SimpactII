@@ -14,23 +14,16 @@ public class ExponentialDecay implements Distribution{
     
     private double X0;
     private double lambda;
-    private MersenneTwisterFast mtf;
+    private MersenneTwisterFast r;
     
-    public ExponentialDecay(double X0, double lambda ){
+    public ExponentialDecay(double X0, double lambda, MersenneTwisterFast r ){
         this.X0 = X0;
         this.lambda = lambda;
+        this.r = r;
     }
     
     public double nextValue(){
         //return X0*dist.nextDouble();
-        return X0*(- Math.log(mtf.nextDouble()) / lambda);
+        return X0*(- Math.log(r.nextDouble()) / lambda);
     }
-    
-    public static void main(String[] args){
-        ExponentialDecay ed = new ExponentialDecay(1, 0.1/52);
-        for(int i = 0; i < 100 ; i++){
-            System.out.print(ed.nextValue() + ", ");
-        }
-    }
-    
 }

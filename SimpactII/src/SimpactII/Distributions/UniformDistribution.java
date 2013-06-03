@@ -12,23 +12,17 @@ import ec.util.MersenneTwisterFast;
  */
 public class UniformDistribution implements Distribution {
 
-    private MersenneTwisterFast mtf;
+    private MersenneTwisterFast r;
     private double top;
     private double bottom;
 
-    public UniformDistribution(double bottom, double top) {
-        this.mtf = new MersenneTwisterFast();
-        this.top = top;
-        this.bottom = bottom;
-    }
-
-    public UniformDistribution(double bottom, double top, long seed) {
-        this.mtf = new MersenneTwisterFast(seed);
+    public UniformDistribution(double bottom, double top, MersenneTwisterFast r) {
+        this.r = r;
         this.top = top;
         this.bottom = bottom;
     }
 
     public double nextValue() {
-        return bottom + (mtf.nextDouble() * (top - bottom));
+        return bottom + (r.nextDouble() * (top - bottom));
     }
 }

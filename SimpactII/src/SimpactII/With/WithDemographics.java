@@ -18,11 +18,11 @@ import SimpactII.Distributions.*;
 public class WithDemographics {
     
     public static void main (String[] args){
-        SimpactII s = new SimpactII();
+        final SimpactII s = new SimpactII();
         s.numberOfYears = 30; // (1) 1985 | (30) 2015 | (45) 2030
         
         //add special sex debut agents
-        Distribution sexualDebutAges = new UniformDistribution(13, 18);
+        Distribution sexualDebutAges = new UniformDistribution(13, 18,s.random);
         HashMap<String,Object> attri = new HashMap<>();
         for(int i =0 ; i < 1000; i++){
             attri.put("debutAge", sexualDebutAges.nextValue());
@@ -36,7 +36,7 @@ public class WithDemographics {
             private double[] dist = new double[] {0.1549, 0.2941, 0.4155, 
                 0.5198, 0.6118, 0.6905, 0.7543, 0.8088, 0.8545, 0.8932, 
                 0.9247, 0.9495, 0.9690, 0.9825, 0.9915, 0.9964, 1.0000};
-            private Distribution noise = new UniformDistribution(0, 4);
+            private Distribution noise = new UniformDistribution(0, 4,s.random);
         
             @Override
             public double nextValue() {

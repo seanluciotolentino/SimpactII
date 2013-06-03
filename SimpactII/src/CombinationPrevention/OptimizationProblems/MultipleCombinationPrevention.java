@@ -54,9 +54,9 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
    
     public SimpactII setup(double[] args) {
         //basic simulation stuff        
-        SimpactII s = new SimpactII();
+        final SimpactII s = new SimpactII();
         s.numberOfYears = 30;
-        s.relationshipDurations = new PowerLawDistribution(-1.1);
+        s.relationshipDurations = new PowerLawDistribution(1,-1.1,s.random);
         s.timeOperator = new DemographicTimeOperator();
         s.infectionOperator = new InterventionInfectionOperator(new AIDSDeathInfectionOperator() );
         
@@ -66,7 +66,7 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
             private double[] dist = new double[] {0.1549, 0.2941, 0.4155, 
                 0.5198, 0.6118, 0.6905, 0.7543, 0.8088, 0.8545, 0.8932, 
                 0.9247, 0.9495, 0.9690, 0.9825, 0.9915, 0.9964, 1.0000};
-            private Distribution noise = new UniformDistribution(0, 4);
+            private Distribution noise = new UniformDistribution(0, 4, s.random);
         
             @Override
             public double nextValue() {

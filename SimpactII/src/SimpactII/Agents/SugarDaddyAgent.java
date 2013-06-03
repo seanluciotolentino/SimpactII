@@ -14,7 +14,7 @@ import java.util.HashMap;
  */
 public class SugarDaddyAgent extends Agent{
     
-    Distribution swRelationshipDistribution = new UniformDistribution(1.0, 2.0);
+    Distribution relationshipDuration;
     double MIN_AGE = 40;
     double MAX_AGE = 65;
     
@@ -22,6 +22,7 @@ public class SugarDaddyAgent extends Agent{
         super(state,attributes);
         this.male = true;
         this.age = (state.random.nextDouble()*(MAX_AGE - MIN_AGE)) + MIN_AGE; //random age between MIN and MAX
+        relationshipDuration = new UniformDistribution(1.0, 2.0,state.random);
     }
     
     public boolean isLookingFor(Agent other){

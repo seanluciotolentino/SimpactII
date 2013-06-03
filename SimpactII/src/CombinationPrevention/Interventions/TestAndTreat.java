@@ -49,12 +49,12 @@ public class TestAndTreat implements Intervention {
         this.numSlots = numSlots;
         this.numTests = numTests;
         this.retentionRate = retentionRate;
-        this.dropoutTimes = new ExponentialDecay(52, retentionRate);
     }
 
     @Override
     public void step(SimState state) {
         //this is the first step of the intervention
+        this.dropoutTimes = new ExponentialDecay(52, retentionRate, state.random);
         SimpactII s = (SimpactII) state;
 
         //schedule test and treat to happen more frequently
