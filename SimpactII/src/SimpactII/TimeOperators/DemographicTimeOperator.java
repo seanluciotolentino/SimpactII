@@ -47,26 +47,15 @@ public class DemographicTimeOperator extends TimeOperator{
                     
                     int age = (int) Math.floor(agent.age/5)-3 ;                    
                     if(s.random.nextDouble() < fertility[age][year]){
-//                        //kinda hacky:
-//                        Agent a;
-//                        if (state.random.nextDouble() < 0.04){
-//                            a = new MSMAgent(s, agent.attributes);
-//                        }else if (state.random.nextDouble() < 0.04){
-//                            a = new BiAgent(s, agent.attributes);
-//                        }else if (state.random.nextDouble() < 0.04){
-//                            a = new SexWorkerAgent(s, agent.attributes);
-//                        }else{
-//                            a = new BandAgeAgent(s,agent.attributes);
-//                        }
                         Agent a;
                         if(s.random.nextBoolean()){
                             HashMap attributes = new HashMap<String,Object>();
                             attributes.put("genderRatio", 1.0);
-                            if(s.random.nextDouble() < (350.0/500)){
+                            if(s.random.nextDouble() < 0.9 ){
                                 attributes.put("preferredAgeDifference",0.9);
                                 attributes.put("probabilityMultiplier",-0.1);
                                 attributes.put("preferredAgeDifferenceGrowth",0.02);
-                                attributes.put("adDispersion",0.005);
+                                attributes.put("adDispersion",0.006);
                                 a = new ConeAgeAgent(s,attributes);
                             }else{
                                 a = new Agent(s,attributes);

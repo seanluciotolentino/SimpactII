@@ -18,15 +18,13 @@ import sim.util.Bag;
 public class OptimizationProblem {
 
     protected int averageOver = 1;
-    protected final double BUDGET = 400_000.0;// 50 million = $5,000/person year
+    protected final double BUDGET = 400_000.0; //$40 / person / year
     private String metric;
     protected int population;
     protected double[] X0;
     protected double[] delta;
     protected double[] LB;
     protected double[] UB;
-    private double numberInfections;
-    private double numberDeaths;
 
     public OptimizationProblem(String metric, int population) {
         this.population = population;
@@ -34,37 +32,7 @@ public class OptimizationProblem {
     }
 
     public double run(double[] combination) {
-        //run combination n times and add to results bag
-//        ExecutorService executor = Executors.newFixedThreadPool(averageOver); //for parallelization
-//        Bag results = new Bag(averageOver);
-//        for (int j = 0; j < averageOver; j++) {
-//            final SimpactII s = setup(combination);
-//            Callable run = new Callable(){
-//                @Override
-//                public Object call() {
-//                    s.run();
-//                    return s;
-//                }
-//            };
-//            results.add(executor.submit(run));
-//        }
-//        executor.shutdown();
-//        
-//        //average over the results bag when they are all done
-//        double avg = 0;
-//        for (int j = 0; j < averageOver; j++) {
-//            try {
-//                SimpactII s = (SimpactII) ((Future) results.get(j)).get();
-//                avg += goodness(combination, s);
-//            } catch (InterruptedException ex) {
-//                Logger.getLogger(OptimizationProblem.class.getName()).log(Level.SEVERE, null, ex);
-//            } catch (ExecutionException ex) {
-//                Logger.getLogger(OptimizationProblem.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-//        //s.prevalence();
-//        return avg / averageOver;
-        
+        //run combination n times and add to results to average
         SimpactII s = setup(combination);
         double avg = 0;
         for (int j = 0; j < averageOver; j++) {

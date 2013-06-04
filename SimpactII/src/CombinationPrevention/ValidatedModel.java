@@ -106,11 +106,11 @@ public class ValidatedModel extends SimpactII{
         attributes.put("preferredAgeDifference",0.9);
         attributes.put("probabilityMultiplier",-0.1);
         attributes.put("preferredAgeDifferenceGrowth",0.02);
-        attributes.put("adDispersion",0.008);
+        attributes.put("adDispersion",0.006);
         attributes.put("genderRatio", 1.0);        
-        addAgents(ConeAgeAgent.class, (int) ((population/2) * 1.0),attributes);
+        addAgents(ConeAgeAgent.class, (int) ((population/2) * 0.9),attributes);
                         
-        addAgents(Agent.class,(int) ((population/2) * 0.0)); //50 men all over the place
+        addAgents(Agent.class,(int) ((population/2) * 0.1)); //50 men all over the place
         
         //half female band agents non-AD
         attributes.clear();
@@ -128,8 +128,9 @@ public class ValidatedModel extends SimpactII{
         //<<<<<<<<<<< ADD AGENTS
                 
         //debug runs
-        //run();        
-        //agemixingScatter();
+//        System.out.println(getPopulation());
+//        run();        
+//        agemixingScatter();
         //demographics();                
         //prevalence();
         //System.exit(0);         
