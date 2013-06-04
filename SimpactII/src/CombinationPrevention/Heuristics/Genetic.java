@@ -25,10 +25,10 @@ public class Genetic implements Heuristic{
     private MersenneTwisterFast rand;
     
     //heuristic parameters    
-    private int populationLimit = 10; //number of initial random solutions
+    private int populationLimit = 12; //number of initial random solutions
     private int numCrossOverGen = 5; //the best to pick 
     private int numHoldOverGen = 3; //new blood = populationLimit - numCrossOverGen - numHoldOverGen
-    private int generateLimit = 20;
+    private int generateLimit = 50;
     
     //optimization problem
     private int solutionLength;
