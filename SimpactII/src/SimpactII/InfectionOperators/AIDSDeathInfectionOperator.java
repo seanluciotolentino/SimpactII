@@ -33,6 +33,23 @@ public class AIDSDeathInfectionOperator extends InfectionOperator{
         this.state = state;      
     }
     
+    public void performInitialInfections(SimpactII state){
+        //perform initial infections in 25-35
+        int pop = state.getPopulation();
+        if (pop < initialNumberInfected){
+            System.err.println("Population too small for " + initialNumberInfected + " individuals to be initially infected." + 
+                    " Decrease initial number infected or increase population size");
+            return;
+        }
+        for(int i = 0; i < initialNumberInfected; i++){
+            Agent agent = (Agent) state.network.allNodes.get(state.random.nextInt(pop));
+            while(agent.age > 35 || agent.age < 25) //grab a new one till you find one between 25-35
+                agent = (Agent) state.network.allNodes.get(state.random.nextInt(pop));
+            
+            agent.weeksInfected = 1;
+        }
+    }
+    
     public void infect(Agent infected, Agent infector){
         super.infect(infected,infector);
         

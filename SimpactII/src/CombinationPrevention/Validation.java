@@ -1,17 +1,14 @@
 package CombinationPrevention;
 
+import CombinationPrevention.Interventions.Condom;
 import CombinationPrevention.OptimizationProblems.MultipleCombinationPrevention;
 import SimpactII.Agents.*;
 import SimpactII.DataStructures.Relationship;
-import SimpactII.Distributions.Distribution;
-import SimpactII.Distributions.ExponentialDecay;
-import SimpactII.Distributions.PowerLawDistribution;
-import SimpactII.Distributions.UniformDistribution;
-import SimpactII.InfectionOperators.AIDSDeathInfectionOperator;
-import SimpactII.InfectionOperators.InterventionInfectionOperator;
+import SimpactII.Distributions.*;
+import SimpactII.InfectionOperators.*;
+import SimpactII.Interventions.Intervention;
 import SimpactII.SimpactII;
 import SimpactII.TimeOperators.DemographicTimeOperator;
-import ec.util.MersenneTwisterFast;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,27 +31,22 @@ public class Validation {
                 + "\\SimulatedData\\Simulated";
     
     public static void main(String[] args) throws IOException{
-        //new Validation();
+        new Validation();
         
         //test my degree distribution
-        int num = 1000;
-        //Distribution dist = new PowerLawDistribution(-2);   
-        final double cut = 0.5;        
-        final double alpha = -2;
-        final MersenneTwisterFast r = new MersenneTwisterFast();
-        Distribution dist = new Distribution() {
-            @Override
-            public double nextValue() {
-                return cut*Math.pow(r.nextDouble(), 1.0/(alpha+1.0) ) ;
-            }
-        };
-        System.out.print("hist([ ");
-        for(int i = 0; i < num; i++){
-            System.out.print(Math.round(dist.nextValue()) + ", ");
-            //System.out.print(dist.nextValue() + ", ");
-        }
-        //System.out.println("],0:5:length(x)*5); plot(bins/sum(bins)); hold all; plot(x)");
-        System.out.println("],0:10); ");
+//        int num = 1000;
+//        //Distribution dist = new PowerLawDistribution(-2);   
+//        final double cut = 8;        
+//        final double alpha = 5;
+//        final MersenneTwisterFast r = new MersenneTwisterFast();
+//        Distribution dist = new PowerLawDistribution(cut, alpha, r);
+//        System.out.print("hist([ ");
+//        for(int i = 0; i < num; i++){
+//            System.out.print(Math.round(dist.nextValue()) + ", ");
+//            //System.out.print(dist.nextValue() + ", ");
+//        }
+//        //System.out.println("],0:5:length(x)*5); plot(bins/sum(bins)); hold all; plot(x)");
+//        System.out.println("],0:10); ");
 
     }
 
@@ -62,11 +54,14 @@ public class Validation {
         //make new model and add agents
         final SimpactII s = new SimpactII();
         s.numberOfYears = 30;
-        s.relationshipDurations = new PowerLawDistribution(1,-1.1,s.random);
+        s.relationshipDurations = new PowerLawDistribution(52,4.2,s.random);
+        s.degrees = new PowerLawDistribution(8, 10, s.random);
         s.timeOperator = new DemographicTimeOperator();
-        s.infectionOperator = new AIDSDeathInfectionOperator() ;
-        s.infectionOperator.transmissionProbability = 0.01;
-        s.infectionOperator.initialNumberInfected = 5;
+        InfectionOperator io = new AIDSDeathInfectionOperator() ;
+        io.transmissionProbability = 0.008;
+        io.initialNumberInfected = 2;
+        s.infectionOperator = new InterventionInfectionOperator(io);
+        
                 
         //set the initial age distribution based on data
         s.ages = new Distribution() {
@@ -85,7 +80,25 @@ public class Validation {
             }
         };
         
+        //condoms started to be used more in year 15
+        //proportion using condoms: 10 --> 0.1% of the population
+        //                          20 --> 0.2%
+        //                          200 --> 2%
+        //                          1500 --> 15%
+        Intervention condom = new Condom("generalPopulation", 2500, 5){
+            public double getStart(){ return 52*10; };
+            public double getSpend(){ return 0.0; };
+        };
+        s.addIntervention(condom);
+        condom = new Condom("generalPopulation", 2500, 5){
+            public double getStart(){ return 52*20; };
+            public double getSpend(){ return 0.0; };
+        };
+        s.addIntervention(condom);
+        
         //>>>>>>> ADD AGENTS
+        int pop =1000;
+        
         //male cone agents
         HashMap attributes = new HashMap<String,Object>();
         attributes.put("preferredAgeDifference",0.9);
@@ -93,9 +106,9 @@ public class Validation {
         attributes.put("preferredAgeDifferenceGrowth",0.02);
         attributes.put("adDispersion",0.005);
         attributes.put("genderRatio", 1.0);        
-        s.addAgents(ConeAgeAgent.class,350,attributes);
+        s.addAgents(ConeAgeAgent.class, (int) ((pop/2) * 0.9),attributes);
                         
-        s.addAgents(Agent.class,150); //50 men all over the place
+        s.addAgents(Agent.class,(int) ((pop/2) * 0.1)); //50 men all over the place
         
         //half female band agents non-AD
         attributes.clear();
@@ -103,24 +116,24 @@ public class Validation {
         attributes.put("probabilityMultiplier",-0.9);
         attributes.put("preferredAgeDifferenceGrowth",0.01);
         attributes.put("genderRatio", 0.0);        
-        s.addAgents(TriAgeAgent.class,250,attributes);
+        s.addAgents(TriAgeAgent.class,pop/4,attributes);
         
         //other half of female agent AD forming
         attributes.put("preferredAgeDifference",2.0);
         attributes.put("probabilityMultiplier",-0.5);
         attributes.put("preferredAgeDifferenceGrowth",0.01);
-        s.addAgents(TriAgeAgent.class,250,attributes);
-        //
+        s.addAgents(TriAgeAgent.class,pop/4,attributes);
+        //<<<<<<<<<<< ADD AGENTS
                 
         //write files        
-        //foo(s);
-        //bar(s);
+        foo(s);
+        bar(s);
         
         //debug runs
-        s.run();        
-        s.agemixingScatter();
-        s.demographics();                
-        s.prevalence();
+//        s.run();        
+//        s.agemixingScatter();
+//        s.demographics();                
+//        s.prevalence();
         //System.exit(0);         
     }
     
@@ -160,6 +173,8 @@ public class Validation {
             //relationship duration file
             relationDuration.write((r.getEnd() - r.getStart()) + "\n");
         }
+        ageMixing.close();
+        relationDuration.close();
     }
     
     private void foo(SimpactII s) throws IOException{

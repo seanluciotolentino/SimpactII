@@ -56,7 +56,8 @@ public class Prevalence extends JFrame{
                 Agent agent = (Agent) state.myAgents.get(i);
                 double timeOfInfection = (now - agent.weeksInfected);
                 
-                if (agent.getTimeOfAddition() < t && agent.timeOfRemoval > t){ //if he or she is alive at this time step
+                if (agent.getTimeOfAddition() < t && agent.timeOfRemoval > t //if he or she is alive at this time step
+                        && (agent.age>15 || agent.age<50 ) ){ //AND within the right age range
                     //add him or her to population counts
                     population++;                    
                     if(agent.isMale() ) {  malePopulation++; }

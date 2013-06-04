@@ -38,7 +38,7 @@ public class SimpactII extends SimState {
     private Bag subPopulationNum = new Bag();
     private Bag subPopulationArgs = new Bag();
     public double numberOfYears = 10;
-    public Distribution degrees = new PowerLawDistribution(1,2.0,this.random);
+    public Distribution degrees = new PowerLawDistribution(8,3.0,this.random);
     public Distribution ages = new UniformDistribution(15.0, 65.0,this.random);//new PowerLawDistribution(1.0,3);
     public Distribution relationshipDurations = new UniformDistribution(1.0, 10.0, this.random);//new BetaDistribution(0.1,0.9);
     //class variables for main operations
