@@ -23,15 +23,19 @@ import sim.util.Bag;
  * and output validate.
  * 
  */
-public class Validation {
+public class ValidatedModel extends SimpactII{
     
-    String filename;
-    String directory = "C:\\Users\\visiting_researcher\\Dropbox\\SACEMA"
-                + "\\SIMPACT\\Abstracts and Papers (in production)\\SimpactII Paper"
-                + "\\SimulatedData\\Simulated";
-    
-    public static void main(String[] args) throws IOException{
-        new Validation();
+    public static void main(String[] args) {
+        SimpactII s = new ValidatedModel(1000);
+        
+        //write files  
+        try{
+            WriteHIVADPrevalence(s);
+            WriteAgeMixingRelationshipDurations(s);
+        }catch(IOException ioe){
+            System.err.println(ioe);
+            System.exit(-1);
+        }
         
         //test my degree distribution
 //        int num = 1000;
@@ -50,26 +54,26 @@ public class Validation {
 
     }
 
-    public Validation() throws IOException{
+    public ValidatedModel(int population) {
         //make new model and add agents
-        final SimpactII s = new SimpactII();
-        s.numberOfYears = 30;
-        s.relationshipDurations = new PowerLawDistribution(52,4.2,s.random);
-        s.degrees = new PowerLawDistribution(8, 10, s.random);
-        s.timeOperator = new DemographicTimeOperator();
+        //final SimpactII s = new SimpactII();
+        numberOfYears = 30;
+        relationshipDurations = new PowerLawDistribution(52,4.2,random);
+        degrees = new PowerLawDistribution(8, 10, random);
+        timeOperator = new DemographicTimeOperator();
         InfectionOperator io = new AIDSDeathInfectionOperator() ;
         io.transmissionProbability = 0.008;
         io.initialNumberInfected = 2;
-        s.infectionOperator = new InterventionInfectionOperator(io);
+        infectionOperator = new InterventionInfectionOperator(io);
         
                 
         //set the initial age distribution based on data
-        s.ages = new Distribution() {
+        ages = new Distribution() {
             //initial age population in 1985
             private double[] dist = new double[] {0.1489, 0.2830, 0.4048, 0.5113,
                 0.6028, 0.6835, 0.7524, 0.8077, 0.8545, 0.8931, 0.9250, 0.9501,
                 0.9689, 0.9827, 0.9914, 0.9965, 1.0000};
-            private Distribution noise = new UniformDistribution(0, 4,s.random);
+            private Distribution noise = new UniformDistribution(0, 4,random);
         
             @Override
             public double nextValue() {
@@ -89,26 +93,24 @@ public class Validation {
             public double getStart(){ return 52*10; };
             public double getSpend(){ return 0.0; };
         };
-        s.addIntervention(condom);
+        addIntervention(condom);
         condom = new Condom("generalPopulation", 2500, 5){
             public double getStart(){ return 52*20; };
             public double getSpend(){ return 0.0; };
         };
-        s.addIntervention(condom);
+        addIntervention(condom);
         
         //>>>>>>> ADD AGENTS
-        int pop =1000;
-        
         //male cone agents
         HashMap attributes = new HashMap<String,Object>();
         attributes.put("preferredAgeDifference",0.9);
         attributes.put("probabilityMultiplier",-0.1);
         attributes.put("preferredAgeDifferenceGrowth",0.02);
-        attributes.put("adDispersion",0.005);
+        attributes.put("adDispersion",0.008);
         attributes.put("genderRatio", 1.0);        
-        s.addAgents(ConeAgeAgent.class, (int) ((pop/2) * 0.9),attributes);
+        addAgents(ConeAgeAgent.class, (int) ((population/2) * 1.0),attributes);
                         
-        s.addAgents(Agent.class,(int) ((pop/2) * 0.1)); //50 men all over the place
+        addAgents(Agent.class,(int) ((population/2) * 0.0)); //50 men all over the place
         
         //half female band agents non-AD
         attributes.clear();
@@ -116,28 +118,29 @@ public class Validation {
         attributes.put("probabilityMultiplier",-0.9);
         attributes.put("preferredAgeDifferenceGrowth",0.01);
         attributes.put("genderRatio", 0.0);        
-        s.addAgents(TriAgeAgent.class,pop/4,attributes);
+        addAgents(TriAgeAgent.class,population/4,attributes);
         
         //other half of female agent AD forming
         attributes.put("preferredAgeDifference",2.0);
         attributes.put("probabilityMultiplier",-0.5);
         attributes.put("preferredAgeDifferenceGrowth",0.01);
-        s.addAgents(TriAgeAgent.class,pop/4,attributes);
+        addAgents(TriAgeAgent.class,population/4,attributes);
         //<<<<<<<<<<< ADD AGENTS
                 
-        //write files        
-        foo(s);
-        bar(s);
-        
         //debug runs
-//        s.run();        
-//        s.agemixingScatter();
-//        s.demographics();                
-//        s.prevalence();
+        //run();        
+        //agemixingScatter();
+        //demographics();                
+        //prevalence();
         //System.exit(0);         
     }
     
-    private void bar(SimpactII s) throws IOException{
+    private static void WriteAgeMixingRelationshipDurations(SimpactII s) throws IOException{
+        String filename;
+        String directory = "C:\\Users\\visiting_researcher\\Dropbox\\SACEMA"
+                + "\\SIMPACT\\Abstracts and Papers (in production)\\SimpactII Paper"
+                + "\\SimulatedData\\Simulated";
+        
         //age mixing file
         filename = directory + "AgeMixing.csv";
         BufferedWriter ageMixing = new BufferedWriter(new FileWriter(filename));
@@ -177,7 +180,12 @@ public class Validation {
         relationDuration.close();
     }
     
-    private void foo(SimpactII s) throws IOException{
+    private static void WriteHIVADPrevalence(SimpactII s) throws IOException{
+        String filename;
+        String directory = "C:\\Users\\visiting_researcher\\Dropbox\\SACEMA"
+                + "\\SIMPACT\\Abstracts and Papers (in production)\\SimpactII Paper"
+                + "\\SimulatedData\\Simulated";
+        
         //prevalence HIV
         filename = directory + "PrevHIV.csv";
         BufferedWriter prevHIV = new BufferedWriter(new FileWriter(filename));

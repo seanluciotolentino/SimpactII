@@ -1,6 +1,7 @@
 package CombinationPrevention.OptimizationProblems;
 
 import CombinationPrevention.Interventions.*;
+import CombinationPrevention.ValidatedModel;
 import SimpactII.Agents.*;
 import SimpactII.Distributions.*;
 import SimpactII.InfectionOperators.*;
@@ -26,9 +27,6 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
             {100,1,0.1, 100,10,0.1,  100,10,0.1,      //test and treat (0-8)
              10,  0,  0,  0,         //MC (9-14)
              100,4,  100,0,  100,0,  100,0,  100,0},//condom (15-24)
-//            {0,0,0.5, 0,0,0.5,  0,0,0.5,      //test and treat (0-8)
-//             0,  0,  0,  0,         //MC (9-14)
-//             0,0,  0,0,  0,0,  0,0,  0,0},//condom (15-24)
             
             //delta:
             {10,10,0.05, 10,10,0.05,  10,10,0.05,       //test and treat (0-8)
@@ -53,35 +51,8 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
     }
    
     public SimpactII setup(double[] args) {
-        //basic simulation stuff        
-        final SimpactII s = new SimpactII();
-        s.numberOfYears = 30;
-        s.relationshipDurations = new PowerLawDistribution(1,-1.1,s.random);
-        s.timeOperator = new DemographicTimeOperator();
-        s.infectionOperator = new InterventionInfectionOperator(new AIDSDeathInfectionOperator() );
-        
-        //set the initial age distribution based on data
-        s.ages = new Distribution() {
-            //initial age population in 1980
-            private double[] dist = new double[] {0.1549, 0.2941, 0.4155, 
-                0.5198, 0.6118, 0.6905, 0.7543, 0.8088, 0.8545, 0.8932, 
-                0.9247, 0.9495, 0.9690, 0.9825, 0.9915, 0.9964, 1.0000};
-            private Distribution noise = new UniformDistribution(0, 4, s.random);
-        
-            @Override
-            public double nextValue() {
-                double r = Math.random();
-                int i = 0;
-                for(; r > dist[i]; i++){ continue; }
-                return (i * 5) + noise.nextValue();
-            }
-        };
-        
-        //heterogenous population stuff        
-        s.addAgents(SexWorkerAgent.class, (int) (population * 0.04));
-        s.addAgents(MSMAgent.class, (int) (population * 0.04));
-        s.addAgents(BiAgent.class, (int) (population * 0.04));
-        s.addAgents(BandAgeAgent.class, (int) population - s.getPopulation()); //the rest are band age agents        
+        //basic simulation stuff
+        SimpactII s = new ValidatedModel(population);
         
         //intervention stuff  
         //{0,1,2, 3,4,5,  6,7,8,                    //test and treat (0-8)
@@ -92,6 +63,7 @@ public class MultipleCombinationPrevention extends OptimizationProblem{
         String[] targets = new String[] {"generalPopulation","msm","sexWorker"};
         for(int i = 0; i< targets.length; i++)
             s.addIntervention( new TestAndTreat(targets[i], args[(3*i)], args[(3*i)+1],args[(3*i)+2]));
+        
         //MC
         targets = new String[] {"generalPopulation","msm","young","highRisk"};
         for(int i = 0; i< targets.length; i++)

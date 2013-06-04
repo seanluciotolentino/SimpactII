@@ -16,9 +16,10 @@ public class SolveCombinationPrevention {
 
     public static void main(String[] args) throws InterruptedException {
         //set parameters
-        String metric = "totalInfections";//args[0];//
-        int population = 1000;//Integer.parseInt(args[1]);//
-        //System.out.println("metric: " + metric + " population: " + population);
+        String file = args[0];
+        String metric = args[1];//"totalInfections";//
+        int population = Integer.parseInt(args[2]);//1000;//
+        System.out.println("RUNNING FOR " + file + " metric: " + metric + " population: " + population);
         
         //set optimization problem
         //OptimizationProblem op = new CondomCombinationPrevention(metric);
