@@ -26,7 +26,7 @@ public class SexWorkerAgent extends Agent{
     public SexWorkerAgent(SimpactII state, HashMap<String,Object> attributes){  
         super(state,attributes);
         this.DNP = 7;      //let's say this is the maximum she can have in a week
-        this.age = (state.random.nextDouble()*(MAX_AGE - MIN_AGE)) + MIN_AGE; //random age between MIN and MAX
+        //this.age = (state.random.nextDouble()*(MAX_AGE - MIN_AGE)) + MIN_AGE; //random age between MIN and MAX
         this.male = false; //all sex-workers are female (in this model)
         swRelationshipDistribution = new UniformDistribution(1.0, 2.0,state.random);
     }
@@ -41,16 +41,18 @@ public class SexWorkerAgent extends Agent{
     }
     
     public boolean remove(){
-        return age > MAX_AGE;
+        //return age > MAX_AGE;
+        return false;
     }
     //replace agent with a non-sex worker agent 
     public Agent replace(SimpactII state){
-        Agent a = new Agent(state,attributes)
-            {
-                public Agent replace(SimpactII state){
-                    return new SexWorkerAgent(state, attributes);
-                }
-            }; //create a new basic agent to replace the sexworker, the new agent is replaced by sexworker
+//        Agent a = new Agent(state,attributes)
+//            {
+//                public Agent replace(SimpactII state){
+//                    return new SexWorkerAgent(state, attributes);
+//                }
+//            }; //create a new basic agent to replace the sexworker, the new agent is replaced by sexworker
+        Agent a = new SexWorkerAgent(state, attributes);
         a.age = MAX_AGE;
         a.male = false;
         return a;

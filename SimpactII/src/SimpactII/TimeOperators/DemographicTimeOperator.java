@@ -48,26 +48,32 @@ public class DemographicTimeOperator extends TimeOperator{
                     int age = (int) Math.floor(agent.age/5)-3 ;                    
                     if(s.random.nextDouble() < fertility[age][year]){
                         Agent a;
-                        if(s.random.nextBoolean()){
-                            HashMap attributes = new HashMap<String,Object>();
-                            attributes.put("genderRatio", 1.0);
-                            if(s.random.nextDouble() < 0.9 ){
-                                attributes.put("preferredAgeDifference",0.9);
-                                attributes.put("probabilityMultiplier",-0.1);
-                                attributes.put("preferredAgeDifferenceGrowth",0.02);
-                                attributes.put("adDispersion",0.006);
-                                a = new ConeAgeAgent(s,attributes);
-                            }else{
-                                a = new Agent(s,attributes);
-                            }
-                        }else{
-                            a = agent.replace(s);
-                        }
+                        HashMap attributes = new HashMap<String,Object>();
                         
-                        //START EXPERIMENTS STUFF
-                        //Agent a = new Agent(s,agent.attributes);
-                        //Agent a = new ConeAgeAgent(s,agent.attributes);
-                        //Agent a = new TriAgeAgent(s, agent.attributes);
+                        //next, flip a coin for MSM and sex worker
+                        if(s.random.nextDouble() < 0.08){
+                            if(s.random.nextBoolean())
+                                a = new SexWorkerAgent(s, attributes);
+                            else
+                                a = new MSMAgent(s, attributes);
+                        }else{
+                            //flip coins for "normal" agents
+                            if(s.random.nextBoolean()){                            
+                                attributes.put("genderRatio", 1.0);
+                                if(s.random.nextDouble() < 0.9 ){
+                                    attributes.put("preferredAgeDifference",0.9);
+                                    attributes.put("probabilityMultiplier",-0.1);
+                                    attributes.put("preferredAgeDifferenceGrowth",0.02);
+                                    attributes.put("adDispersion",0.006);
+                                    a = new ConeAgeAgent(s,attributes);
+                                }else{
+                                    a = new Agent(s,attributes);
+                                }
+                            }else{
+                                a = agent.replace(s);
+                                a.male = false;
+                            }
+                        }
                         
                         a.age = 0;
                         a.attributes.remove("AIDSDeath");

@@ -27,5 +27,9 @@ public class TriAgeAgent extends ConeAgeAgent{
                 * Math.abs(ageDifference - (preferredAgeDifference) ) );            //*meanAge*preferredAgeDifferenceGrowth
     }
     
+    public Agent replace(SimpactII state){
+        return new TriAgeAgent(state, attributes);
+    }
+    
     
 }

@@ -18,7 +18,7 @@ public class Condom implements Intervention {
     
     //settable parameters
     private String target;
-    private int condomsPerInterval;
+    public int condomsPerInterval;
     private int interval;
     
     //parameters that are set for the combination prevention paper
@@ -52,7 +52,7 @@ public class Condom implements Intervention {
 
     }
     
-    private void distributeCondoms(SimpactII state){
+    public void distributeCondoms(SimpactII state){
         int c = 0;
         while( c < condomsPerInterval){
             final Agent target = findAgent(state);

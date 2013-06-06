@@ -13,6 +13,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import sim.engine.SimState;
+import sim.engine.Steppable;
 import sim.util.Bag;
 
 /**
@@ -28,7 +32,7 @@ public class ValidatedModel extends SimpactII{
     public static void main(String[] args) {
         SimpactII s = new ValidatedModel(1000);
         
-        //write files  
+        //write files for matlap figure  
         try{
             WriteHIVADPrevalence(s);
             WriteAgeMixingRelationshipDurations(s);
@@ -36,21 +40,37 @@ public class ValidatedModel extends SimpactII{
             System.err.println(ioe);
             System.exit(-1);
         }
-        
+//
+//        //print stuff for demographic / prevalence
+//        System.out.println("DEMOGRAPHICS:");
+//        PrintDemographics(s);
+//        System.out.println("PREVALENCE:");
+//        PrintPrevalence(s);
+//
+//        System.exit(1);
+            
+        //run multiple
+        //for(int i = 0; i < 20; i++){
+        //    s.run();
+        //    //PrintDemographics(s);
+        //    PrintPrevalence(s);
+        //}
+
         //test my degree distribution
-//        int num = 1000;
-//        //Distribution dist = new PowerLawDistribution(-2);   
-//        final double cut = 8;        
-//        final double alpha = 5;
-//        final MersenneTwisterFast r = new MersenneTwisterFast();
-//        Distribution dist = new PowerLawDistribution(cut, alpha, r);
-//        System.out.print("hist([ ");
-//        for(int i = 0; i < num; i++){
-//            System.out.print(Math.round(dist.nextValue()) + ", ");
-//            //System.out.print(dist.nextValue() + ", ");
-//        }
-//        //System.out.println("],0:5:length(x)*5); plot(bins/sum(bins)); hold all; plot(x)");
-//        System.out.println("],0:10); ");
+        //int num = 1000;
+        ////Distribution dist = new PowerLawDistribution(-2);   
+        //final double cut = 8;        
+        //final double alpha = 5;
+        //final MersenneTwisterFast r = new MersenneTwisterFast();
+        //Distribution dist = new PowerLawDistribution(cut, alpha, r);
+        //System.out.print("hist([ ");
+        //for(int i = 0; i < num; i++){
+        //    System.out.print(Math.round(dist.nextValue()) + ", ");
+        //    //System.out.print(dist.nextValue() + ", ");
+        //}
+        //System.out.println("],0:10); ");
+        //System.out.println("],0:10); ");
+        
 
     }
 
@@ -62,8 +82,9 @@ public class ValidatedModel extends SimpactII{
         degrees = new PowerLawDistribution(8, 10, random);
         timeOperator = new DemographicTimeOperator();
         InfectionOperator io = new AIDSDeathInfectionOperator() ;
-        io.transmissionProbability = 0.008;
+        io.transmissionProbability = 0.01;
         io.initialNumberInfected = 2;
+        io.HIVIntroductionTime = 4*52;
         infectionOperator = new InterventionInfectionOperator(io);
         
                 
@@ -74,7 +95,7 @@ public class ValidatedModel extends SimpactII{
                 0.6028, 0.6835, 0.7524, 0.8077, 0.8545, 0.8931, 0.9250, 0.9501,
                 0.9689, 0.9827, 0.9914, 0.9965, 1.0000};
             private Distribution noise = new UniformDistribution(0, 4,random);
-        
+            
             @Override
             public double nextValue() {
                 double r = Math.random();
@@ -89,28 +110,57 @@ public class ValidatedModel extends SimpactII{
         //                          20 --> 0.2%
         //                          200 --> 2%
         //                          1500 --> 15%
-        Intervention condom = new Condom("generalPopulation", 2500, 5){
-            public double getStart(){ return 52*10; };
-            public double getSpend(){ return 0.0; };
+//        Intervention condom = new Condom("generalPopulation", 1000, 5){
+//            public double getStart(){ return 52*13; };
+//            public double getSpend(){ return 0.0; };
+//        };
+//        addIntervention(condom);
+//        condom = new Condom("generalPopulation", 2500, 5){
+//            public double getStart(){ return 52*20; };
+//            public double getSpend(){ return 0.0; };
+//        };
+//        addIntervention(condom);
+        //behavioural change of condoms: Parameters: start, stop, slant, max
+        final double start = 13*52;     //13 = 1998
+        final double end = 19 *52;       //15 = 2000, 20 = 2005, 18 = 2003
+        final double min = 10;          //1%
+        final double max = 3500;        //30%
+        final double slant = 0.005;     //looks good...?
+        
+        //solved constants
+        final double a = slant*(max-min)/(end - start);
+        final double b = (start + end)/2;
+
+        Intervention i = new Condom("generalPopulation",10,5) {
+            public void distributeCondoms(SimpactII state){
+                double t = state.schedule.getTime() ;
+                condomsPerInterval = (int) ((max-min)/(1+Math.exp( a*(b-t)))+min);
+                super.distributeCondoms(state);
+            }
+            public double getStart() { return start; }
+            public double getSpend() { return 0.0; }
         };
-        addIntervention(condom);
-        condom = new Condom("generalPopulation", 2500, 5){
-            public double getStart(){ return 52*20; };
-            public double getSpend(){ return 0.0; };
-        };
-        addIntervention(condom);
+        addIntervention(i);
+        
+        
         
         //>>>>>>> ADD AGENTS
+        //add special agents first
+        addAgents(SexWorkerAgent.class, (int) (population*0.04));
+        addAgents(MSMAgent.class, (int) (population*0.04));
+        population = population - getPopulation(); //update number in population
+        
+        //add "normal" agents
         //male cone agents
         HashMap attributes = new HashMap<String,Object>();
         attributes.put("preferredAgeDifference",0.9);
         attributes.put("probabilityMultiplier",-0.1);
-        attributes.put("preferredAgeDifferenceGrowth",0.02);
-        attributes.put("adDispersion",0.006);
+        attributes.put("preferredAgeDifferenceGrowth",0.05);
+        attributes.put("adDispersion",0.004);
         attributes.put("genderRatio", 1.0);        
-        addAgents(ConeAgeAgent.class, (int) ((population/2) * 0.9),attributes);
+        addAgents(ConeAgeAgent.class, (int) ((population/2) * 0.8),attributes);
                         
-        addAgents(Agent.class,(int) ((population/2) * 0.1)); //50 men all over the place
+        addAgents(Agent.class,(int) ((population/2) * 0.2),attributes); //50 men all over the place
         
         //half female band agents non-AD
         attributes.clear();
@@ -156,22 +206,20 @@ public class ValidatedModel extends SimpactII{
         int numRelations = s.myRelations.size();
         for (int j = 0; j < numRelations; j++) {
             Relationship r = (Relationship) s.myRelations.get(j);
-            
-            ////skip Male Male relationships
-            if(r.getAgent1().isMale() && r.getAgent2().isMale())
-                continue;
-            
+                        
             //skip non-traditional relationships
-            if(r.getAgent1().getClass() == SexWorkerAgent.class && r.getAgent2().getClass() == SexWorkerAgent.class)
+            if(r.getAgent1().getClass() == SexWorkerAgent.class || r.getAgent2().getClass() == SexWorkerAgent.class)
                 continue;
-            if(r.getAgent1().getClass() == MSMAgent.class && r.getAgent2().getClass() == MSMAgent.class)
+            if(r.getAgent1().getClass() == MSMAgent.class || r.getAgent2().getClass() == MSMAgent.class)
                 continue;
 
             //age mixing file
             if (r.getAgent1().isMale()) {
-                ageMixing.write(r.getAgent1AgeAtFormation()+ "," + r.getAgent2AgeAtFormation() + "\n");
+                //System.out.println(r.getAgent2().getClass() + ", " + r.getAgent1().getClass());
+                ageMixing.write(r.getAgent2AgeAtFormation()+ "," + r.getAgent1AgeAtFormation() + "\n");
             } else {
-                ageMixing.write(r.getAgent2AgeAtFormation() + "," + r.getAgent1AgeAtFormation() + "\n");
+                //System.out.println(r.getAgent1().getClass() + ", " + r.getAgent2().getClass());
+                ageMixing.write(r.getAgent1AgeAtFormation() + "," + r.getAgent2AgeAtFormation() + "\n");
             }
 
             //relationship duration file
@@ -204,6 +252,10 @@ public class ValidatedModel extends SimpactII{
         for(int count = 0; count < averageOver; count++){        
             //initialize counters
             s.run();
+            
+            System.out.println("PREVALENCE:");
+            PrintPrevalence(s);
+            
             double[] adPop = new double[8];
             int[] ad = new int[8];
             double[] hivPop = new double[8];
@@ -232,6 +284,8 @@ public class ValidatedModel extends SimpactII{
             //go through agents and tally them accordingly
             for (int j = 0; j < numAgents; j++) {
                 Agent a = (Agent) agents.get(j);
+                if(a.getClass() == MSMAgent.class || a.getClass() == SexWorkerAgent.class)
+                    continue;
 
                 //tally for HIV prevalence
                 int gender = a.isMale()? 0:1;
@@ -247,7 +301,7 @@ public class ValidatedModel extends SimpactII{
                     Relationship r = (Relationship) s.myRelations.get(k);
                     if(!r.getAgent1().equals(a) && !r.getAgent2().equals(a))
                         continue;
-
+                    
                     //grab the agents
                     //Agent male = r.getAgent1().isMale()? r.getAgent1(): r.getAgent2();
                     //Agent female = r.getAgent1().isMale()? r.getAgent2(): r.getAgent1();
@@ -301,4 +355,70 @@ public class ValidatedModel extends SimpactII{
             prevAD.close();
     }
     
+    private static void PrintDemographics(SimpactII s){
+        //vars for the graphic:
+        int numBoxes = 9;
+        int boxSize = 10;
+        int timeGranularity = 52; //4 = 1 month, 52 = 1 year, etc...
+        
+        //do the calculations
+        int[] demographic;
+        int numAgents = s.myAgents.size();
+        double now = Math.min(s.numberOfYears*52, s.schedule.getTime()); //determine if we are at the end of the simulation or in the middle
+        for (int t = timeGranularity; t < now; t += timeGranularity) { //Go through each time step (skipping the first)
+            demographic = new int[numBoxes]; //create an int[] with the number of slots we want
+            
+            //go through agents...
+            for (int i = 0; i < numAgents; i++) { 
+                Agent agent = (Agent) s.myAgents.get(i);
+                if (agent.getTimeOfAddition() >= t || agent.timeOfRemoval < t){  continue; } //skip if the agent wasn't born yet or has been removed
+
+                double age = agent.getAge()*52; //convert age to weeks
+                double ageAtT = age - now + t;        
+                ageAtT/= 52; //convert back to years
+                int level = (int) Math.min(numBoxes-1, Math.floor( ageAtT / boxSize)); 
+                demographic[ level ] += 1; //...and add them to their delineations level
+            }
+            
+            //print the delineations for this time step
+            System.out.print(t + ", ");
+            for (int j = 0; j < numBoxes; j++) { 
+                //data.addValue(demographic[j], j*boxSize + " - " + (((j+1)*boxSize)-1), t + "");
+                System.out.print(demographic[j] + ",");
+            }
+            System.out.println();
+        }
+    }
+    
+    private static void PrintPrevalence(SimpactII s){
+        int timeGranularity = 52; 
+        int numAgents = s.myAgents.size(); //this were added to this data struct, but should not have been remove.
+        double now = Math.min(s.numberOfYears*52, s.schedule.getTime()); //determine if we are at the end of the simulation or in the middle
+        double population;
+        double totalInfections;
+        for (int t = timeGranularity; t < now; t += timeGranularity) { //Go through each time step (skipping the first)
+            //at each time step collect ALIVE POPULATION and NUMBER INFECTED
+            population = 0;
+            totalInfections = 0;
+            
+            //go through agents and tally
+            for (int i = 0; i < numAgents; i++) { 
+                Agent agent = (Agent) s.myAgents.get(i);
+                double timeOfInfection = (now - agent.weeksInfected);
+                
+                if (agent.getTimeOfAddition() < t && agent.timeOfRemoval > t //if he or she is alive at this time step
+                        && (agent.age>15 || agent.age<50 ) ){ //AND within the right age range
+                    //add him or her to population counts
+                    population++;                    
+                    
+                    //tally him or her for prevalence counts
+                    if (agent.weeksInfected>=1 && timeOfInfection < t){ //you are (1) infected AND (2) infected before time t
+                        totalInfections++; 
+                    }
+                }                       
+            }// end agents loop
+            System.out.print(totalInfections / population + ", ");
+        }//end time loop    
+        System.out.println();
+    }
 }

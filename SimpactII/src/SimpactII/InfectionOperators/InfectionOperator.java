@@ -24,6 +24,7 @@ public class InfectionOperator implements Steppable{
     //default class variables about infection
     public double transmissionProbability = 0.01; //this should reflect sex acts per week as well
     public int initialNumberInfected = 5;
+    public int HIVIntroductionTime = 0;
     
     public InfectionOperator(){
     }
@@ -80,8 +81,14 @@ public class InfectionOperator implements Steppable{
         return transmissionProbability;  //default, it doesn't matter who the agents are     
     }
     
-    public void preProcess(SimpactII state){
-        performInitialInfections(state);
+    public void preProcess(final SimpactII state){
+        state.schedule.scheduleOnceIn(HIVIntroductionTime, 
+            new Steppable() {
+                @Override
+                public void step(SimState ss) {
+                    performInitialInfections(state);
+                }
+        });
     }
     
     public void performInitialInfections(SimpactII state){
