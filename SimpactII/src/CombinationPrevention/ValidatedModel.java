@@ -1,7 +1,7 @@
 package CombinationPrevention;
 
 import CombinationPrevention.Interventions.Condom;
-import CombinationPrevention.OptimizationProblems.MultipleCombinationPrevention;
+import CombinationPrevention.OptimizationProblems.CombinationPrevention;
 import SimpactII.Agents.*;
 import SimpactII.DataStructures.Relationship;
 import SimpactII.Distributions.*;
@@ -40,43 +40,16 @@ public class ValidatedModel extends SimpactII{
             System.err.println(ioe);
             System.exit(-1);
         }
-//
-//        //print stuff for demographic / prevalence
-//        System.out.println("DEMOGRAPHICS:");
-//        PrintDemographics(s);
-//        System.out.println("PREVALENCE:");
-//        PrintPrevalence(s);
-//
-//        System.exit(1);
-            
-        //run multiple
-        //for(int i = 0; i < 20; i++){
-        //    s.run();
-        //    //PrintDemographics(s);
-        //    PrintPrevalence(s);
-        //}
 
-        //test my degree distribution
-        //int num = 1000;
-        ////Distribution dist = new PowerLawDistribution(-2);   
-        //final double cut = 8;        
-        //final double alpha = 5;
-        //final MersenneTwisterFast r = new MersenneTwisterFast();
-        //Distribution dist = new PowerLawDistribution(cut, alpha, r);
-        //System.out.print("hist([ ");
-        //for(int i = 0; i < num; i++){
-        //    System.out.print(Math.round(dist.nextValue()) + ", ");
-        //    //System.out.print(dist.nextValue() + ", ");
-        //}
-        //System.out.println("],0:10); ");
-        //System.out.println("],0:10); ");
-        
-
+        //print stuff for demographic / prevalence
+        System.out.println("DEMOGRAPHICS:");
+        PrintDemographics(s);
+        System.out.println("PREVALENCE:");
+        PrintPrevalence(s);
     }
 
     public ValidatedModel(int population) {
         //make new model and add agents
-        //final SimpactII s = new SimpactII();
         numberOfYears = 30;
         relationshipDurations = new PowerLawDistribution(52,4.2,random);
         degrees = new PowerLawDistribution(8, 10, random);
@@ -94,8 +67,7 @@ public class ValidatedModel extends SimpactII{
             private double[] dist = new double[] {0.1489, 0.2830, 0.4048, 0.5113,
                 0.6028, 0.6835, 0.7524, 0.8077, 0.8545, 0.8931, 0.9250, 0.9501,
                 0.9689, 0.9827, 0.9914, 0.9965, 1.0000};
-            private Distribution noise = new UniformDistribution(0, 4,random);
-            
+            private Distribution noise = new UniformDistribution(0, 4,random);            
             @Override
             public double nextValue() {
                 double r = Math.random();
@@ -105,32 +77,15 @@ public class ValidatedModel extends SimpactII{
             }
         };
         
-        //condoms started to be used more in year 15
-        //proportion using condoms: 10 --> 0.1% of the population
-        //                          20 --> 0.2%
-        //                          200 --> 2%
-        //                          1500 --> 15%
-//        Intervention condom = new Condom("generalPopulation", 1000, 5){
-//            public double getStart(){ return 52*13; };
-//            public double getSpend(){ return 0.0; };
-//        };
-//        addIntervention(condom);
-//        condom = new Condom("generalPopulation", 2500, 5){
-//            public double getStart(){ return 52*20; };
-//            public double getSpend(){ return 0.0; };
-//        };
-//        addIntervention(condom);
         //behavioural change of condoms: Parameters: start, stop, slant, max
         final double start = 13*52;     //13 = 1998
-        final double end = 19 *52;       //15 = 2000, 20 = 2005, 18 = 2003
+        final double end = 19 *52;      //15 = 2000, 20 = 2005, 18 = 2003
         final double min = 10;          //1%
         final double max = 3500;        //30%
-        final double slant = 0.005;     //looks good...?
-        
+        final double slant = 0.005;     //looks good...?        
         //solved constants
         final double a = slant*(max-min)/(end - start);
         final double b = (start + end)/2;
-
         Intervention i = new Condom("generalPopulation",10,5) {
             public void distributeCondoms(SimpactII state){
                 double t = state.schedule.getTime() ;
@@ -141,8 +96,6 @@ public class ValidatedModel extends SimpactII{
             public double getSpend() { return 0.0; }
         };
         addIntervention(i);
-        
-        
         
         //>>>>>>> ADD AGENTS
         //add special agents first
@@ -175,18 +128,10 @@ public class ValidatedModel extends SimpactII{
         attributes.put("probabilityMultiplier",-0.5);
         attributes.put("preferredAgeDifferenceGrowth",0.01);
         addAgents(TriAgeAgent.class,population/4,attributes);
-        //<<<<<<<<<<< ADD AGENTS
-                
-        //debug runs
-//        System.out.println(getPopulation());
-//        run();        
-//        agemixingScatter();
-        //demographics();                
-        //prevalence();
-        //System.exit(0);         
+        //<<<<<<<<<<< ADD AGENTS  
     }
     
-    private static void WriteAgeMixingRelationshipDurations(SimpactII s) throws IOException{
+    public static void WriteAgeMixingRelationshipDurations(SimpactII s) throws IOException{
         String filename;
         String directory = "C:\\Users\\visiting_researcher\\Dropbox\\SACEMA"
                 + "\\SIMPACT\\Abstracts and Papers (in production)\\SimpactII Paper"
@@ -229,7 +174,7 @@ public class ValidatedModel extends SimpactII{
         relationDuration.close();
     }
     
-    private static void WriteHIVADPrevalence(SimpactII s) throws IOException{
+    public static void WriteHIVADPrevalence(SimpactII s) throws IOException{
         String filename;
         String directory = "C:\\Users\\visiting_researcher\\Dropbox\\SACEMA"
                 + "\\SIMPACT\\Abstracts and Papers (in production)\\SimpactII Paper"
@@ -355,7 +300,7 @@ public class ValidatedModel extends SimpactII{
             prevAD.close();
     }
     
-    private static void PrintDemographics(SimpactII s){
+    public static void PrintDemographics(SimpactII s){
         //vars for the graphic:
         int numBoxes = 9;
         int boxSize = 10;
@@ -390,7 +335,7 @@ public class ValidatedModel extends SimpactII{
         }
     }
     
-    private static void PrintPrevalence(SimpactII s){
+    public static void PrintPrevalence(SimpactII s){
         int timeGranularity = 52; 
         int numAgents = s.myAgents.size(); //this were added to this data struct, but should not have been remove.
         double now = Math.min(s.numberOfYears*52, s.schedule.getTime()); //determine if we are at the end of the simulation or in the middle
