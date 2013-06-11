@@ -23,8 +23,10 @@ public class TriAgeAgent extends ConeAgeAgent{
         //double ageDifference = femaleAge - maleAge;
         //double meanAge = ((this.age + other.age)/2);
         
-        return  probability < Math.exp(this.probabilityMultiplier
-                * Math.abs(ageDifference - (preferredAgeDifference) ) );            //*meanAge*preferredAgeDifferenceGrowth
+        //return probability < Math.exp(meanAgeFactor*meanAge)*Math.exp(this.probabilityMultiplier
+        //        * Math.abs(ageDifference - (preferredAgeDifference) ) );            
+        return probability < Math.exp(this.probabilityMultiplier
+                * Math.abs(ageDifference - (preferredAgeDifference) ) );            
     }
     
     public Agent replace(SimpactII state){

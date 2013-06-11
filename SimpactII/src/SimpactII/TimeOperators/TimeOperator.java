@@ -52,7 +52,7 @@ public class TimeOperator implements Steppable{
             }
             
             //check some removal condition
-            if(remove(agent) && agent.timeOfRemoval >= Double.MAX_VALUE){ //if some removal condition is met && not already removed
+            if((agent.timeOfRemoval >= Double.MAX_VALUE) && remove(agent) ){ //if some removal condition is met && not already removed
                 //somehow replace individual:
                 replace(state,agent);
                 //Agent newAgent = replace(state,agent);

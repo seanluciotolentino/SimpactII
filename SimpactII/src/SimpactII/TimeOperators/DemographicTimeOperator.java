@@ -24,14 +24,20 @@ public class DemographicTimeOperator extends TimeOperator{
     
     private double[][] fertility; 
     private SimpactII state; //need to grab the RNG and schedule time in remove method
+    
+    //for maintainging the agent distribution
+    private Bag agents;
+    private int[] num;
+    private Bag attributes;
                 
     //create anonymous agent to inject 100 new agents every 5 years
     @Override
     public void preProcess(SimpactII state){
+        this.state = state; 
+        grabAgentDistribution();
         loadMortality();
         loadFertility(); 
         maxYears = fertility[0].length-1;
-        this.state = state; 
         
         //go through females and flip a coin whether they have a child
         state.schedule.scheduleRepeating(new Steppable(){
@@ -47,50 +53,11 @@ public class DemographicTimeOperator extends TimeOperator{
                     
                     int age = (int) Math.floor(agent.age/5)-3 ;                    
                     if(s.random.nextDouble() < fertility[age][year]){
-                        Agent a;
-                        HashMap attributes = new HashMap<String,Object>();
-                        
-                        //next, flip a coin for MSM and sex worker
-                        if(s.random.nextDouble() < 0.08){
-                            if(s.random.nextBoolean())
-                                a = new SexWorkerAgent(s, attributes);
-                            else
-                                a = new MSMAgent(s, attributes);
-                        }else{
-                            //flip coins for "normal" agents
-                            if(s.random.nextBoolean()){                            
-                                attributes.put("genderRatio", 1.0);
-                                if(s.random.nextDouble() < 0.9 ){
-                                    attributes.put("preferredAgeDifference",0.9);
-                                    attributes.put("probabilityMultiplier",-0.1);
-                                    attributes.put("preferredAgeDifferenceGrowth",0.02);
-                                    attributes.put("adDispersion",0.006);
-                                    a = new ConeAgeAgent(s,attributes);
-                                }else{
-                                    a = new Agent(s,attributes);
-                                }
-                            }else{
-                                a = agent.replace(s);
-                                a.male = false;
-                            }
-                        }
-                        
-                        a.age = 0;
-                        a.attributes.remove("AIDSDeath");
-                        a.attributes.remove("ARVStart");
-                        a.attributes.remove("ARVStop");
-                        a.attributes.remove("HIVTest");
-                        a.attributes.put("circumcised",false);
-                        a.attributes.put("isCondomUser",false);
-                        a.attributes.put("infectivityChangeFrom", 1.0);
-                        a.attributes.put("infectivityChangeTo", 1.0);                       
+                        newAgent(s);
                     }
                 }
-            }
-            //print fertility for this year
-            //for()
-            
-        }, 52);
+            }//end  step            
+        }, 52); //end schedule
     }
     
     //no one is replacing anyone here...
@@ -98,11 +65,11 @@ public class DemographicTimeOperator extends TimeOperator{
     public void replace(SimpactII state, Agent agent){ return; }
     
     //remove based on mortality curves -- from ASSA2008 / Johnson paper
-    @Override
-    public boolean remove(Agent agent){
+    public boolean remove(Agent agent){ //AIDS death will occur after coin flip
+        boolean HIVdeath = false;
         Double ttd = (Double) agent.attributes.get("AIDSDeath");
         if(ttd != null &&  state.schedule.getTime() > ttd.doubleValue())
-            return true;
+            HIVdeath = true;
 			
         //return false;
         int year = (int) Math.floor(state.schedule.getTime()/52);
@@ -113,14 +80,14 @@ public class DemographicTimeOperator extends TimeOperator{
         //use correct mortality table
         if( agent.isMale())
             if(age < 0)
-                return state.random.nextDouble() < (maleChildMortality[(int) Math.floor(agent.age)][year]);
+                return HIVdeath || state.random.nextDouble() < (maleChildMortality[(int) Math.floor(agent.age)][year]);
             else
-                return state.random.nextDouble() < (maleMortality[age][year]); //divide by 52 b/c it's yearly mortality            
+                return HIVdeath || state.random.nextDouble() < (maleMortality[age][year]); //divide by 52 b/c it's yearly mortality            
         else
             if(age < 0)
-                return state.random.nextDouble() < (femaleChildMortality[(int) Math.floor(agent.age)][year]); 
+                return HIVdeath || state.random.nextDouble() < (femaleChildMortality[(int) Math.floor(agent.age)][year]); 
             else
-                return state.random.nextDouble() < (femaleMortality[age][year]);             
+                return HIVdeath || state.random.nextDouble() < (femaleMortality[age][year]);             
         //end if statements
             
         
@@ -209,5 +176,44 @@ public class DemographicTimeOperator extends TimeOperator{
             {0.058123549, 0.056700513, 0.055521857, 0.054380123, 0.053178177, 0.051882651, 0.050482506, 0.049001408, 0.047454003, 0.045834512, 0.044140252, 0.041887716, 0.039598019, 0.037293284, 0.034991373, 0.032715121, 0.030969991, 0.029383782, 0.027936541, 0.026602071, 0.025362501, 0.024216693, 0.023173452, 0.02224762, 0.021444575, 0.020755422, 0.020152007, 0.01959691, 0.019058818, 0.018526938, 0.018007948, 0.017520079, 0.017082841, 0.016710621, 0.01640726, 0.016163792, 0.015956503, 0.015759276, 0.015547815, 0.01531626, 0.015071142},
             {0.023287942, 0.021563243, 0.01981084, 0.018140837, 0.016633552, 0.015322161, 0.014150236, 0.012990746, 0.011747746, 0.01040531, 0.008985057, 0.008902336, 0.009005132, 0.009145663, 0.009317542, 0.009510381, 0.008379574, 0.00745972, 0.006708593, 0.006092974, 0.005587021, 0.005169959, 0.004826797, 0.004542447, 0.004301698, 0.00409303, 0.003911779, 0.003758179, 0.003635482, 0.003545638, 0.003486838, 0.003449885, 0.003420493, 0.003386037, 0.003341268, 0.003288241, 0.003234538, 0.003190276, 0.003163873, 0.003159258, 0.003174291},
         };
+    }
+
+    private void grabAgentDistribution() {
+        //grab distribution of agents
+        agents = state.getSubPopulationTypes();
+        Bag numbers = state.getSubPopulationNum();
+        num = new int[numbers.size()];
+        num[0] = (int) numbers.get(0);
+        for(int i = 1; i < numbers.size(); i++){
+            num[i] = num[i-1] + (int) numbers.get(i);
+        }
+        attributes = state.getSubPopulationArgs();
+    }
+    
+    private Agent newAgent(SimpactII s){
+        int n = state.random.nextInt(state.getPopulation());
+        int i = 0;
+        for(; num[i] < n; i++){ continue; }
+        
+        //make a new agent of type i
+        Class c = (Class) agents.get(i);
+        HashMap attri = (HashMap) attributes.get(i);
+        Agent a;
+        try {
+            a = (Agent) c.getConstructor(new Class[]{SimpactII.class, HashMap.class}).newInstance(s, attri);
+        } catch (Exception e) {
+            throw new RuntimeException("Exception occurred while trying to replace agent " + c + "\n" + e.getMessage());
+        }
+        a.age = 0;
+        //attributes that we know are necessary:
+        a.attributes.remove("AIDSDeath");
+        a.attributes.remove("ARVStart");
+        a.attributes.remove("ARVStop");
+        a.attributes.remove("HIVTest");
+        a.attributes.put("circumcised",false);
+        a.attributes.put("isCondomUser",false);
+        a.attributes.put("infectivityChangeFrom", 1.0);
+        a.attributes.put("infectivityChangeTo", 1.0);       
+        return a;
     }
 }

@@ -24,7 +24,7 @@ public class InfectionOperator implements Steppable{
     //default class variables about infection
     public double transmissionProbability = 0.01; //this should reflect sex acts per week as well
     public int initialNumberInfected = 5;
-    public int HIVIntroductionTime = 0;
+    public double HIVIntroductionTime = 1;
     
     public InfectionOperator(){
     }

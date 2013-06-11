@@ -21,15 +21,15 @@ public class AIDSDeathInfectionOperator extends InfectionOperator{
         
         //give AIDS death time to the intially infected
         //this may be better moved to "performInitialInfections"
-        int numAgents = state.myAgents.size();
-        for(int i = 0 ; i < numAgents; i++){
-            Agent agent = (Agent) state.myAgents.get(i);
-            if(agent.weeksInfected>0){
-                double timeTillDeath = 52*8;
-                agent.attributes.put("AIDSDeath", 
-                    new Double(timeTillDeath+state.schedule.getTime()));
-            }
-        }
+//        int numAgents = state.myAgents.size();
+//        for(int i = 0 ; i < numAgents; i++){
+//            Agent agent = (Agent) state.myAgents.get(i);
+//            if(agent.weeksInfected>0){
+//                double timeTillDeath = 52*8;
+//                agent.attributes.put("AIDSDeath", 
+//                    new Double(timeTillDeath+state.schedule.getTime()));
+//            }
+//        }
         this.state = state;      
     }
     
@@ -46,7 +46,8 @@ public class AIDSDeathInfectionOperator extends InfectionOperator{
             while(agent.age > 35 || agent.age < 25) //grab a new one till you find one between 25-35
                 agent = (Agent) state.network.allNodes.get(state.random.nextInt(pop));
             
-            agent.weeksInfected = 1;
+            //agent.weeksInfected = 1;
+            infect(agent,null);
         }
     }
     
@@ -64,4 +65,4 @@ public class AIDSDeathInfectionOperator extends InfectionOperator{
         return scale * Math.pow(-Math.log(1.0 - state.random.nextDouble()), 1.0 / shape);
     }
     
-}
+    }

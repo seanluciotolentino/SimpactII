@@ -27,6 +27,7 @@ public class ConeAgeAgent extends Agent{
     protected MersenneTwisterFast rng;
     protected double preferredAgeDifferenceGrowth;
     protected double adDispersion;
+    protected double meanAgeFactor;
     
         
     public ConeAgeAgent(SimpactII state, HashMap<String,Object> attributes){  
@@ -36,6 +37,7 @@ public class ConeAgeAgent extends Agent{
         probabilityMultiplier = -0.1;
         preferredAgeDifferenceGrowth = 2;
         adDispersion = 0.01;
+        meanAgeFactor = -0.01;//larger means age matter more
         
         //set defaults if not yet set
         try{
@@ -48,6 +50,8 @@ public class ConeAgeAgent extends Agent{
                 preferredAgeDifferenceGrowth = (double) attributes.get("preferredAgeDifferenceGrowth");
             if ( attributes.get("adDispersion") != null )
                 adDispersion = (double) attributes.get("adDispersion");
+            if ( attributes.get("meanAgeFactor") != null )
+                meanAgeFactor = (double) attributes.get("meanAgeFactor");
         }catch(Exception e){
             System.err.println("Attribute provided not castable to double. Please provide double (not ints or Strings).\n" + e);
             System.exit(-2);
@@ -75,7 +79,7 @@ public class ConeAgeAgent extends Agent{
         double meanAge = ((this.age + other.age)/2);
         
         //return  probability < Math.exp(probMult * Math.abs(ageDifference - (prefAD*meanAge*adGrowth) ) );        
-        return probability < Math.exp(probabilityMultiplier * (Math.abs(ageDifference - 
+        return probability < Math.exp(meanAgeFactor*meanAge)*Math.exp(probabilityMultiplier * (Math.abs(ageDifference - 
                 (preferredAgeDifference*meanAge*preferredAgeDifferenceGrowth) ) /
                 (preferredAgeDifference*meanAge*adDispersion)) );
     }

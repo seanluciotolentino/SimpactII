@@ -467,4 +467,25 @@ public class SimpactII extends SimState {
         s.run();
         System.exit(0);
     }
+
+    /**
+     * @return the subPopulationTypes
+     */
+    public Bag getSubPopulationTypes() {
+        return subPopulationTypes;
+    }
+
+    /**
+     * @return the subPopulationNum
+     */
+    public Bag getSubPopulationNum() {
+        return subPopulationNum;
+    }
+
+    /**
+     * @return the subPopulationArgs
+     */
+    public Bag getSubPopulationArgs() {
+        return subPopulationArgs;
+    }
 }
