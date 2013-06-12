@@ -18,18 +18,6 @@ public class AIDSDeathInfectionOperator extends InfectionOperator{
     
     public void preProcess(SimpactII state){
         super.preProcess(state);
-        
-        //give AIDS death time to the intially infected
-        //this may be better moved to "performInitialInfections"
-//        int numAgents = state.myAgents.size();
-//        for(int i = 0 ; i < numAgents; i++){
-//            Agent agent = (Agent) state.myAgents.get(i);
-//            if(agent.weeksInfected>0){
-//                double timeTillDeath = 52*8;
-//                agent.attributes.put("AIDSDeath", 
-//                    new Double(timeTillDeath+state.schedule.getTime()));
-//            }
-//        }
         this.state = state;      
     }
     

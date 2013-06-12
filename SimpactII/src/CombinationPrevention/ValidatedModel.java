@@ -5,6 +5,7 @@ import CombinationPrevention.OptimizationProblems.CombinationPrevention;
 import SimpactII.Agents.*;
 import SimpactII.DataStructures.Relationship;
 import SimpactII.Distributions.*;
+import SimpactII.Graphs.AgePrevalence;
 import SimpactII.InfectionOperators.*;
 import SimpactII.Interventions.Intervention;
 import SimpactII.SimpactII;
@@ -55,8 +56,8 @@ public class ValidatedModel extends SimpactII{
         degrees = new PowerLawDistribution(8, 10, random);
         timeOperator = new DemographicTimeOperator();
         InfectionOperator io = new AIDSDeathInfectionOperator() ;
-        io.transmissionProbability = 0.01;
-        io.initialNumberInfected = 2;
+        io.transmissionProbability = 0.008;
+        io.initialNumberInfected = 5;
         io.HIVIntroductionTime = 4*52;
         infectionOperator = new InterventionInfectionOperator(io);
         
@@ -81,14 +82,30 @@ public class ValidatedModel extends SimpactII{
         final double start = 13*52;     //13 = 1998
         final double end = 19 *52;      //15 = 2000, 20 = 2005, 18 = 2003
         final double min = 10;          //1%
-        final double max = 3500;        //30%
+        final double max = 4500;        //30%
         final double slant = 0.005;     //looks good...?        
         //solved constants
         final double a = slant*(max-min)/(end - start);
         final double b = (start + end)/2;
         Intervention i = new Condom("generalPopulation",10,5) {
+            private Bag condomUsers;
+            private int user = 0;
+            public void step(SimState state){
+                SimpactII s = (SimpactII) state;
+                condomUsers = s.myAgents;
+                super.step(state);
+            }
+            protected Agent findAgent(SimpactII state){
+                Agent a = (Agent) condomUsers.get(user);
+                double now = state.schedule.getTime();
+                for( ; a.timeOfRemoval< now && user < condomUsers.size();user++)
+                    a = (Agent) condomUsers.get(user);
+                user++;
+                return a;
+            }
             public void distributeCondoms(SimpactII state){
                 double t = state.schedule.getTime() ;
+                user = 0; //start over from the beginning of the list
                 condomsPerInterval = (int) ((max-min)/(1+Math.exp( a*(b-t)))+min);
                 super.distributeCondoms(state);
             }
@@ -110,17 +127,18 @@ public class ValidatedModel extends SimpactII{
         attributes.put("probabilityMultiplier",-0.1);
         attributes.put("preferredAgeDifferenceGrowth",0.05);
         attributes.put("adDispersion",0.004);
-        attributes.put("genderRatio", 1.0);        
-        addAgents(ConeAgeAgent.class, (int) ((population/2) * 0.8),attributes);
+        attributes.put("genderRatio", 1.0);
+        attributes.put("meanAgeFactor", -0.08);
+        addAgents(ConeAgeAgent.class, (int) ((population/2) * 0.5),attributes);
                         
-        addAgents(Agent.class,(int) ((population/2) * 0.2),attributes); //50 men all over the place
+        addAgents(Agent.class,(int) ((population/2) * 0.5),attributes); //50 men all over the place
         
         //half female band agents non-AD
         attributes.clear();
         attributes.put("preferredAgeDifference",2.0);
         attributes.put("probabilityMultiplier",-0.9);
         attributes.put("preferredAgeDifferenceGrowth",0.01);
-        attributes.put("genderRatio", 0.0);        
+        attributes.put("genderRatio", 0.0);
         addAgents(TriAgeAgent.class,population/4,attributes);
         
         //other half of female agent AD forming
@@ -352,7 +370,7 @@ public class ValidatedModel extends SimpactII{
                 double timeOfInfection = (now - agent.weeksInfected);
                 
                 if (agent.getTimeOfAddition() < t && agent.timeOfRemoval > t //if he or she is alive at this time step
-                        && (agent.age>15 || agent.age<50 ) ){ //AND within the right age range
+                        && (agent.age>15 && agent.age<50 ) ){ //AND within the right age range
                     //add him or her to population counts
                     population++;                    
                     

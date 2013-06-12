@@ -29,15 +29,15 @@ public class AgePrevalence extends JFrame{
         
         //make the data
         DefaultCategoryDataset data = new DefaultCategoryDataset();
-        int[][] prevalence = new int[2][10];
-        double[][] population = new double[2][10];
+        int[][] prevalence = new int[2][7];
+        double[][] population = new double[2][7];
         int numAgents = state.myAgents.size(); 
         double t, now = Math.min(state.numberOfYears*52, state.schedule.getTime()); 
         for (int i = 0; i < numAgents; i++) { 
             Agent agent = (Agent) state.myAgents.get(i);
-            int age = (int) Math.min(9,Math.floor(agent.age/5)-3) ;  
+            int age = (int) Math.floor(agent.age/5)-3 ;  
             int gender = agent.isMale()? 0:1;
-            if(age<0 || agent.timeOfRemoval < now ){continue;} //skip childern
+            if(age<0 || age>6 || agent.timeOfRemoval < now ){continue;} //skip childern
             
             //add to population counts
             population[gender][age]++;
@@ -49,15 +49,15 @@ public class AgePrevalence extends JFrame{
         //add it all to "data"
         double pop = 0;
         double prev = 0;
-        for(int age = 0; age < 10; age++){
+        for(int age = 0; age < 7; age++){
             //after everyone for this time step, add to the data
 //            System.out.println("====age " + ((age+3)*5) + "======");
 //            System.out.println("male: " + prevalence[0][age] / population[0][age]);
 //            System.out.println("female: " + prevalence[1][age] / population[1][age]);
             pop+=population[0][age]+population[1][age];
             prev+=prevalence[0][age]+prevalence[1][age];
-            data.addValue( prevalence[0][age] / population[0][age], "male", ((age+3)*5) + "-" + (((age+3)*5)+4));
             data.addValue( prevalence[1][age] / population[1][age], "female", ((age+3)*5) + "-" + (((age+3)*5)+4));
+            data.addValue( prevalence[0][age] / population[0][age], "male", ((age+3)*5) + "-" + (((age+3)*5)+4));            
         }
         System.out.println("PREVALENCE = " + prev / pop);
         
