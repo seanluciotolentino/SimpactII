@@ -21,10 +21,10 @@ import sim.util.Bag;
 public class TestAndTreat implements Intervention {
 
     //parameters
-    private String target;
-    private double numSlots;
-    private double numTests;
-    private double retentionRate;
+    public String target;
+    public double numSlots;
+    public double numTests;
+    public double retentionRate;
     
     //constants
     private final double start = 20.0 * 52;
@@ -36,11 +36,12 @@ public class TestAndTreat implements Intervention {
     private final double costOfTest = 1.0;
     
     //class variables
-    private int patientsOnTreatment = 0;
-    private Queue<Agent> treatmentQueue = new LinkedList();
-    private Bag targets;
+    public Bag patientsOnTreatment = new Bag();
+    public Queue<Agent> treatmentQueue = new LinkedList();
+    public Bag targets;
     public Distribution dropoutTimes ;
     public double treatmentTime = 0;
+    public SimpactII state;
 
     public TestAndTreat(String target, double numSlots,
             double numTests, double retentionRate) {
@@ -56,6 +57,7 @@ public class TestAndTreat implements Intervention {
         //this is the first step of the intervention
         this.dropoutTimes = new ExponentialDecay(52, retentionRate, state.random);
         SimpactII s = (SimpactII) state;
+        this.state = s;
 
         //schedule test and treat to happen more frequently
         s.schedule.scheduleRepeating(new Steppable() {
@@ -83,7 +85,7 @@ public class TestAndTreat implements Intervention {
      * treatment queue.
      *
      */
-    private void testStep(SimpactII s) {
+    public void testStep(SimpactII s) {
         Agent agent = (Agent) findAgent(s);
         for (int i = 0; i < numTests && agent != null; i++) {
             //check that this agent is a target and hasn't been tested
@@ -97,14 +99,23 @@ public class TestAndTreat implements Intervention {
         }
     } //end testStep method
 
-    private void treatStep(SimState s) {
-        while (patientsOnTreatment < numSlots && !treatmentQueue.isEmpty()) {
+    public void treatStep(SimpactII s) {
+        //go through patients on treatment and remove anyone who has been removed
+        for (int i = 0; i < patientsOnTreatment.size(); i++) { //add syphilis weeks infected attribute to every one
+            Agent agent = (Agent) patientsOnTreatment.get(i);
+            if(agent.timeOfRemoval<= s.schedule.getTime() )
+                stopTreatment(agent);
+        }
+        
+        //add patients from queue 
+        while (patientsOnTreatment.size() < numSlots && !treatmentQueue.isEmpty()) {
             Agent patient = treatmentQueue.remove();
-            treat(patient, s);
+            if(patient.timeOfRemoval>= s.schedule.getTime() ) //check patient is still alive
+                treat(patient, s);
         }
     }
 
-    private void treat(final Agent patient, SimState state) {
+    private void treat(final Agent patient, SimpactII state) {        
         patient.attributes.put("ARVStart", state.schedule.getTime());
 
         //reduce their infectivity
@@ -117,10 +128,7 @@ public class TestAndTreat implements Intervention {
         state.schedule.scheduleOnceIn(timeOfDropOut + timeTillNormalInfectivity, new Steppable() {
             @Override
             public void step(SimState state) {
-                double currentInfectivity = (double) patient.attributes.get("infectivityChangeFrom");
-                patient.attributes.put("infectivityChangeFrom", currentInfectivity / (1 - ARVInfectivityReduction));
-                patient.attributes.put("ARVStop", state.schedule.getTime());
-                patientsOnTreatment--;
+                stopTreatment(patient);
             }
         });
         
@@ -129,8 +137,16 @@ public class TestAndTreat implements Intervention {
         AIDSDeath += timeOfDropOut;
         patient.attributes.put("AIDSDeath",AIDSDeath);//I don't think this is necessary
             
-        double timeLeft = (30*52) - state.schedule.getTime();
+        //for purposes of calculating cost:
+        double timeLeft = (state.numberOfYears*52) - state.schedule.getTime();
         treatmentTime += Math.min(timeOfDropOut,timeLeft); //add the amount of time on ART for cost purposes
+    }
+    
+    private void stopTreatment(Agent patient){
+        double currentInfectivity = (double) patient.attributes.get("infectivityChangeFrom");
+        patient.attributes.put("infectivityChangeFrom", currentInfectivity / (1 - ARVInfectivityReduction));
+        patient.attributes.put("ARVStop", state.schedule.getTime());
+        patientsOnTreatment.remove(patient);
     }
 
     protected Agent findAgent(SimpactII state) {

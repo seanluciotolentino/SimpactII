@@ -284,6 +284,14 @@ public class SimpactII extends SimState {
     public final JFrame prevalence() {
         return new Prevalence(this);
     }
+    /**
+     * Generate the age-specific prevalence plot. This is a bar chart of HIV
+     * prevalence stratified by age-groups and gender. It reflects the cross
+     * sectional HIV-prevalence at the time that the method was called.
+     */
+    public final JFrame agePrevalence() {
+        return new AgePrevalence(this);
+    }
 
     //CSV EXPORT METHODS
     /**

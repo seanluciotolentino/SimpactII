@@ -1,7 +1,8 @@
 package CombinationPrevention;
 
-import CombinationPrevention.Interventions.Condom;
+import CombinationPrevention.Interventions.*;
 import CombinationPrevention.OptimizationProblems.CombinationPrevention;
+import CombinationPrevention.OptimizationProblems.PrevalenceFit;
 import SimpactII.Agents.*;
 import SimpactII.DataStructures.Relationship;
 import SimpactII.Distributions.*;
@@ -32,37 +33,43 @@ public class ValidatedModel extends SimpactII{
     
     public static void main(String[] args) {
         SimpactII s = new ValidatedModel(1000);
+        s.run();
+        s.prevalence();
+        s.demographics();
+        new AgePrevalence(s);
         
         //write files for matlap figure  
-        try{
-            WriteHIVADPrevalence(s);
-            WriteAgeMixingRelationshipDurations(s);
-        }catch(IOException ioe){
-            System.err.println(ioe);
-            System.exit(-1);
-        }
-
-        //print stuff for demographic / prevalence
-        System.out.println("DEMOGRAPHICS:");
-        PrintDemographics(s);
-        System.out.println("PREVALENCE:");
-        PrintPrevalence(s);
+//        try{
+//            WriteHIVADPrevalence(s);
+//            WriteAgeMixingRelationshipDurations(s);
+//        }catch(IOException ioe){
+//            System.err.println(ioe);
+//            System.exit(-1);
+//        }
+//
+//        //print stuff for demographic / prevalence
+//        System.out.println("DEMOGRAPHICS:");
+//        PrintDemographics(s);
+//        System.out.println("PREVALENCE:");
+//        PrintPrevalence(s);
+//        s.prevalence();
+        
+//        int stepSize = 100;
+//        int numberRuns = 100;
+//        for(int seed = 100; seed < stepSize*numberRuns; seed+=stepSize){
+//            s.run(new String[] {"-seed",seed+""});
+//            System.out.print("Seed, " + seed + ", ");
+//            System.out.print("Quality, " + PrevalenceFit.goodness(s) + ", ");
+//            PrintPrevalence(s);
+//        }
+        
     }
 
     public ValidatedModel(int population) {
-        //make new model and add agents
+        //basic model parameters
         numberOfYears = 30;
         relationshipDurations = new PowerLawDistribution(52,4.2,random);
         degrees = new PowerLawDistribution(8, 10, random);
-        timeOperator = new DemographicTimeOperator();
-        InfectionOperator io = new AIDSDeathInfectionOperator() ;
-        io.transmissionProbability = 0.008;
-        io.initialNumberInfected = 5;
-        io.HIVIntroductionTime = 4*52;
-        infectionOperator = new InterventionInfectionOperator(io);
-        
-                
-        //set the initial age distribution based on data
         ages = new Distribution() {
             //initial age population in 1985
             private double[] dist = new double[] {0.1489, 0.2830, 0.4048, 0.5113,
@@ -76,9 +83,33 @@ public class ValidatedModel extends SimpactII{
                 for(; r > dist[i]; i++){ continue; }
                 return (i * 5) + noise.nextValue();
             }
-        };
+        };//set the initial age distribution based on data
+        
+        //modified operators
+        timeOperator = new DemographicTimeOperator();
+        AIDSDeathInfectionOperator io = new AIDSDeathInfectionOperator() ;
+            io.transmissionProbability = 0.008;
+            io.initialNumberInfected = 5;
+            io.HIVIntroductionTime = 4*52;
+            io.CD4AtInfection = new Normal(1500, 250, random);
+            io.CD4AtDeath = new UniformDistribution(0, 100, random);
+        infectionOperator = new InterventionInfectionOperator(io);
         
         //behavioural change of condoms: Parameters: start, stop, slant, max
+        addCondomBehaviorChange();
+        
+        //ART uptake
+        addARTIncrease();
+        
+        //add agents
+        addHeterogeneousAgents(population);
+        
+    }
+    
+    /*
+     * behavioural change of condoms: Parameters: start, stop, slant, max
+     */
+    private void addCondomBehaviorChange(){
         final double start = 13*52;     //13 = 1998
         final double end = 19 *52;      //15 = 2000, 20 = 2005, 18 = 2003
         final double min = 10;          //1%
@@ -113,8 +144,73 @@ public class ValidatedModel extends SimpactII{
             public double getSpend() { return 0.0; }
         };
         addIntervention(i);
-        
-        //>>>>>>> ADD AGENTS
+    }
+    
+    private void addARTIncrease(){
+        final double start = 17*52;     //17 = 2002
+        final double end = 25 *52;      //15 = 2000, 20 = 2005, 25 = 2010, 
+        final double min = 10;          //1 slot = 0.001 coverage (0.1%)
+        final double max = 50;        //200 slots = 0.2 coverage (20%)
+        final double slant = 0.03;     //looks good...?        
+        //solved constants
+        final double a = slant*(max-min)/(end - start);
+        final double b = (start + end)/2;
+        Intervention i = new TestAndTreat("generalPopulation",1,1,0.9) {
+            
+            private int CD4Threshold = 200;
+            
+            /*
+             * CD4 threshold changes in 2011
+             */
+            public void step(SimState state) {
+                state.schedule.scheduleOnce(26.5*52,new Steppable() {
+                    @Override
+                    public void step(SimState ss) {
+                        CD4Threshold = 350;
+                    }
+                });
+                super.step(state);
+            }
+            
+            public void testStep(SimpactII s) {
+                //go through agents, looking for those with "low" CD4
+                //note that this completely overrides previous testStep -- no call to super
+                Bag myAgents = s.network.allNodes;
+                for (int i = 0; i < myAgents.size(); i++) { //add syphilis weeks infected attribute to every one
+                    Agent agent = (Agent) myAgents.get(i);
+                    
+                    //if agent is HIV-positive, calculate CD4
+                    if(agent.weeksInfected >= 1 && !treatmentQueue.contains(agent)){
+                        double now = s.schedule.getTime();
+                        
+                        //CD4 at infection
+                        double CD4I = (double) agent.attributes.get("CD4AtInfection"); 
+                        double toi = now - agent.weeksInfected; //time of infection
+                        
+                        //CD4 at (eventual) death
+                        double CD4D = (double) agent.attributes.get("CD4AtDeath"); 
+                        double tod = (Double) agent.attributes.get("AIDSDeath"); //do I have to do a getValue?
+                        
+                        //interpolate CD4 and add to the queue accordingly
+                        double CD4 = CD4I + (CD4D - CD4I)*( (now - toi) / (tod - toi) );
+                        if(CD4 < CD4Threshold) //threshold changes midway through 2011
+                            treatmentQueue.add(agent);                        
+                    }                        
+                }//end agents for-loop
+            }//end test
+            
+            public void treatStep(SimpactII s) {
+                double t = state.schedule.getTime() ;
+                numSlots = (int) ((max-min)/(1+Math.exp( a*(b-t)))+min);
+                super.treatStep(s);
+            }
+            public double getStart() { return start; }
+            public double getSpend() { return 0.0; }
+        };
+        addIntervention(i);
+    }
+    
+    private void addHeterogeneousAgents(int population){
         //add special agents first
         addAgents(SexWorkerAgent.class, (int) (population*0.04));
         addAgents(MSMAgent.class, (int) (population*0.04));
@@ -146,7 +242,6 @@ public class ValidatedModel extends SimpactII{
         attributes.put("probabilityMultiplier",-0.5);
         attributes.put("preferredAgeDifferenceGrowth",0.01);
         addAgents(TriAgeAgent.class,population/4,attributes);
-        //<<<<<<<<<<< ADD AGENTS  
     }
     
     public static void WriteAgeMixingRelationshipDurations(SimpactII s) throws IOException{
@@ -367,10 +462,11 @@ public class ValidatedModel extends SimpactII{
             //go through agents and tally
             for (int i = 0; i < numAgents; i++) { 
                 Agent agent = (Agent) s.myAgents.get(i);
+                double ageAtT = agent.age - (now - t)/52;
                 double timeOfInfection = (now - agent.weeksInfected);
                 
                 if (agent.getTimeOfAddition() < t && agent.timeOfRemoval > t //if he or she is alive at this time step
-                        && (agent.age>15 && agent.age<50 ) ){ //AND within the right age range
+                        && (ageAtT >=15 && ageAtT <50 ) ){ //AND within the right age range
                     //add him or her to population counts
                     population++;                    
                     
@@ -380,6 +476,7 @@ public class ValidatedModel extends SimpactII{
                     }
                 }                       
             }// end agents loop
+            population = Math.max(1,population);
             System.out.print(totalInfections / population + ", ");
         }//end time loop    
         System.out.println();

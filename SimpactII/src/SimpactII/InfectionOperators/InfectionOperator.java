@@ -82,7 +82,7 @@ public class InfectionOperator implements Steppable{
     }
     
     public void preProcess(final SimpactII state){
-        state.schedule.scheduleOnceIn(HIVIntroductionTime, 
+        state.schedule.scheduleOnce(HIVIntroductionTime, 
             new Steppable() {
                 @Override
                 public void step(SimState ss) {

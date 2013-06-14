@@ -21,12 +21,12 @@ public class SolveCombinationPrevention {
         //MultipleCombinationPrevention op = new MultipleCombinationPrevention(args[0],Integer.parseInt(args[1]));
 
         //set heuristic
-        Heuristic h = new SimulatedAnnealing();
-        //Heuristic h = new Genetic();
+        //Heuristic h = new SimulatedAnnealing();
+        Heuristic h = new Genetic();
 
         //find solution
-        //double[] solution = h.solve(op);
-        double[] solution = {156,416,1222,0.005,3500.0,0.01};
+        double[] solution = h.solve(op);
+        //double[] solution = {156,416,1222,0.005,3500.0,0.01};
         
         //see how good validated model is
         SimpactII s = op.setup(solution);
