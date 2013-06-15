@@ -27,8 +27,8 @@ public class TestAndTreat implements Intervention {
     public double retentionRate;
     
     //constants
-    private final double start = 20.0 * 52;
-    private final double numWeeks = 10.0 * 52; //from year 20 to 30
+    private final double start = 28.0 * 52;
+    private final double numWeeks = 10.0 * 52; //from year 28 to 38
     private final double refuseTesting = 0.24;
     private final double timeTillNormalInfectivity = 0;
     private final double ARVInfectivityReduction = 0.96;

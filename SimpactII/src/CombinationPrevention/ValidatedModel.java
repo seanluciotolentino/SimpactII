@@ -32,11 +32,18 @@ import sim.util.Bag;
 public class ValidatedModel extends SimpactII{
     
     public static void main(String[] args) {
-        SimpactII s = new ValidatedModel(1000);
-        s.run();
-        s.prevalence();
-        s.demographics();
-        new AgePrevalence(s);
+        SimpactII s = new ValidatedModel(10000);
+        //basic runs
+//        s.prevalence();
+//        s.demographics();
+//        new AgePrevalence(s);
+        
+        //run multiple times
+        for (int i = 0; i < 20; i++){
+            s.run();
+            System.out.print("Run " + i + " :");
+            PrintPrevalence(s);
+        }
         
         //write files for matlap figure  
 //        try{
@@ -56,9 +63,10 @@ public class ValidatedModel extends SimpactII{
         
 //        int stepSize = 100;
 //        int numberRuns = 100;
-//        for(int seed = 100; seed < stepSize*numberRuns; seed+=stepSize){
+//        int initialSeed = 1_000_000;
+//        for(int seed = initialSeed; seed < (stepSize*numberRuns)+initialSeed; seed+=stepSize){
 //            s.run(new String[] {"-seed",seed+""});
-//            System.out.print("Seed, " + seed + ", ");
+//            System.out.print("a,Seed, " + seed + ", ");
 //            System.out.print("Quality, " + PrevalenceFit.goodness(s) + ", ");
 //            PrintPrevalence(s);
 //        }
@@ -90,16 +98,16 @@ public class ValidatedModel extends SimpactII{
         AIDSDeathInfectionOperator io = new AIDSDeathInfectionOperator() ;
             io.transmissionProbability = 0.008;
             io.initialNumberInfected = 5;
-            io.HIVIntroductionTime = 4*52;
+            io.HIVIntroductionTime = 3.5;//4*52;
             io.CD4AtInfection = new Normal(1500, 250, random);
             io.CD4AtDeath = new UniformDistribution(0, 100, random);
         infectionOperator = new InterventionInfectionOperator(io);
         
         //behavioural change of condoms: Parameters: start, stop, slant, max
-        addCondomBehaviorChange();
+        addCondomBehaviorChange(population);
         
         //ART uptake
-        addARTIncrease();
+        addARTIncrease(population);
         
         //add agents
         addHeterogeneousAgents(population);
@@ -109,12 +117,12 @@ public class ValidatedModel extends SimpactII{
     /*
      * behavioural change of condoms: Parameters: start, stop, slant, max
      */
-    private void addCondomBehaviorChange(){
-        final double start = 13*52;     //13 = 1998
-        final double end = 19 *52;      //15 = 2000, 20 = 2005, 18 = 2003
+    private void addCondomBehaviorChange(int population){
+        final double start = 540;//13*52;     //13 = 1998
+        final double end = 750;//19 *52;      //15 = 2000, 20 = 2005, 18 = 2003
         final double min = 10;          //1%
-        final double max = 4500;        //30%
-        final double slant = 0.005;     //looks good...?        
+        final double max = .35*10*population;//4500;        //30%
+        final double slant = 0.008;//0.005;     //looks good...?        
         //solved constants
         final double a = slant*(max-min)/(end - start);
         final double b = (start + end)/2;
@@ -146,11 +154,11 @@ public class ValidatedModel extends SimpactII{
         addIntervention(i);
     }
     
-    private void addARTIncrease(){
+    private void addARTIncrease(int population){
         final double start = 17*52;     //17 = 2002
         final double end = 25 *52;      //15 = 2000, 20 = 2005, 25 = 2010, 
         final double min = 10;          //1 slot = 0.001 coverage (0.1%)
-        final double max = 50;        //200 slots = 0.2 coverage (20%)
+        final double max = .05*population;        //200 slots = 0.2 coverage (20%)
         final double slant = 0.03;     //looks good...?        
         //solved constants
         final double a = slant*(max-min)/(end - start);
