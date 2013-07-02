@@ -47,7 +47,7 @@ public class Condom implements Intervention {
             public void step(SimState state) {
                 distributeCondoms((SimpactII) state);
             }            
-        });
+        }, interval);
         
 
     }

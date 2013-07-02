@@ -31,13 +31,13 @@ public class SolveCombinationPrevention {
         //see how good validated model is
         SimpactII s = op.setup(solution);
         s.run();
-        try{
-            ValidatedModel.WriteHIVADPrevalence(s);
-            ValidatedModel.WriteAgeMixingRelationshipDurations(s);
-        }catch(IOException ioe){
-            System.err.println(ioe);
-            System.exit(-1);
-        }
+//        try{
+//            ValidatedModel.WriteHIVADPrevalence(s);
+//            ValidatedModel.WriteAgeMixingRelationshipDurations(s);
+//        }catch(IOException ioe){
+//            System.err.println(ioe);
+//            System.exit(-1);
+//        }
 
         //print stuff for demographic / prevalence
         System.out.println("DEMOGRAPHICS:");
@@ -46,6 +46,7 @@ public class SolveCombinationPrevention {
         ValidatedModel.PrintPrevalence(s);
         
         //print the solution
+        System.out.println("SOLUTION:");
         for(int i = 0; i< solution.length; i++)
             System.err.println(solution[i] + ", " );
         

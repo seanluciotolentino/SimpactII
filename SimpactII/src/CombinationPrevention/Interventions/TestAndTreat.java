@@ -101,7 +101,7 @@ public class TestAndTreat implements Intervention {
 
     public void treatStep(SimpactII s) {
         //go through patients on treatment and remove anyone who has been removed
-        for (int i = 0; i < patientsOnTreatment.size(); i++) { //add syphilis weeks infected attribute to every one
+        for (int i = 0; i < patientsOnTreatment.size(); i++) { 
             Agent agent = (Agent) patientsOnTreatment.get(i);
             if(agent.timeOfRemoval<= s.schedule.getTime() )
                 stopTreatment(agent);
@@ -115,7 +115,8 @@ public class TestAndTreat implements Intervention {
         }
     }
 
-    private void treat(final Agent patient, SimpactII state) {        
+    private void treat(final Agent patient, SimpactII state) {  
+        patientsOnTreatment.add(patient);
         patient.attributes.put("ARVStart", state.schedule.getTime());
 
         //reduce their infectivity

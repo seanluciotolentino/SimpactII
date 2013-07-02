@@ -21,55 +21,33 @@ import sim.util.Bag;
 public class PrevalenceFit implements OptimizationProblem{
     
     public int averageOver = 10;
+    public int population = 1000;
     
     public PrevalenceFit(){        
         /*
          * PARAMETERS TO OPTIMIZE
-         * Condom:
-         *  -introduction
-         *  -start
-         *  -stop
-         *  -slant
-         *  -max
-         *  -infectivity          
-         * 
-         * ART:
-         *  -end
-         *  -max
+         *  -infectivity
+         *  -condom use
+         *  -ART coverage
          * 
           */  
-        
-        /*
-         * 3.5 //introduction
-         * 540 = 10.38  //condom start
-         * 750 = 14.41 //condom end         * 
-         * 0.0086 //slant
-         * 4143 = 41.43%
-         * 0.023 = //infectivity
-         * 1490.9
-         * 213.75  
-         */
         
     }
     
     public double[] getX0() {//init:        
-        return new double[]{4*52,  13*52,  19*52,  0.005,  .35,   0.01,    //condom (15-24)
-            25*52, 0.05};
+        return new double[]{0.0065, 0.35, 0.05};
     }
 
     public double[] getDelta() {//delta:        
-        return new double[]{26,    26,     26,     0.001,  0.01,    0.001,   //condom (15-24)  
-            26,     0.01};
+        return new double[]{0.0005, 0.01, 0.01};
     }
 
     public double[] getLB() {
-        return new double[]{0,     5*52,      6*52,      0.001,  0.01,    0.001,   //condom (15-24) 
-            20*52,  0.01};    
+        return new double[]{0.002, 0.10, 0.01};    
     }
 
     public double[] getUB() {
-        return new double[]{5*52,  15*52,  30*52,  0.01,   0.50,   0.050,   //condom (15-24)   
-            30*52,  0.30};   
+        return new double[]{0.010, 0.50, 0.15};   
     }
     
     public double run(double[] combination) {
@@ -88,12 +66,10 @@ public class PrevalenceFit implements OptimizationProblem{
     public SimpactII setup(double[] parameters){
         SimpactII s = new ValidatedModel(1000);
         s.myInterventions.clear(); //get rid of the other condom uptake
-        s.infectionOperator.HIVIntroductionTime = (int) parameters[0];
-        s.infectionOperator.transmissionProbability = parameters[5];     //looks good...?        
+        s.infectionOperator.transmissionProbability = parameters[0];     
         
         //Condoms
         addCondomsBC(s,parameters);
-
         
         //ART
         addART(s,parameters);
@@ -102,11 +78,11 @@ public class PrevalenceFit implements OptimizationProblem{
     }
     
     private void addCondomsBC(SimpactII s, double[] parameters){
-        final double start =    parameters[1];     //13 = 1998
-        final double end =      parameters[2];      //15 = 2000, 20 = 2005, 18 = 2003
-        final double slant =    parameters[3];     //looks good...?        
-        final double min =      100;          //1%
-        final double max =      parameters[4]*10*1000;        //30%        
+        final double start = 540;//13*52;     //13 = 1998
+        final double end = 750;//19 *52;      //15 = 2000, 20 = 2005, 18 = 2003
+        final double min = 10;          //1%
+        final double max = parameters[1]*10*population;//4500;        //30%
+        final double slant = 0.008;//0.005;     //looks good...?        
         //solved constants
         final double a = slant*(max-min)/(end - start);
         final double b = (start + end)/2;
@@ -140,15 +116,20 @@ public class PrevalenceFit implements OptimizationProblem{
 
     private void addART(SimpactII s, double[] parameters){
         final double start = 17*52;     //17 = 2002
-        final double end = parameters[6];//25 *52;      //15 = 2000, 20 = 2005, 25 = 2010, 
+        final double end = 25 *52;      //15 = 2000, 20 = 2005, 25 = 2010, 
         final double min = 10;          //1 slot = 0.001 coverage (0.1%)
-        final double max = parameters[7]*1000;//;50;        //200 slots = 0.2 coverage (20%)
+        final double max = parameters[2]*population;        //200 slots = 0.2 coverage (20%)
         final double slant = 0.03;     //looks good...?        
         //solved constants
         final double a = slant*(max-min)/(end - start);
         final double b = (start + end)/2;
         Intervention i = new TestAndTreat("generalPopulation",1,1,0.9) {
+            
             private int CD4Threshold = 200;
+            
+            /*
+             * CD4 threshold changes in 2011
+             */
             public void step(SimState state) {
                 state.schedule.scheduleOnce(26.5*52,new Steppable() {
                     @Override
@@ -158,6 +139,7 @@ public class PrevalenceFit implements OptimizationProblem{
                 });
                 super.step(state);
             }
+            
             public void testStep(SimpactII s) {
                 //go through agents, looking for those with "low" CD4
                 //note that this completely overrides previous testStep -- no call to super
@@ -184,6 +166,7 @@ public class PrevalenceFit implements OptimizationProblem{
                     }                        
                 }//end agents for-loop
             }//end test
+            
             public void treatStep(SimpactII s) {
                 double t = state.schedule.getTime() ;
                 numSlots = (int) ((max-min)/(1+Math.exp( a*(b-t)))+min);

@@ -23,6 +23,7 @@ public class DemographicTimeOperator extends TimeOperator{
     private double[][] femaleMortality;
     private double[][] maleMortality;
     private SimpactII state;
+    private int initialPopulation;
     private Bag agents;
     private int[] num;
     private Bag attributes;
@@ -71,8 +72,10 @@ public class DemographicTimeOperator extends TimeOperator{
                         //schedule the baby to be born sometime in the coming year
                         state.schedule.scheduleOnceIn(state.random.nextInt(52),
                             new Steppable() {
-                            public void step(SimState state) {
-                                newAgent((SimpactII) state);
+                            public void step(SimState s) {
+                                SimpactII state = (SimpactII) s;
+                                newAgent(state);
+                                state.setPopulation(state.getPopulation() + 1);
                             }
                         });                        
                     } //end fertility if
@@ -130,6 +133,7 @@ public class DemographicTimeOperator extends TimeOperator{
                                 }
                                 state.network.removeNode(agent);
                                 state.world.remove(agent);
+                                state.setPopulation(state.getPopulation() - 1);
                             }
                         });                        
                     } //end morality if
@@ -225,18 +229,20 @@ public class DemographicTimeOperator extends TimeOperator{
     
     private void grabAgentDistribution() {
         //grab distribution of agents
+        initialPopulation = 0;
         agents = state.getSubPopulationTypes();
         Bag numbers = state.getSubPopulationNum();
         num = new int[numbers.size()];
         num[0] = (int) numbers.get(0);
         for(int i = 1; i < numbers.size(); i++){
             num[i] = num[i-1] + (int) numbers.get(i);
+            initialPopulation += (int) numbers.get(i);
         }
         attributes = state.getSubPopulationArgs();
     }
     
     private Agent newAgent(SimpactII s){
-        int n = state.random.nextInt(state.getPopulation());
+        int n = state.random.nextInt(initialPopulation);
         int i = 0;
         for(; num[i] < n; i++){ continue; }
         

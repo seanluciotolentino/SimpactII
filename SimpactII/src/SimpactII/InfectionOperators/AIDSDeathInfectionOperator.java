@@ -37,7 +37,8 @@ public class AIDSDeathInfectionOperator extends InfectionOperator{
     
     public void performInitialInfections(SimpactII state){
         //perform initial infections in 25-35
-        int pop = state.getPopulation();
+        //int pop = state.getPopulation();
+        int pop = state.network.allNodes.size();
         if (pop < initialNumberInfected){
             System.err.println("Population too small for " + initialNumberInfected + " individuals to be initially infected." + 
                     " Decrease initial number infected or increase population size");
