@@ -14,7 +14,7 @@ import SimpactII.Distributions.*;
  */
 public class AIDSDeathInfectionOperator extends InfectionOperator{
     
-    private SimpactII state;
+    protected SimpactII state;
     public Distribution CD4AtInfection;
     public Distribution CD4AtDeath;
     

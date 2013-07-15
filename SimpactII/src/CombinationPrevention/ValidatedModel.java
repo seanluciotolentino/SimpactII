@@ -32,7 +32,7 @@ import sim.util.Bag;
 public class ValidatedModel extends SimpactII{
     
     public static void main(String[] args) {
-        SimpactII s = new ValidatedModel(10000);
+        SimpactII s = new ValidatedModel(1000);
         //basic runs
 //        s.prevalence();
 //        s.demographics();
@@ -98,7 +98,7 @@ public class ValidatedModel extends SimpactII{
         AIDSDeathInfectionOperator io = new AIDSDeathInfectionOperator() ;
             io.transmissionProbability = 0.008;
             io.initialNumberInfected = 5;
-            io.HIVIntroductionTime = 3.5;//4*52;
+            io.HIVIntroductionTime = 3.5*52;
             io.CD4AtInfection = new Normal(1500, 250, random);
             io.CD4AtDeath = new UniformDistribution(0, 100, random);
         infectionOperator = new InterventionInfectionOperator(io);
@@ -218,11 +218,15 @@ public class ValidatedModel extends SimpactII{
         addIntervention(i);
     }
     
-    private void addHeterogeneousAgents(int population){
+    protected void addHeterogeneousAgents(int population){
         //add special agents first
-        addAgents(SexWorkerAgent.class, (int) (population*0.04));
-        addAgents(MSMAgent.class, (int) (population*0.04));
-        population = population - getPopulation(); //update number in population
+        /*
+         *  THESE AGENTS WERE REMOVED FOR TESTS WITH THE SLEEPING AGENT ALGORITHM
+         * --SHOULD BE ADDED IN FOR OTHER MODELS
+         */
+//        addAgents(SexWorkerAgent.class, (int) (population*0.04));
+//        addAgents(MSMAgent.class, (int) (population*0.04));
+//        population = population - getPopulation(); //update number in population
         
         //add "normal" agents
         //male cone agents

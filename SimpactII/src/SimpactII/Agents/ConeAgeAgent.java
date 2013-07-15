@@ -35,7 +35,7 @@ public class ConeAgeAgent extends Agent{
         rng = state.random;
         preferredAgeDifference = this.isMale()? 3: -3;
         probabilityMultiplier = -0.1;
-        preferredAgeDifferenceGrowth = 2;
+        preferredAgeDifferenceGrowth =0.02;
         adDispersion = 0.01;
         meanAgeFactor = -0.01;//larger means age matter more
         
@@ -64,11 +64,6 @@ public class ConeAgeAgent extends Agent{
         return isLooking() && (isMale() ^ other.isMale()) && ageIsRight(other);
     }
     
-    public Agent replace(SimpactII state){
-        Agent a = new ConeAgeAgent(state,attributes );
-        a.age = 15;
-        return a;
-    }
     public boolean ageIsRight(Agent other){
         double maleAge = this.isMale()? age: other.age;
         double femaleAge = this.isMale()? other.age: age;
