@@ -18,7 +18,22 @@ public class TriAgeAgent extends ConeAgeAgent{
     }
     
     public boolean ageIsRight(Agent other){
-        double probability = rng.nextDouble();
+        //DEBUG CODE: rng is getting ArrayIndexOutOfBounds? Could it not get a lock?
+        double probability=0.0;
+        try{            
+            synchronized(state){
+//                System.err.print("Lock onto rng " + this.hashCode() + "\t\t");
+                probability = state.random.nextDouble();
+//                System.err.println(this.hashCode() + " --> release lock " );
+            }                    
+        }catch(ArrayIndexOutOfBoundsException e){
+            System.err.println(this.hashCode() + " COULDN'T GET LOCK " );
+            System.exit(-1);
+        }
+//        double probability;
+//        //synchronized(rng){ probability = rng.nextDouble(); }
+//        synchronized(state.random){ probability = state.random.nextDouble(); }
+        
         double ageDifference = this.age - other.age;
         //double ageDifference = femaleAge - maleAge;
         //double meanAge = ((this.age + other.age)/2);

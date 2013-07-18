@@ -28,11 +28,13 @@ public class ConeAgeAgent extends Agent{
     protected double preferredAgeDifferenceGrowth;
     protected double adDispersion;
     protected double meanAgeFactor;
+    protected SimpactII state; //try to see if we can store the state and then put a lock on it
     
         
     public ConeAgeAgent(SimpactII state, HashMap<String,Object> attributes){  
         super(state,attributes);
         rng = state.random;
+        this.state = state;
         preferredAgeDifference = this.isMale()? 3: -3;
         probabilityMultiplier = -0.1;
         preferredAgeDifferenceGrowth =0.02;
@@ -68,9 +70,28 @@ public class ConeAgeAgent extends Agent{
         double maleAge = this.isMale()? age: other.age;
         double femaleAge = this.isMale()? other.age: age;
         
-        double probability = rng.nextDouble();
+        /*
+         * DEBUG CODE: This occassionally still happens and I need to find out 
+         * why. It seems that this instance is unable to put a lock on the RNG,
+         * because someone else is calling the nextDouble method and causing 
+         * an ArrayIndexOutOfBoundsException. 
+         */
+        double probability=0.0;
+        try{            
+            synchronized(state){
+//                System.err.print("Lock onto rng " + this.hashCode() + "\t\t");
+                probability = state.random.nextDouble();
+//                System.err.println(this.hashCode() + " --> release lock " );
+            }                    
+        }catch(ArrayIndexOutOfBoundsException e){
+            System.err.println(this.hashCode() + " COULDN'T GET LOCK " );
+            System.exit(-1);
+        }
+//        double probability;
+//        //synchronized(rng){ probability = rng.nextDouble(); }
+//        synchronized(state.random){ probability = state.random.nextDouble(); }
+        
         double ageDifference = this.age - other.age;
-        //double ageDifference = femaleAge - maleAge;
         double meanAge = ((this.age + other.age)/2);
         
         //return  probability < Math.exp(probMult * Math.abs(ageDifference - (prefAD*meanAge*adGrowth) ) );        

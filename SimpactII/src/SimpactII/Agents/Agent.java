@@ -3,6 +3,8 @@ package SimpactII.Agents;
 import SimpactII.SimpactII;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sim.engine.*;
@@ -46,7 +48,7 @@ public class Agent implements Steppable {
         this.attributes.putAll(attributes); //this might replace gender ratio
         
         //assign random values from distribution
-        this.DNP = (double) state.degrees.nextValue();
+        this.DNP = Math.max(1,state.degrees.nextValue());
         this.male = state.random.nextDouble() <= (double) this.attributes.get("genderRatio"); //default gender ratio
         this.age = state.ages.nextValue();
         
@@ -76,23 +78,69 @@ public class Agent implements Steppable {
      * @param state
      */
     public void step(SimState s) {
-        SimpactII state = (SimpactII) s; //cast state to a SimpactII (from SimState)
+        final SimpactII state = (SimpactII) s; //cast state to a SimpactII (from SimState)
 
+        //if this agent isn't interested, don't keep looking
+        if (!isLooking()){        
+            return;
+        }
+        
         //go through other nodes, try to find partner
-        Bag others = possiblePartners(state);
-        int numOthers = others.size();
-        for (int i = 0; i < numOthers; i++) {
-            Agent other = (Agent) others.get(i);
-            if (!isLooking()) //if this agent isn't interested, don't keep looking
-            {
-                return;
-            }
-            if (isLookingFor(other)) {
-                double d1 = this.informRelationship(other);
-                double d2 = other.informRelationship(this);
-                state.formRelationship(this, other, Math.max(d1, d2));
-            }
-        } //for end
+//        final Agent this_ = this;
+//        Bag others = possiblePartners(state);
+//        int numOthers = others.size();
+//        for (int i = 0; i < numOthers; i++) {
+//            Agent other = (Agent) others.get(i);
+//
+//            if (isLookingFor(other)) {
+//                double d1 = this_.informRelationship(other);
+//                double d2 = other.informRelationship(this_);
+//                state.formRelationship(this_, other, Math.max(d1, d2)); 
+//            }                    
+//        } //for end
+        
+//        //if we've made it this far, spawn a new thread
+        final Agent this_ = this;
+        Runnable partnerSearch = new Runnable(){
+            public void run(){
+                Bag others = possiblePartners(state);
+                int numOthers = others.size();
+                for (int i = 0; i < numOthers; i++) {
+                    Agent other = (Agent) others.get(i);
+                    
+                    /*
+                     *  Was throwing IndexOutOfBoundsException on others.get(i)
+                     *  b/c others was shrinking while the for loop was excuting.
+                     *  This was happening b/c deaths were scheduled to happen
+                     *  with the same priority as formation. This has been changed
+                     *  in the DemographicTimeOperator so they now have priority
+                     *  2 like the operator.
+                     */ 
+                    //Agent other = null;
+                    //try{
+                    //    other = (Agent) others.get(i);
+                    //}catch(IndexOutOfBoundsException e){
+                    //    System.err.println("==== SOMEHOW OTHERS SHRUNK time = " + state.schedule.getTime() + "=====");
+                    //    System.err.println(this.hashCode() + " --> i = " + i + " other.size() = " + others.size() + " numOthers = " + numOthers);
+                    //    //look at the last couple agents
+                    //    int lastAgentIndex = state.myAgents.size()-1;
+                    //    Agent lastAgent = (Agent) state.myAgents.get(lastAgentIndex);
+                    //    System.err.println("Removal times of last agent: " + lastAgent.timeOfRemoval);
+                    //    Agent secondLastAgent = (Agent) state.myAgents.get(lastAgentIndex-1);
+                    //    System.err.println("Removal times of last agent: " + secondLastAgent.timeOfRemoval);
+                    //    System.exit(-1);
+                    //}
+                    
+                    if(isLookingFor(other) ){
+                        double d1 = this_.informRelationship(other);
+                        double d2 = other.informRelationship(this_);
+//                        state.formRelationship(this_, other, Math.max(d1, d2)); 
+                        synchronized(state){ state.formRelationship(this_, other, Math.max(d1, d2)); }
+                    }                    
+                } //for end
+            }//end run
+        };
+        state.executor.execute(partnerSearch); //tell a processor to run it         
     }//step end
 
     /**

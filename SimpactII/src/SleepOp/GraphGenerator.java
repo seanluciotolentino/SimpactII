@@ -17,8 +17,9 @@ public class GraphGenerator {
     public static void main (String[] args){
         //graph1();
         //graph2();
-        graph3();
-//        graph4();
+        //graph3();
+        //graph4();
+        graph5();
     }
     
     /*
@@ -200,6 +201,45 @@ public class GraphGenerator {
         System.out.print("1, Modified Prevalence,");
         PrintPrevalence(s);
         
+    }
+    
+    /*
+     * Graph to show the benefit of parallelization and sleeping algorithm
+     */
+    private static void graph5() {
+        //local vars
+        double start;
+        SimpactII s;
+        int population = 1000;
+        
+        
+        //scenario 1: baseline, sequential
+        start = System.currentTimeMillis();
+        s = new ValidatedModel(population); 
+        s.processors = 1;//saying explicitly will de-paralellize
+        s.run();
+        System.out.println("0,Scenario 1, " + (System.currentTimeMillis() - start));
+        
+        //scenario 2: baseline, parallel
+        start = System.currentTimeMillis();
+        s.processors = Runtime.getRuntime().availableProcessors(); 
+        s = new ValidatedModel(population); 
+        s.run();
+        System.out.println("0,Scenario 2, " + (System.currentTimeMillis() - start));
+        
+        //scenario 3: modified, sequential
+        start = System.currentTimeMillis();
+        s = new SleepingValidatedModel(population);
+        s.processors = 1; 
+        s.run();
+        System.out.println("0,Scenario 3, " + (System.currentTimeMillis() - start));
+        
+        //scenario 4: modified, parallel
+        start = System.currentTimeMillis();
+        s = new SleepingValidatedModel(population);
+        s.processors = Runtime.getRuntime().availableProcessors(); 
+        s.run();
+        System.out.println("0,Scenario 4, " + (System.currentTimeMillis() - start));
     }
     
         

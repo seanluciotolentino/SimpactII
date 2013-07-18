@@ -77,11 +77,11 @@ public class DemographicTimeOperator extends TimeOperator{
                                 newAgent(state);
                                 state.setPopulation(state.getPopulation() + 1);
                             }
-                        });                        
+                         },2); //ordering = 2, after all the formation events                        
                     } //end fertility if
                 }//end female agents for loop
             }//end  step   
-        }, 52); //end schedule repeating
+        }, 2, 52); //ordering = 2, interval = 52 (weels, end schedule repeating
         
         /*
          * schedule a mortality operator
@@ -135,11 +135,11 @@ public class DemographicTimeOperator extends TimeOperator{
                                 state.world.remove(agent);
                                 state.setPopulation(state.getPopulation() - 1);
                             }
-                        });                        
+                        },2); //ordering = 2, after all the formation events
                     } //end morality if
                 }//end agents for loop
             }//end  step 
-        }, 52);
+        }, 2, 52); //ordering = 2, interval = 52;
         
     }
     

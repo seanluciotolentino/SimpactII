@@ -7,9 +7,15 @@ import SimpactII.Graphs.*;
 import SimpactII.InfectionOperators.InfectionOperator;
 import SimpactII.Interventions.Intervention;
 import SimpactII.TimeOperators.TimeOperator;
+import SleepOp.Operators.ParallelRelationshipOperator;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
@@ -44,6 +50,10 @@ public class SimpactII extends SimState {
     //class variables for main operations
     public TimeOperator timeOperator = new TimeOperator();
     public InfectionOperator infectionOperator = new InfectionOperator();
+    //for parallizing
+    public ParallelRelationshipOperator relationsOperator = new ParallelRelationshipOperator();
+    public ExecutorService executor;
+    public int processors = Runtime.getRuntime().availableProcessors(); //This is problematic for Java 1.3 and below
     //class variables for data management
     public Bag myRelations = new Bag();
     public Bag myAgents = new Bag();
@@ -102,14 +112,18 @@ public class SimpactII extends SimState {
 
         //add the agents
         this.addPopulations();
+        
+        //add new relationship operator
+        relationsOperator.preProcess(this);
+        schedule.scheduleRepeating(schedule.EPOCH, 1,relationsOperator);
 
         //schedule time operator
         timeOperator.preProcess(this);
-        schedule.scheduleRepeating(schedule.EPOCH, 1, timeOperator);
+        schedule.scheduleRepeating(schedule.EPOCH, 2, timeOperator);
 
         //schedule infection operator
         infectionOperator.preProcess(this);
-        schedule.scheduleRepeating(schedule.EPOCH, 2, infectionOperator);
+        schedule.scheduleRepeating(schedule.EPOCH, 3, infectionOperator);
 
         //anonymous class to schedule a stop
         schedule.scheduleOnce(52 * numberOfYears, new Steppable() {
