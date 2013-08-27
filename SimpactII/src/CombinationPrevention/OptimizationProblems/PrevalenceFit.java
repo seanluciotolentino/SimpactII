@@ -20,34 +20,84 @@ import sim.util.Bag;
  */
 public class PrevalenceFit implements OptimizationProblem{
     
-    public int averageOver = 10;
-    public int population = 1000;
+    public int averageOver = 5;
+    public int population = 5000;
     
     public PrevalenceFit(){        
         /*
          * PARAMETERS TO OPTIMIZE
-         *  -infectivity
-         *  -condom use
-         *  -ART coverage
+         *  -introduction   0
+         *  -infectivity    1
+         *  
+         *  -condom use     2
+         *  -condom start   3
+         *  -condom end     4
          * 
-          */  
-        
+         *  -ART coverage   5   
+         *  -ART start      6
+         *  -ART end        7
+         * 
+          */          
     }
     
     public double[] getX0() {//init:        
-        return new double[]{0.0065, 0.35, 0.05};
+        return new double[]{
+                3.5,
+                0.008,
+                
+                .35,
+                13,
+                19,
+                
+                0.05,
+                17,
+                25,
+        };
     }
 
     public double[] getDelta() {//delta:        
-        return new double[]{0.0005, 0.01, 0.01};
+        return new double[]{
+                0.5,
+                0.001,
+                
+                .01,
+                0.5,
+                0.5,
+                
+                0.01,
+                0.5,
+                0.5,
+        };
     }
 
     public double[] getLB() {
-        return new double[]{0.002, 0.10, 0.01};    
+        return new double[]{
+                2.0,
+                0.004,
+                
+                0.05,
+                10,
+                15,
+                
+                0.01,
+                15,
+                17,
+        };   
     }
 
     public double[] getUB() {
-        return new double[]{0.010, 0.50, 0.15};   
+        return new double[]{
+                7,
+                0.015,
+                
+                .40,
+                15,
+                20,
+                
+                0.10,
+                18,
+                27
+        };  
     }
     
     public double run(double[] combination) {
@@ -64,9 +114,10 @@ public class PrevalenceFit implements OptimizationProblem{
     
     
     public SimpactII setup(double[] parameters){
-        SimpactII s = new ValidatedModel(1000);
+        SimpactII s = new ValidatedModel(population);
         s.myInterventions.clear(); //get rid of the other condom uptake
-        s.infectionOperator.transmissionProbability = parameters[0];     
+        s.infectionOperator.HIVIntroductionTime = parameters[0];
+        s.infectionOperator.transmissionProbability = parameters[1];     
         
         //Condoms
         addCondomsBC(s,parameters);
@@ -78,10 +129,10 @@ public class PrevalenceFit implements OptimizationProblem{
     }
     
     private void addCondomsBC(SimpactII s, double[] parameters){
-        final double start = 540;//13*52;     //13 = 1998
-        final double end = 750;//19 *52;      //15 = 2000, 20 = 2005, 18 = 2003
+        final double start = parameters[3];//13*52;     //13 = 1998
+        final double end = parameters[4];//19 *52;      //15 = 2000, 20 = 2005, 18 = 2003
         final double min = 10;          //1%
-        final double max = parameters[1]*10*population;//4500;        //30%
+        final double max = parameters[2]*10*population;//4500;        //30%
         final double slant = 0.008;//0.005;     //looks good...?        
         //solved constants
         final double a = slant*(max-min)/(end - start);
@@ -115,10 +166,10 @@ public class PrevalenceFit implements OptimizationProblem{
     }
 
     private void addART(SimpactII s, double[] parameters){
-        final double start = 17*52;     //17 = 2002
-        final double end = 25 *52;      //15 = 2000, 20 = 2005, 25 = 2010, 
+        final double start = parameters[6]*52;     //17 = 2002
+        final double end = parameters[7]*52;      //15 = 2000, 20 = 2005, 25 = 2010, 
         final double min = 10;          //1 slot = 0.001 coverage (0.1%)
-        final double max = parameters[2]*population;        //200 slots = 0.2 coverage (20%)
+        final double max = parameters[5]*population;        //200 slots = 0.2 coverage (20%)
         final double slant = 0.03;     //looks good...?        
         //solved constants
         final double a = slant*(max-min)/(end - start);
